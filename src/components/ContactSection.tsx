@@ -26,25 +26,25 @@ const ContactSection = () => {
     {
       name: 'Email',
       icon: Mail,
-      href: 'mailto:abelion@example.com',
+      href: 'mailto:agen.salva@gmail.com',
       color: 'hover:text-red-400'
     },
     {
       name: 'GitHub',
       icon: Github,
-      href: 'https://github.com/abelion',
+      href: 'https://github.com/abelion512',
       color: 'hover:text-foreground'
     },
     {
       name: 'LinkedIn',
       icon: Linkedin,
-      href: 'https://linkedin.com/in/abelion',
+      href: 'https://linkedin.com',
       color: 'hover:text-blue-400'
     },
     {
       name: 'Twitter',
       icon: Twitter,
-      href: 'https://twitter.com/abelion',
+      href: 'https://x.com/KataraCha',
       color: 'hover:text-blue-300'
     }
   ];
@@ -97,7 +97,7 @@ const ContactSection = () => {
 
             {/* CTA Button */}
             <button 
-              onClick={() => window.open('mailto:abelion@example.com', '_blank')}
+              onClick={() => window.open('mailto:agen.salva@gmail.com', '_blank')}
               className="cyber-button text-primary-foreground font-medium"
             >
               Send Me a Message
