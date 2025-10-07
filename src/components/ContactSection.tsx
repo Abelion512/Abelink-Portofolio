@@ -38,7 +38,7 @@ const ContactSection = () => {
     {
       name: 'LinkedIn',
       icon: Linkedin,
-      href: 'https://linkedin.com',
+      href: 'https://www.linkedin.com/in/ihsanuddin-salav',
       color: 'hover:text-blue-400'
     },
     {
