@@ -38,7 +38,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold glow-text">
-            AL
+            IS
           </div>
 
           {/* Desktop Navigation */}

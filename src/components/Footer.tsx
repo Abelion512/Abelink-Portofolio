@@ -4,16 +4,16 @@ const Footer = () => {
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <div className="text-2xl font-bold glow-text mb-2">Abelion Lavv</div>
-            <p className="text-muted-foreground">Building the future, one line of code at a time.</p>
+            <div className="text-2xl font-bold glow-text mb-2">Ihsanuddin Salav</div>
+            <p className="text-muted-foreground">Will contribute to building the future.</p>
           </div>
           
           <div className="text-center md:text-right">
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} Abelion Lavv. All rights reserved.
+              © {new Date().getFullYear()} Ihsanuddin Salav. All rights reserved.
             </p>
             <p className="text-muted-foreground text-xs mt-1">
-              Designed with passion and precision.
+              Designed with all my heart.
             </p>
           </div>
         </div>

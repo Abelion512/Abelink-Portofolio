@@ -50,7 +50,7 @@ const AboutSection = () => {
             <div className="relative inline-block mb-8">
               <div className="w-64 h-64 mx-auto lg:mx-0 rounded-full overflow-hidden border-4 border-primary/20 shadow-2xl relative">
                 <img 
-                  src={avatarImage} 
+                  src="https://ik.imagekit.io/focustimerin/preview%20image1?updatedAt=1757343104763" 
                   alt="Abelion Lavv" 
                   className="w-full h-full object-cover"
                 />
@@ -63,13 +63,12 @@ const AboutSection = () => {
               About Me
             </h2>
             <p className="text-lg text-foreground/80 leading-relaxed mb-8">
-              I'm a passionate student and developer focused on cybersecurity and building innovative solutions. 
-              My journey combines technical expertise with a deep understanding of security principles, 
-              always aiming to create technology that protects and empowers users.
+              I am a student majoring in Information Systems at Muhammadiyah Cyber ​​University. 
+              I am passionate about AI, automation, and the latest technologies.
             </p>
             <p className="text-lg text-foreground/80 leading-relaxed">
-              When I'm not coding or studying security frameworks, you'll find me exploring new technologies, 
-              contributing to open-source projects, or researching the latest trends in cybersecurity.
+              Outside of my work as a student, you'll find me exploring new technologies, 
+              contributing to open source projects, or researching the latest trends in Artificial Intelligence.
             </p>
           </div>
 

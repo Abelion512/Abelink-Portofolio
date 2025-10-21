@@ -56,10 +56,10 @@ const HeroSection = () => {
       {/* ID Badge */}
       <div className="absolute top-32 right-8 md:right-20 floating-badge">
         <div className="cyber-card p-4 min-w-[200px]">
-          <div className="text-xs text-muted-foreground mb-1">SECURITY CLEARANCE</div>
+          <div className="text-xs text-muted-foreground mb-1">INFORMATION SYSTEMS</div>
           <div className="text-sm font-medium text-primary">STUDENT ID</div>
-          <div className="text-lg font-bold glow-text">ABELION LAVV</div>
-          <div className="text-xs text-muted-foreground mt-2">CYBER SECURITY</div>
+          <div className="text-lg font-bold glow-text">IHSANUDDIN SALAV</div>
+          <div className="text-xs text-muted-foreground mt-2">STUDENT</div>
         </div>
       </div>
 
@@ -69,14 +69,14 @@ const HeroSection = () => {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 glow-text">
             Hi, I'm{' '}
             <span className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
-              Abelion Lavv
+              IHSANUDDIN SALAV
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-foreground/80 mb-4">
             I build things that matter.
           </p>
           <p className="text-lg text-muted-foreground mb-12">
-            Student. Builder. Cyber Security Enthusiast.
+            Student at Universitas Siber Muhammadiyah.
           </p>
           
           <button 

@@ -74,7 +74,7 @@ const ContactSection = () => {
                 Get In Touch
               </h3>
               <p className="text-foreground/70">
-                Whether you have a project in mind, want to discuss cybersecurity, 
+                Whether you have a project in mind, want to discuss AI, Automation, 
                 or just want to say hello, I'd love to hear from you.
               </p>
             </div>
