@@ -57,7 +57,7 @@ const HeroSection = () => {
       <div className="absolute top-32 right-8 md:right-20 floating-badge">
         <div className="cyber-card p-4 min-w-[200px]">
           <div className="text-xs text-muted-foreground mb-1">INFORMATION SYSTEMS</div>
-          <div className="text-sm font-medium text-primary">STUDENT ID</div>
+          <div className="text-sm font-medium text-primary">SIBERMU</div>
           <div className="text-lg font-bold glow-text">IHSANUDDIN SALAV</div>
           <div className="text-xs text-muted-foreground mt-2">STUDENT</div>
         </div>

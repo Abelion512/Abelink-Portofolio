@@ -25,26 +25,26 @@ const ProjectsSection = () => {
 
   const projects = [
     {
-      title: 'SecureChat Pro',
-      description: 'End-to-end encrypted messaging platform with advanced security features and zero-knowledge architecture.',
+      title: 'Project 01',
+      description: '-',
       image: projectPreview,
-      tags: ['React', 'Node.js', 'WebRTC', 'Cryptography'],
+      tags: ['-'],
       githubUrl: '#',
       liveUrl: '#'
     },
     {
-      title: 'CyberGuard Dashboard',
-      description: 'Real-time cybersecurity monitoring dashboard for threat detection and incident response.',
+      title: 'Project 02',
+      description: '-',
       image: projectPreview,
-      tags: ['Vue.js', 'Python', 'FastAPI', 'Machine Learning'],
+      tags: ['-'],
       githubUrl: '#',
       liveUrl: '#'
     },
     {
-      title: 'Blockchain Authenticator',
-      description: 'Decentralized authentication system using blockchain technology for secure identity management.',
+      title: 'Project 03',
+      description: '-',
       image: projectPreview,
-      tags: ['Solidity', 'Web3.js', 'IPFS', 'Smart Contracts'],
+      tags: ['-'],
       githubUrl: '#',
       liveUrl: '#'
     }
@@ -58,7 +58,7 @@ const ProjectsSection = () => {
             Featured Projects
           </h2>
           <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-            Explore my latest work in cybersecurity, web development, and innovative solutions.
+            Explore my latest work in artificial intelligence, automation, and innovative solutions.
           </p>
         </div>
 
