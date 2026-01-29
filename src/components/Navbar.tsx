@@ -12,8 +12,13 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    let lastScrolled = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const isScrolledNow = window.scrollY > 50;
+      if (isScrolledNow !== lastScrolled) {
+        setIsScrolled(isScrolledNow);
+        lastScrolled = isScrolledNow;
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
