@@ -2,6 +2,33 @@ import { useEffect, useRef } from 'react';
 import { ExternalLink, Github } from 'lucide-react';
 import projectPreview from '@/assets/project-preview.jpg';
 
+const projects = [
+  {
+    title: 'Project 01',
+    description: '-',
+    image: projectPreview,
+    tags: ['-'],
+    githubUrl: '#',
+    liveUrl: '#'
+  },
+  {
+    title: 'Project 02',
+    description: '-',
+    image: projectPreview,
+    tags: ['-'],
+    githubUrl: '#',
+    liveUrl: '#'
+  },
+  {
+    title: 'Project 03',
+    description: '-',
+    image: projectPreview,
+    tags: ['-'],
+    githubUrl: '#',
+    liveUrl: '#'
+  }
+];
+
 const ProjectsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -22,33 +49,6 @@ const ProjectsSection = () => {
 
     return () => observer.disconnect();
   }, []);
-
-  const projects = [
-    {
-      title: 'Project 01',
-      description: '-',
-      image: projectPreview,
-      tags: ['-'],
-      githubUrl: '#',
-      liveUrl: '#'
-    },
-    {
-      title: 'Project 02',
-      description: '-',
-      image: projectPreview,
-      tags: ['-'],
-      githubUrl: '#',
-      liveUrl: '#'
-    },
-    {
-      title: 'Project 03',
-      description: '-',
-      image: projectPreview,
-      tags: ['-'],
-      githubUrl: '#',
-      liveUrl: '#'
-    }
-  ];
 
   return (
     <section id="projects" ref={sectionRef} className="py-24 px-6 bg-cyber-darker/50">
