@@ -1,24 +1,29 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 
+const navItems = [
+  { name: 'About', href: '#about' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Contact', href: '#contact' }
+];
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    let lastScrolled = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const isScrolledNow = window.scrollY > 50;
+      if (isScrolledNow !== lastScrolled) {
+        setIsScrolled(isScrolledNow);
+        lastScrolled = isScrolledNow;
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const navItems = [
-    { name: 'About', href: '#about' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Contact', href: '#contact' }
-  ];
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
