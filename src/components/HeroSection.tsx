@@ -6,8 +6,9 @@ const HeroSection = () => {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const orbs = document.querySelectorAll('.floating-orb');
+
     const handleMouseMove = (e: MouseEvent) => {
-      const orbs = document.querySelectorAll('.floating-orb');
       const mouseX = e.clientX / window.innerWidth;
       const mouseY = e.clientY / window.innerHeight;
 
