@@ -53,6 +53,9 @@ const AboutSection = () => {
                   src="https://ik.imagekit.io/focustimerin/preview%20image1?updatedAt=1757343104763" 
                   alt="Abelion Lavv" 
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  width={256}
+                  height={256}
                 />
                 <div className="absolute inset-0 bg-primary/10 rounded-full"></div>
               </div>
