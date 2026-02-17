@@ -1,6 +1,33 @@
 import { useEffect, useRef } from 'react';
 import { Mail, Github, Linkedin, Twitter } from 'lucide-react';
 
+const socialLinks = [
+  {
+    name: 'Email',
+    icon: Mail,
+    href: 'mailto:agen.salva@gmail.com',
+    color: 'hover:text-red-400'
+  },
+  {
+    name: 'GitHub',
+    icon: Github,
+    href: 'https://github.com/abelion512',
+    color: 'hover:text-foreground'
+  },
+  {
+    name: 'LinkedIn',
+    icon: Linkedin,
+    href: 'https://www.linkedin.com/in/ihsanuddin-salav',
+    color: 'hover:text-blue-400'
+  },
+  {
+    name: 'Twitter',
+    icon: Twitter,
+    href: 'https://x.com/KataraCha',
+    color: 'hover:text-blue-300'
+  }
+];
+
 const ContactSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -21,33 +48,6 @@ const ContactSection = () => {
 
     return () => observer.disconnect();
   }, []);
-
-  const socialLinks = [
-    {
-      name: 'Email',
-      icon: Mail,
-      href: 'mailto:agen.salva@gmail.com',
-      color: 'hover:text-red-400'
-    },
-    {
-      name: 'GitHub',
-      icon: Github,
-      href: 'https://github.com/abelion512',
-      color: 'hover:text-foreground'
-    },
-    {
-      name: 'LinkedIn',
-      icon: Linkedin,
-      href: 'https://www.linkedin.com/in/ihsanuddin-salav',
-      color: 'hover:text-blue-400'
-    },
-    {
-      name: 'Twitter',
-      icon: Twitter,
-      href: 'https://x.com/KataraCha',
-      color: 'hover:text-blue-300'
-    }
-  ];
 
   return (
     <section id="contact" ref={sectionRef} className="py-24 px-6 relative overflow-hidden">
