@@ -2,6 +2,24 @@ import { useEffect, useRef } from 'react';
 import { Eye, Zap, Shield } from 'lucide-react';
 import avatarImage from '@/assets/avatar.jpg';
 
+const values = [
+  {
+    icon: Eye,
+    title: 'Vision',
+    description: 'I see technology as a tool to solve real-world problems and create meaningful impact.'
+  },
+  {
+    icon: Zap,
+    title: 'Skill',
+    description: 'Constantly learning and adapting to new technologies while mastering the fundamentals.'
+  },
+  {
+    icon: Shield,
+    title: 'Integrity',
+    description: 'Building secure, ethical solutions with a focus on privacy and user protection.'
+  }
+];
+
 const AboutSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -22,24 +40,6 @@ const AboutSection = () => {
 
     return () => observer.disconnect();
   }, []);
-
-  const values = [
-    {
-      icon: Eye,
-      title: 'Vision',
-      description: 'I see technology as a tool to solve real-world problems and create meaningful impact.'
-    },
-    {
-      icon: Zap,
-      title: 'Skill',
-      description: 'Constantly learning and adapting to new technologies while mastering the fundamentals.'
-    },
-    {
-      icon: Shield,
-      title: 'Integrity',
-      description: 'Building secure, ethical solutions with a focus on privacy and user protection.'
-    }
-  ];
 
   return (
     <section id="about" ref={sectionRef} className="py-24 px-6">
