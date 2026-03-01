@@ -13,16 +13,30 @@ const Navbar = () => {
 
   useEffect(() => {
     let lastScrolled = false;
+    let ticking = false;
+    let rafId: number | null = null;
+
     const handleScroll = () => {
-      const isScrolledNow = window.scrollY > 50;
-      if (isScrolledNow !== lastScrolled) {
-        setIsScrolled(isScrolledNow);
-        lastScrolled = isScrolledNow;
+      if (!ticking) {
+        rafId = window.requestAnimationFrame(() => {
+          const isScrolledNow = window.scrollY > 50;
+          if (isScrolledNow !== lastScrolled) {
+            setIsScrolled(isScrolledNow);
+            lastScrolled = isScrolledNow;
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   const scrollToSection = (href: string) => {
