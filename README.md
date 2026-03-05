@@ -1,50 +1,75 @@
-# Abelion Lavv - Portfolio
+# Abelink-Portofolio
 
-A personal portfolio website for Abelion Lavv, a Student, Builder, and Cyber Security Enthusiast.
+A project hosted on GitHub.
 
-## Tech Stack
+## Overview
 
-This project is built with:
+This repository contains the source code for the **Abelink-Portofolio** project.
+It is primarily developed using **TypeScript**.
 
-- [Vite](https://vitejs.dev/)
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Shadcn UI](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
+## Features
 
-## Getting Started
+- Personal portfolio website.
+- Developed with TypeScript.
+
+## Technologies Used
+
+- **Primary Language**: TypeScript
+- Node.js/npm (for dependencies)
+- Vite
+- Tailwind CSS
+- TypeScript
+
+## Setup and Installation
+
+To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
 
-- Node.js & npm installed.
+- Node.js (LTS recommended)
+- npm or yarn
 
 ### Installation
 
-1. Clone the repository:
-   ```sh
-   git clone <repository-url>
-   cd vite_react_shadcn_ts
+1. Clone the repo
+   ```bash
+   git clone https://github.com/Abelion512/Abelink-Portofolio
    ```
-
-2. Install dependencies:
-   ```sh
+2. Navigate to the project directory
+   ```bash
+   cd Abelink-Portofolio
+   ```
+3. Install NPM packages
+   ```bash
    npm install
    ```
 
-3. Start the development server:
-   ```sh
-   npm run dev
-   ```
+## Usage
 
-## Scripts
+To start the development server:
+```bash
+ npm run dev
+```
+To build the project for production:
+```bash
+ npm run build
+```
 
-- `npm run dev`: Start the development server.
-- `npm run build`: Build the project for production.
-- `npm run preview`: Preview the production build locally.
-- `npm run lint`: Run ESLint to check for code quality issues.
+## Contributing
 
-## Project Structure
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-- `src/components`: UI components.
-- `src/pages`: Application pages.
-- `src/lib`: Utility functions and libraries.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+Your Name - [Your Email/GitHub Profile]
+Project Link: https://github.com/Abelion512/Abelink-Portofolio
