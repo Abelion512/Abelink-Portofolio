@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Syne", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-base: #0a0a0f;
+  --color-surface: #1a1a2e;
+  --color-olivx-purple: #6C63FF;
+  --color-ai-teal: #00D4AA;
+  --color-gold: #C9A84C;
+  --color-text-primary: #F0F0F5;
+  --color-text-secondary: #9999BB;
+  --color-border: rgba(108, 99, 255, 0.15);
+}
+
+@layer base {
+  :root {
+    --background: var(--color-base);
+    --foreground: var(--color-text-primary);
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+  }
+
+  .text-gradient {
+    background: linear-gradient(to right, var(--color-olivx-purple), var(--color-ai-teal));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

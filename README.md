@@ -1,75 +1,36 @@
-# Abelink-Portofolio
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A project hosted on GitHub.
+## Getting Started
 
-## Overview
+First, run the development server:
 
-This repository contains the source code for the **Abelink-Portofolio** project.
-It is primarily developed using **TypeScript**.
-
-## Features
-
-- Personal portfolio website.
-- Developed with TypeScript.
-
-## Technologies Used
-
-- **Primary Language**: TypeScript
-- Node.js/npm (for dependencies)
-- Vite
-- Tailwind CSS
-- TypeScript
-
-## Setup and Installation
-
-To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-- Node.js (LTS recommended)
-- npm or yarn
-
-### Installation
-
-1. Clone the repo
-   ```bash
-   git clone https://github.com/Abelion512/Abelink-Portofolio
-   ```
-2. Navigate to the project directory
-   ```bash
-   cd Abelink-Portofolio
-   ```
-3. Install NPM packages
-   ```bash
-   npm install
-   ```
-
-## Usage
-
-To start the development server:
 ```bash
- npm run dev
-```
-To build the project for production:
-```bash
- npm run build
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Contributing
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## License
+## Learn More
 
-Distributed under the MIT License. See `LICENSE` for more information.
+To learn more about Next.js, take a look at the following resources:
 
-## Contact
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Your Name - [Your Email/GitHub Profile]
-Project Link: https://github.com/Abelion512/Abelink-Portofolio
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
