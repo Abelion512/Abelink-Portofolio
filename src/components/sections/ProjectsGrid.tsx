@@ -14,7 +14,7 @@ interface ProjectsClientProps {
   initialProjects: Project[];
 }
 
-export default function ProjectsClient({ initialProjects }: ProjectsClientProps) {
+export default function ProjectsGrid({ initialProjects }: ProjectsClientProps) {
   const [filter, setFilter] = useState("All");
 
   const filteredProjects = filter === "All" 

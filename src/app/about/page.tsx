@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import BioToggle from "@/components/features/about/BioToggle";
+import BioToggle from "@/components/sections/BioToggle";
 
 export const metadata: Metadata = {
   title: "About | Abelion — Student. Builder. Learner.",

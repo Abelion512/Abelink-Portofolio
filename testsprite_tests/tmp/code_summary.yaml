@@ -2,82 +2,70 @@ version: "2"
 type: frontend
 tech_stack:
   - TypeScript
-  - Next.js 16 (App Router)
-  - Tailwind CSS v4
-  - Motion v12
+  - Next.js (App Router)
+  - Tailwind CSS
+  - Framer Motion (motion/react)
+  - Lucide React
   - Supabase
-  - Anthropic SDK
+  - NextAuth.js
 routes:
   - path: /
     file: src/app/page.tsx
     auth_required: false
-    description: Hero and introduction page
+    description: Home page with Hero and sections
   - path: /projects
     file: src/app/projects/page.tsx
     auth_required: false
-    description: Showcase of projects
+    description: Projects gallery
   - path: /about
     file: src/app/about/page.tsx
     auth_required: false
-    description: Personal information page
-  - path: /achievements
-    file: src/app/achievements/page.tsx
+    description: About page with Bio Toggle
+  - path: /guestbook
+    file: src/app/guestbook/page.tsx
     auth_required: false
-    description: Certificates and awards gallery
-  - path: /stack
-    file: src/app/stack/page.tsx
-    auth_required: false
-    description: Tech stack overview
+    description: Guestbook with Supabase integration
   - path: /chat
     file: src/app/chat/page.tsx
     auth_required: false
     description: AI Chat interface
-  - path: /guestbook
-    file: src/app/guestbook/page.tsx
-    auth_required: false
-    description: Public message board
 features:
-  - name: Dynamic Hero Status
-    description: Displays "Open to Work" status and "Currently Learning" from Supabase.
+  - name: Global Navigation
+    description: Premium Navbar with 7 nav items and mobile responsiveness
     files:
-      - src/app/page.tsx
-      - src/components/features/home/HeroClient.tsx
+      - src/components/layout/Navbar.tsx
     entry_route: /
     user_interactions:
-      - Observe the Hero section for dynamic badges
-    auth_required: false
-  - name: AI Chatbot
-    description: Interactive chat with Abelion AI using Claude 3.5 Sonnet.
+      - Scroll to see glass effect
+      - Click nav items to navigate
+      - Open mobile hamburger menu on small screens
+  - name: Hero Profile
+    description: Animated hero section with parallax and status
     files:
-      - src/app/chat/page.tsx
-      - src/components/features/chat/ChatClient.tsx
-      - src/app/api/chat/route.ts
-    entry_route: /chat
+      - src/components/sections/Hero.tsx
+    entry_route: /
     user_interactions:
-      - Type message in chat input
-      - Click send button
-      - Receive AI response with markdown
-      - Clear chat history
-    auth_required: false
-  - name: Digital Guestbook
-    description: Users can leave messages stored in Supabase.
+      - Hover to see parallax effect on orbs
+      - Click social links
+  - name: Guestbook
+    description: Message board using Supabase Realtime
     files:
-      - src/app/guestbook/page.tsx
-      - src/components/features/guestbook/GuestbookClient.tsx
+      - src/components/guestbook/GuestbookForm.tsx
     entry_route: /guestbook
     user_interactions:
-      - Fill name and message fields
-      - Click Sign Guestbook button
-      - See message appearing in the list
-    auth_required: false
-  - name: Filterable Achievements
-    description: Masonry grid of certificates with category filters.
+      - Fill name and message
+      - Click Send to submit
+      - See message list update
+    api_calls:
+      - method: POST
+        endpoint: supabase guestbook table
+  - name: AI Chat
+    description: Chatbot interface for Abelion AI
     files:
-      - src/app/achievements/page.tsx
-      - src/components/features/achievements/AchievementsClient.tsx
-    entry_route: /achievements
+      - src/components/guestbook/ChatClient.tsx
+    entry_route: /chat
     user_interactions:
-      - Click filter pills (All, Certificate, Participation)
-      - View certificate images in masonry layout
-    auth_required: false
+      - Type message in input
+      - Send message to AI
+      - View AI streaming response
 known_limitations: []

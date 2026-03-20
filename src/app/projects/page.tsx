@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ProjectsClient from "@/components/features/projects/ProjectsClient";
+import ProjectsGrid from "@/components/sections/ProjectsGrid";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -48,7 +48,7 @@ export default async function ProjectsPage() {
 
   return (
     <main className="pt-32 px-6 max-w-6xl mx-auto mb-24">
-      <ProjectsClient initialProjects={allProjects} />
+      <ProjectsGrid initialProjects={allProjects} />
     </main>
   );
 }

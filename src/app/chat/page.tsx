@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ChatClient from "@/components/features/chat/ChatClient";
+import ChatClient from "@/components/guestbook/ChatClient";
 
 export const metadata: Metadata = {
   title: "Chat with Abelion AI | Abelink Portfolio",

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { supabase } from "@/lib/supabase";
-import GuestbookClient from "@/components/features/guestbook/GuestbookClient";
+import GuestbookForm from "@/components/guestbook/GuestbookForm";
 
 export const metadata: Metadata = {
   title: "Guestbook | Abelink Portfolio",
@@ -36,7 +36,7 @@ export default async function GuestbookPage() {
         </p>
       </div>
 
-      <GuestbookClient initialEntries={entries} />
+      <GuestbookForm initialEntries={entries} />
     </main>
   );
 }

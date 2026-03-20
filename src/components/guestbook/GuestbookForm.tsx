@@ -12,7 +12,7 @@ interface GuestbookEntry {
   created_at: string;
 }
 
-export default function GuestbookClient({ initialEntries }: { initialEntries: GuestbookEntry[] }) {
+export default function GuestbookForm({ initialEntries }: { initialEntries: GuestbookEntry[] }) {
   const [entries, setEntries] = useState<GuestbookEntry[]>(initialEntries);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");

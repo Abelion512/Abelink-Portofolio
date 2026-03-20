@@ -10,7 +10,7 @@ interface HeroClientProps {
   currentlyLearning: string;
 }
 
-export default function HeroClient({ openToWork, currentlyLearning }: HeroClientProps) {
+export default function Hero({ openToWork, currentlyLearning }: HeroClientProps) {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

@@ -1,4 +1,9 @@
-import HeroClient from "@/components/features/home/HeroClient";
+import Hero from "@/components/sections/Hero";
+import AchievementsSection from "@/components/features/achievements/AchievementsSection";
+import ExperienceSection from "@/components/features/home/ExperienceSection";
+import TechStackSection from "@/components/features/home/TechStackSection";
+import ContactSection from "@/components/features/home/ContactSection";
+import { Award, Code2, Mail, LayoutGrid } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const revalidate = 60; // Revalidate every minute
@@ -32,7 +37,7 @@ export default async function Home() {
   const settings = await getSettings();
 
   return (
-    <HeroClient 
+    <Hero 
       openToWork={settings.open_to_work} 
       currentlyLearning={settings.currently_learning} 
     />

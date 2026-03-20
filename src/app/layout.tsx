@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/common/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const syne = Syne({
   subsets: ["latin"],
