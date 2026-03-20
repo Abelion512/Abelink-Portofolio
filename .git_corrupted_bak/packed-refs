@@ -1,0 +1,18 @@
+# pack-refs with: peeled fully-peeled sorted 
+fb1ac7f9ea03198cbc1e21ce61a51aa6eba53d51 refs/heads/feature/nextjs-setup
+413a75105bf48f45c03bb1c095456e0e8fa7ad17 refs/heads/main
+ac4c2f87c7af23b28b0e1bbbd0543588ec7e69dd refs/remotes/origin/dependabot/npm_and_yarn/babel/runtime-7.28.2
+2e8efa321c8ad58b294fab621a8d72ba8b2532f9 refs/remotes/origin/dependabot/npm_and_yarn/glob-10.5.0
+bd26765b46ab3fadb9d2c6fde1c4ff4a3109a986 refs/remotes/origin/dependabot/npm_and_yarn/js-yaml-4.1.1
+6bf461c1beb6a1d3094f2f9bef26d01adc92d0aa refs/remotes/origin/dependabot/npm_and_yarn/lodash-4.17.23
+28329d88f390f498eae689fb13182861f50c387c refs/remotes/origin/dependabot/npm_and_yarn/multi-5c7f151553
+9e170f5f30f770f970e2f627aca628f0b9a8fdaf refs/remotes/origin/dependabot/npm_and_yarn/multi-dcb5c27ca1
+b77ded9413c36fff4a5c0402041af423d028fb61 refs/remotes/origin/fix-readme-and-eslint-111229995630110307
+413a75105bf48f45c03bb1c095456e0e8fa7ad17 refs/remotes/origin/main
+3d5a144dd6436a3a6f4fae75e9b6bd846733bccc refs/remotes/origin/perf-optimize-navbar-scroll-4914780730202229522
+1e2c8224a406c0a5c8d3e0ce873946796fc9cd73 refs/remotes/origin/perf/optimize-herosection-dom-query-8049017520156284239
+7f27b58f85d1d96c4c0910676298a7416bb3cdb9 refs/remotes/origin/perf/optimize-navbar-scroll-1036642880134126221
+3f3cfb1085fc727c40db1caa7fafa4c3220469b3 refs/remotes/origin/perf/optimize-navbar-static-data-13977501162770666227
+697c483f4cfdadd441e5aeab3ae84f8fc4b0e80d refs/remotes/origin/perf/refactor-projects-static-data-15776681129548829468
+bd4ca439cfa6e767ceee06aecacf18df7cb8f249 refs/remotes/origin/performance-optimize-constant-data-recreation-2326682760366820009
+9b93483a794ad1ad969059fab11c477e8a11064e refs/remotes/origin/performance-optimize-image-1256318962633652847

@@ -36,7 +36,7 @@ export default function HeroClient({ openToWork, currentlyLearning }: HeroClient
         className="w-full grid grid-cols-1 md:grid-cols-12 gap-6 z-10"
       >
         {/* Main Intro Card */}
-        <motion.div variants={itemVariants} className="md:col-span-8 md:row-span-2 glass border border-border bg-surface/30 rounded-[2rem] p-8 md:p-10 lg:p-14 relative overflow-hidden group">
+        <motion.div variants={itemVariants} className="md:col-span-8 md:row-span-2 glass border border-border bg-surface/30 rounded-[2rem] p-6 sm:p-8 md:p-10 lg:p-14 relative overflow-hidden group">
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-olivx-purple/10 blur-[80px] rounded-full group-hover:bg-olivx-purple/20 transition-all duration-700" />
           
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-base/50 text-[10px] sm:text-xs font-mono text-ai-teal mb-6 md:mb-8 tracking-widest uppercase backdrop-blur-md">
@@ -44,14 +44,14 @@ export default function HeroClient({ openToWork, currentlyLearning }: HeroClient
             <span>PORTFOLIO OF IHSANUDDIN SALAV</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-3 md:mb-4 leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-3 leading-[1.1] tracking-tight">
             Abelion
           </h1>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-6 md:mb-8 text-gradient">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-6 text-gradient">
             Student. Builder. Learner.
           </h2>
 
-          <p className="text-base md:text-lg text-text-secondary max-w-xl leading-relaxed mb-8 md:mb-10">
+          <p className="text-sm sm:text-base md:text-lg text-text-secondary max-w-xl leading-relaxed mb-8">
             Hi, I'm <span className="text-primary font-medium">Ihsanuddin Salav</span> (Abelion) — a second-semester student based in Surabaya who builds things with AI and web technology. I'm actively learning, collecting certifications, and developing projects under my own name. Driven by curiosity and the goal of contributing to technology that matters.
           </p>
 

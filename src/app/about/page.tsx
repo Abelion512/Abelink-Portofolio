@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import BioToggle from "@/components/features/about/BioToggle";
 
 export const metadata: Metadata = {
-  title: "About | Abelion - Founder of OlivX",
-  description: "Learn more about Abelion, his journey from Surabaya to Shanghai, and his vision for AI infrastructure.",
+  title: "About | Abelion — Student. Builder. Learner.",
+  description: "Ihsanuddin Salav from Surabaya — building things with AI and web tech.",
 };
 
 export default function AboutPage() {

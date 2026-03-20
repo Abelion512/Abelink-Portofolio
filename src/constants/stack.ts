@@ -5,7 +5,7 @@ export const stackData = [
   },
   {
     category: "Frameworks & Libraries",
-    items: ["Next.js", "React", "Tailwind CSS v4", "Motion v12", "Framer Motion"]
+    items: ["Next.js", "React", "Tailwind CSS v4", "Motion v12"]
   },
   {
     category: "Backend & Database",
