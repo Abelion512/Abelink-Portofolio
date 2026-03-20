@@ -41,4 +41,16 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+
+  .floating-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--color-olivx-purple), transparent);
+    opacity: 0.15;
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+  }
 }

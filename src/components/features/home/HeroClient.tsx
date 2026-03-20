@@ -3,6 +3,7 @@
 import { motion, Variants } from "motion/react";
 import Link from "next/link";
 import { Github, Linkedin, Twitter, ArrowRight, Sparkles, Code2, Bot } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 interface HeroClientProps {
   openToWork: boolean;
@@ -10,6 +11,32 @@ interface HeroClientProps {
 }
 
 export default function HeroClient({ openToWork, currentlyLearning }: HeroClientProps) {
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Optimized DOM query (taken from performance branch)
+    const orbs = heroRef.current?.querySelectorAll(".floating-orb");
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!orbs) return;
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+
+      orbs.forEach((orb, index) => {
+        const speed = (index + 1) * 0.4;
+        const x = (mouseX - 0.5) * speed * 60;
+        const y = (mouseY - 0.5) * speed * 60;
+        
+        if (orb instanceof HTMLElement) {
+          orb.style.transform = `translate(${x}px, ${y}px)`;
+        }
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
@@ -24,11 +51,20 @@ export default function HeroClient({ openToWork, currentlyLearning }: HeroClient
   };
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-24 px-6 max-w-6xl mx-auto">
+    <main 
+      ref={heroRef}
+      className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-24 px-6 max-w-6xl mx-auto overflow-hidden"
+    >
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-olivx-purple/5 to-transparent z-0 pointer-events-none" />
       <div className="absolute top-1/4 -right-64 w-96 h-96 bg-ai-teal/10 rounded-full blur-[120px] z-0 pointer-events-none" />
       
+      {/* Floating Orbs (Parallax) */}
+      <div className="floating-orb w-64 h-64 -top-20 -left-20 bg-olivx-purple/20" />
+      <div className="floating-orb w-48 h-48 top-1/3 -right-20 bg-ai-teal/20" />
+      <div className="floating-orb w-32 h-32 bottom-20 left-1/4 bg-olivx-purple/10" />
+      <div className="floating-orb w-40 h-40 bottom-1/4 right-1/4 bg-ai-teal/15" />
+
       <motion.div 
         variants={containerVariants}
         initial="hidden"
