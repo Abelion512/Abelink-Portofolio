@@ -1,8 +1,4 @@
 import Hero from "@/components/sections/Hero";
-import AchievementsSection from "@/components/features/achievements/AchievementsSection";
-import ExperienceSection from "@/components/features/home/ExperienceSection";
-import TechStackSection from "@/components/features/home/TechStackSection";
-import ContactSection from "@/components/features/home/ContactSection";
 import { Award, Code2, Mail, LayoutGrid } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 

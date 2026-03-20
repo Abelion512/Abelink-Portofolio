@@ -30,7 +30,7 @@ export default function Navbar() {
       >
         <Link href="/" className="flex flex-col group shrink-0">
           <span className="font-display font-bold text-xl leading-none group-hover:text-olivx-purple transition-colors">
-            Abelion
+            Abelink
           </span>
           <span className="text-[10px] font-mono tracking-widest text-text-secondary uppercase mt-0.5 hidden sm:block">
             Ihsanuddin Salav
