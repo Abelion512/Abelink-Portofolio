@@ -1,89 +1,128 @@
 "use client";
 
-import { useState } from "react";
+import { motion } from "motion/react";
+import { projects, Project } from "@/data/projects";
+import { Github, ExternalLink, Code2, LayoutGrid, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-interface Project {
-  name: string;
-  status: string;
-  desc: string;
-  tech: string[];
-  html_url: string;
+interface ProjectsGridProps {
+  initialProjects?: Project[];
 }
 
-interface ProjectsClientProps {
-  initialProjects: Project[];
-}
-
-export default function ProjectsGrid({ initialProjects }: ProjectsClientProps) {
-  const [filter, setFilter] = useState("All");
-
-  const filteredProjects = filter === "All" 
-    ? initialProjects 
-    : initialProjects.filter(p => p.status === filter);
+export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
+  const displayProjects = initialProjects || projects;
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
-          <h1 className="text-5xl font-display font-bold italic mb-2">Curated <span className="text-gradient">Projects</span></h1>
-          <p className="text-text-secondary text-lg">A curated selection of things I&apos;ve built.</p>
+    <section className="py-24 px-6 overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col">
+            <h2 className="text-sm font-mono text-primary uppercase tracking-[0.3em] mb-4">
+              Selected Works
+            </h2>
+            <h3 className="text-4xl md:text-5xl font-display font-bold text-text-primary tracking-tight">
+              Featured Projects
+            </h3>
+          </div>
+          <p className="max-w-md text-text-secondary font-body">
+            A collection of my recent projects, from AI experiments to fullstack web applications.
+          </p>
         </div>
-        <div className="flex gap-2">
-          {["All", "Live", "WIP", "GitHub"].map(f => (
-            <button 
-              key={f} 
-              onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full border border-border text-sm transition-all ${
-                filter === f ? "bg-surface text-primary border-primary/30" : "text-text-secondary hover:bg-surface"
-              }`}
-            >
-              {f}
-            </button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {displayProjects.map((project: Project, i: number) => (
+            <ProjectCard key={project.id || project.name} project={project} index={i} />
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProjects.map((project, idx) => (
-          <a 
-            key={idx} 
-            href={project.html_url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="block group rounded-3xl glass border border-border bg-surface/30 hover:border-olivx-purple/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(108,99,255,0.1)] flex flex-col overflow-hidden"
+        
+        <div className="mt-16 flex justify-center">
+          <Link 
+            href="https://github.com/Abelion512" 
+            target="_blank"
+            className="flex items-center gap-2 text-sm font-mono text-text-secondary hover:text-primary transition-colors group"
           >
-            {/* Cover Image Placeholder */}
-            <div className="relative w-full aspect-video bg-gradient-to-br from-surface to-base flex items-center justify-center border-b border-border/50">
-              <span className="text-2xl font-display font-bold text-text-secondary/40 px-4 text-center line-clamp-1 group-hover:scale-105 transition-transform duration-500">{project.name}</span>
-              
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4 px-2 py-0.5 rounded-md bg-base/80 backdrop-blur-md border border-border text-[10px] font-mono text-ai-teal tracking-tighter uppercase z-10">
-                {project.status}
-              </div>
-            </div>
-
-            {/* Card Content */}
-            <div className="p-6 flex flex-col flex-1">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-bold group-hover:text-gradient transition-all">{project.name}</h3>
-                <div className="text-text-secondary group-hover:text-olivx-purple transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 duration-300">
-                  ↗
-                </div>
-              </div>
-              <p className="text-text-secondary text-sm mb-6 leading-relaxed line-clamp-2">
-                {project.desc}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-auto">
-                {project.tech?.map((t: string) => (
-                  <span key={t} className="text-[10px] font-mono px-2 py-1 rounded bg-surface/50 border border-border/50 text-text-secondary">
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </a>
-        ))}
+            <span>VIEW ALL ON GITHUB</span>
+            <Github size={16} className="group-hover:rotate-12 transition-transform" />
+          </Link>
+        </div>
       </div>
-    </>
+    </section>
+  );
+}
+
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const statusColors = {
+    live: "bg-[#1D9E75]/20 border-[#1D9E75]/30 text-[#1D9E75]",
+    wip: "bg-[#BA7517]/20 border-[#BA7517]/30 text-[#BA7517]",
+    preview: "bg-[#6C63FF]/20 border-[#6C63FF]/30 text-[#6C63FF]",
+  } as const;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className="group relative flex flex-col glass border border-border/50 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-500"
+    >
+      {/* 16:9 Aspect Ratio Image */}
+      <div className="relative aspect-[16/9] overflow-hidden bg-surface/50">
+        {/* Status Badge */}
+        <div className={`absolute top-4 right-4 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${statusColors[project.status as keyof typeof statusColors]}`}>
+          {project.status}
+        </div>
+        
+        {/* Placeholder Gradient if image missing */}
+        <div className="absolute inset-0 bg-gradient-to-br from-surface to-base opacity-40 group-hover:scale-110 transition-transform duration-700" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
+          <Code2 size={64} className="text-primary" />
+        </div>
+      </div>
+
+      <div className="p-6 flex flex-col flex-grow">
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="text-xl font-display font-bold text-text-primary group-hover:text-primary transition-colors">
+            {project.name}
+          </h4>
+          <div className="text-text-secondary group-hover:text-primary transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1">
+            <ExternalLink size={16} />
+          </div>
+        </div>
+        
+        <p className="text-sm text-text-secondary line-clamp-2 mb-6 flex-grow">
+          {project.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          {project.tech.map((t: string) => (
+            <span key={t} className="px-2 py-0.5 rounded-md bg-surface/80 border border-border/50 text-[10px] font-mono text-text-secondary">
+              {t}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-4 mt-auto">
+          {project.githubUrl && (
+            <Link 
+              href={project.githubUrl} 
+              target="_blank"
+              className="text-text-secondary hover:text-text-primary transition-colors p-2 glass border border-border/50 rounded-xl"
+            >
+              <Github size={18} />
+            </Link>
+          )}
+          {project.liveUrl && (
+            <Link 
+              href={project.liveUrl} 
+              target="_blank"
+              className="px-4 py-2 bg-base/50 border border-border/50 rounded-xl text-xs font-bold text-primary hover:bg-primary/10 transition-all"
+            >
+              LIVE PREVIEW
+            </Link>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 }

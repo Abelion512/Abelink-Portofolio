@@ -19,9 +19,14 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Abelink | Student. Builder. Learner.",
-  description: "Portfolio pribadi Ihsanuddin Salav (Abelion) - Mahasiswa, Pengembang AI & Web di Surabaya.",
-  keywords: ["Abelink", "Abelion", "Ihsanuddin Salav", "Portfolio", "Next.js", "AI Developer"],
+  title: {
+    default: "Abelion — Student. Builder. Learner.",
+    template: "%s | Abelion"
+  },
+  description: "Portfolio of Abelion (Ihsanuddin Salav) — second-semester student from Surabaya building things with AI and web technology.",
+  keywords: ["Abelion", "Ihsanuddin Salav", "portfolio", "developer", "AI", "Next.js", "Surabaya"],
+  authors: [{ name: "Abelion", url: "https://abelink-portofolio.vercel.app" }],
+  creator: "Abelion",
 };
 
 export default function RootLayout({
