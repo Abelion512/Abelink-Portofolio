@@ -1,0 +1,1023 @@
+[
+  {
+    "id": "TC001",
+    "title": "Hero shows dynamic collaboration badge and currently learning text (happy path)",
+    "description": "Verifies the homepage Hero displays the collaboration badge and currently learning line as visible content.",
+    "category": "Dynamic Hero Status",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Open\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"collaborate\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Currently learning\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Hero CTA 'See my work' navigates to Projects",
+    "description": "Verifies clicking the primary CTA from the Hero takes the user to the Projects page.",
+    "category": "Dynamic Hero Status",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"See my work\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/projects\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Projects\""
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Hero CTA 'View achievements' navigates to Achievements",
+    "description": "Verifies clicking the achievements CTA from the Hero takes the user to the Achievements page.",
+    "category": "Dynamic Hero Status",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"View achievements\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/achievements\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Achievements\""
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Hero renders collaboration badge and learning line after initial load without blank state",
+    "description": "Verifies the Hero does not remain empty and displays user-facing status content after load.",
+    "category": "Dynamic Hero Status",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Open\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Currently learning\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"See my work\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Fallback content is shown when settings cannot be loaded (badge fallback)",
+    "description": "Verifies that the Hero still shows an 'Open to collaborate' badge even if dynamic settings are unavailable.",
+    "category": "Dynamic Hero Status",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Open\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"collaborate\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"View achievements\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Fallback content is shown when settings cannot be loaded (learning fallback placeholder)",
+    "description": "Verifies that the Hero shows the 'Currently learning' line with a placeholder value when dynamic settings are unavailable.",
+    "category": "Dynamic Hero Status",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Currently learning\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"—\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"View achievements\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/achievements\""
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Hero social links are visible in the Hero section",
+    "description": "Verifies that social link entries are present and visible within the Hero area.",
+    "category": "Dynamic Hero Status",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Social links\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"See my work\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Achievements page shows filter pills and default content",
+    "description": "Verifies the Achievements page loads and the filter pills are visible with initial masonry grid content.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"All\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Certificate\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Participation\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"At least one achievement card\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Filter achievements by Certificate pill updates the visible grid",
+    "description": "Verifies selecting the Certificate filter updates the masonry grid to show certificate items.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Certificate\" filter pill"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"At least one achievement card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Certificate filter pill is selected\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Filter achievements by Participation pill updates the visible grid",
+    "description": "Verifies selecting the Participation filter updates the masonry grid to show participation items.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Participation\" filter pill"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"At least one achievement card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Participation filter pill is selected\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Switching filters back to All restores the full list view",
+    "description": "Verifies the All filter can be re-selected after another filter and the grid remains functional.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Certificate\" filter pill"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Certificate filter pill is selected\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"All\" filter pill"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"All filter pill is selected\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Open an achievement lightbox and verify full image preview is shown",
+    "description": "Verifies clicking an achievement thumbnail opens a lightbox with a full-size image preview.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to \"Achievements masonry grid\""
+      },
+      {
+        "type": "action",
+        "description": "Click on an \"achievement card thumbnail\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox overlay\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox full image\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox close control\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Lightbox can be closed after opening an achievement",
+    "description": "Verifies the user can close the lightbox and return to the masonry grid view.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Click on an \"achievement card thumbnail\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox overlay\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Close\" control in the lightbox"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox overlay\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Lightbox shows image error placeholder when image fails to load and can be closed",
+    "description": "Verifies that when an achievement image fails to load, an error/placeholder is shown and the lightbox can be closed.",
+    "category": "Filterable Achievements (Masonry + Lightbox)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /achievements"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Certificate\" filter pill"
+      },
+      {
+        "type": "action",
+        "description": "Click on an \"achievement card thumbnail\" known to have a broken image"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Lightbox overlay\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Image error placeholder\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Close\" control in the lightbox"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Achievements masonry grid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Projects page loads and shows pinned projects and project grid",
+    "description": "Verifies the /projects page renders the expected pinned section and project grid content for a typical visitor.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify page title contains \"Projects\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Pinned\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Projects grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project card\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Open a specific project card (OlivX) and view its details/expanded state",
+    "description": "Verifies clicking the OlivX project card reveals a detail view or expanded card content on the Projects page.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"OlivX\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on project card \"OlivX\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project detail\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"GitHub\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Project card shows status and tech badges",
+    "description": "Verifies project cards include visible status text and at least one tech badge, indicating metadata is rendered.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project status\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Tech badge\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to \"Projects grid\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Tech badge\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Fallback scenario: project without liveUrl shows 'Live not available' state",
+    "description": "Verifies that when a project has no live URL (common in fallback/manual entries), the UI communicates that Live is unavailable and the Live button is disabled or not actionable.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to \"Projects grid\""
+      },
+      {
+        "type": "action",
+        "description": "Click on a project card that does not show a \"Live\" link or button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Live not available\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Live button (disabled)\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Fallback/manual projects are still displayed when live data is unavailable (UI-level check)",
+    "description": "Verifies the Projects page still shows a populated list of project cards (placeholders/manual data) even if live GitHub content is not present.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Projects grid\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Live not available\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"GitHub\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Projects page remains usable after opening and closing a project detail/expanded card",
+    "description": "Verifies users can open a project detail/expanded view and return to browsing the project grid without losing page usability.",
+    "category": "Projects (GitHub + Manual Fallback)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /projects"
+      },
+      {
+        "type": "action",
+        "description": "Click on project card \"OlivX\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Project detail\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Press \"Escape\" key"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Projects grid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Post a guestbook message and see it appear in the list",
+    "description": "Verifies a visitor can submit a valid guestbook entry and the new entry becomes visible in the message list.",
+    "category": "Digital Guestbook + Cybill AI (RAG)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /guestbook"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Guestbook\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Test Visitor\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Hello from an automated E2E test.\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Hello from an automated E2E test.\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Realtime update: newly posted message becomes visible without manual refresh",
+    "description": "Verifies the guestbook list updates immediately after submission, indicating realtime UI update behavior from the user perspective.",
+    "category": "Digital Guestbook + Cybill AI (RAG)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /guestbook"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Realtime Visitor\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Realtime check message.\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Realtime check message.\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"guestbook messages list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Validation: message is required (empty message submission blocked)",
+    "description": "Verifies submitting with an empty message shows a visible validation error and does not add an entry.",
+    "category": "Digital Guestbook + Cybill AI (RAG)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /guestbook"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Validation Visitor\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"message is required\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Now the message is provided.\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Now the message is provided.\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Cybill AI reply appears after a guestbook post (if enabled)",
+    "description": "Verifies an AI-generated reply appears in the UI after posting a message, or the UI shows a fallback reply text if AI is unavailable.",
+    "category": "Digital Guestbook + Cybill AI (RAG)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /guestbook"
+      },
+      {
+        "type": "action",
+        "description": "Type \"AI Reply Visitor\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Can Cybill respond to this entry?\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Can Cybill respond to this entry?\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for 10 seconds"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cybill reply\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Posting multiple distinct messages in one session adds multiple entries",
+    "description": "Verifies the guestbook can accept more than one submission sequentially and each message appears in the list.",
+    "category": "Digital Guestbook + Cybill AI (RAG)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /guestbook"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Multi Visitor\" into the name field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"First message in sequence.\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"First message in sequence.\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Second message in sequence.\" into the message field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sign Guestbook\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Second message in sequence.\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Send a message and receive an AI response with rendered markdown",
+    "description": "Verifies a visitor can send a chat message and see an AI response rendered with markdown formatting in the chat thread.",
+    "category": "AI Chatbot (Cybill Chat Interface)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chat"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Cybill\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Please reply with a markdown bullet list of three items.\" into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Click the send button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Please reply with a markdown bullet list of three items.\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a chat message rendered as a list (bulleted or numbered)\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Clear chat history after a successful conversation",
+    "description": "Verifies chat history can be cleared and previously visible messages are removed from view.",
+    "category": "AI Chatbot (Cybill Chat Interface)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chat"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Say hello.\" into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Click the send button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Say hello.\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click \"Clear chat history\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Say hello.\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Send message via Enter key (keyboard submit)",
+    "description": "Verifies the chat input supports submitting a message using the Enter key and the message appears in the thread.",
+    "category": "AI Chatbot (Cybill Chat Interface)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chat"
+      },
+      {
+        "type": "action",
+        "description": "Click into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Type \"Testing Enter submit\" into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Testing Enter submit\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"an AI response message\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Prevent sending an empty message",
+    "description": "Verifies the UI blocks or ignores sending when the chat input is empty.",
+    "category": "AI Chatbot (Cybill Chat Interface)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chat"
+      },
+      {
+        "type": "action",
+        "description": "Click into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a new user message bubble\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"an AI response message\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Long message is accepted and displayed in the chat thread",
+    "description": "Verifies a longer user message can be sent and is visible without breaking the chat flow.",
+    "category": "AI Chatbot (Cybill Chat Interface)",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /chat"
+      },
+      {
+        "type": "action",
+        "description": "Type \"This is a longer message to validate the chat input can handle multiple sentences. Please summarize it back in one sentence.\" into the chat input"
+      },
+      {
+        "type": "action",
+        "description": "Click the send button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"This is a longer message to validate the chat input can handle multiple sentences.\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"an AI response message\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Now Playing widget shows current track and artist on Home when a track is playing",
+    "description": "Verifies the Now Playing widget renders a track title and artist name when ListenBrainz reports an active playing track.",
+    "category": "Now Playing (ListenBrainz Widget)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Now playing\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an element \"Track title\" is visible in the Now Playing widget"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an element \"Artist name\" is visible in the Now Playing widget"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an element \"Now Playing widget\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "When no track is playing, the Now Playing widget is not shown on Home",
+    "description": "Verifies the widget hides entirely and does not show a placeholder when ListenBrainz indicates nothing is currently playing.",
+    "category": "Now Playing (ListenBrainz Widget)",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Now playing\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Now Playing widget\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "Now Playing widget does not block other Home page content",
+    "description": "Verifies Home page primary content still appears even when the Now Playing widget is present or absent.",
+    "category": "Now Playing (ListenBrainz Widget)",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Hero section\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Projects\" is visible or a \"Projects\" navigation link is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Page header\" is visible"
+      }
+    ]
+  }
+]

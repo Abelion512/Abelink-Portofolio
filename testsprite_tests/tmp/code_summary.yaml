@@ -1,0 +1,83 @@
+version: "2"
+type: frontend
+tech_stack:
+  - TypeScript
+  - Next.js 16 (App Router)
+  - Tailwind CSS v4
+  - Motion v12
+  - Supabase
+  - Anthropic SDK
+routes:
+  - path: /
+    file: src/app/page.tsx
+    auth_required: false
+    description: Hero and introduction page
+  - path: /projects
+    file: src/app/projects/page.tsx
+    auth_required: false
+    description: Showcase of projects
+  - path: /about
+    file: src/app/about/page.tsx
+    auth_required: false
+    description: Personal information page
+  - path: /achievements
+    file: src/app/achievements/page.tsx
+    auth_required: false
+    description: Certificates and awards gallery
+  - path: /stack
+    file: src/app/stack/page.tsx
+    auth_required: false
+    description: Tech stack overview
+  - path: /chat
+    file: src/app/chat/page.tsx
+    auth_required: false
+    description: AI Chat interface
+  - path: /guestbook
+    file: src/app/guestbook/page.tsx
+    auth_required: false
+    description: Public message board
+features:
+  - name: Dynamic Hero Status
+    description: Displays "Open to Work" status and "Currently Learning" from Supabase.
+    files:
+      - src/app/page.tsx
+      - src/components/features/home/HeroClient.tsx
+    entry_route: /
+    user_interactions:
+      - Observe the Hero section for dynamic badges
+    auth_required: false
+  - name: AI Chatbot
+    description: Interactive chat with Abelion AI using Claude 3.5 Sonnet.
+    files:
+      - src/app/chat/page.tsx
+      - src/components/features/chat/ChatClient.tsx
+      - src/app/api/chat/route.ts
+    entry_route: /chat
+    user_interactions:
+      - Type message in chat input
+      - Click send button
+      - Receive AI response with markdown
+      - Clear chat history
+    auth_required: false
+  - name: Digital Guestbook
+    description: Users can leave messages stored in Supabase.
+    files:
+      - src/app/guestbook/page.tsx
+      - src/components/features/guestbook/GuestbookClient.tsx
+    entry_route: /guestbook
+    user_interactions:
+      - Fill name and message fields
+      - Click Sign Guestbook button
+      - See message appearing in the list
+    auth_required: false
+  - name: Filterable Achievements
+    description: Masonry grid of certificates with category filters.
+    files:
+      - src/app/achievements/page.tsx
+      - src/components/features/achievements/AchievementsClient.tsx
+    entry_route: /achievements
+    user_interactions:
+      - Click filter pills (All, Certificate, Participation)
+      - View certificate images in masonry layout
+    auth_required: false
+known_limitations: []

@@ -38,7 +38,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden lg:flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -56,7 +56,7 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded-xl text-text-secondary hover:text-primary hover:bg-surface/50 transition-all"
+          className="lg:hidden p-2 rounded-xl text-text-secondary hover:text-primary hover:bg-surface/50 transition-all"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -72,7 +72,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-base/95 backdrop-blur-xl flex flex-col items-center justify-center gap-4 md:hidden"
+            className="fixed inset-0 z-40 bg-base/95 backdrop-blur-xl flex flex-col items-center justify-center gap-4 lg:hidden"
           >
             {navItems.map((item) => (
               <Link
