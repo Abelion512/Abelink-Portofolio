@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Code2, User, LayoutGrid, Cpu, Trophy, Menu, X } from "lucide-react";
+import { Code2, User, LayoutGrid, Cpu, Trophy, Menu, X, Sparkles, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
@@ -11,6 +11,8 @@ const navItems = [
   { name: "Projects", href: "/projects", icon: <LayoutGrid size={18} /> },
   { name: "Achievements", href: "/achievements", icon: <Trophy size={18} /> },
   { name: "Stack", href: "/stack", icon: <Code2 size={18} /> },
+  { name: "Chat", href: "/chat", icon: <Sparkles size={18} /> },
+  { name: "Guestbook", href: "/guestbook", icon: <MessageSquare size={18} /> },
   { name: "About", href: "/about", icon: <User size={18} /> },
 ];
 
