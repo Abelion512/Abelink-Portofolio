@@ -24,7 +24,7 @@ async function getGithubProjects() {
     });
     if (!res.ok) return [];
     const repos = await res.json();
-    return repos.map((repo: any) => ({
+    return repos.map((repo: { name: string; description: string; language: string; html_url: string }) => ({
       name: repo.name,
       status: "GitHub",
       desc: repo.description || "No description provided.",
@@ -42,7 +42,7 @@ export default async function ProjectsPage() {
   
   // Merge manual projects with github projects, avoiding duplicates by name
   const manualNames = new Set(manualProjects.map(p => p.name.toLowerCase()));
-  const filteredGithub = githubProjects.filter((p: any) => !manualNames.has(p.name.toLowerCase()));
+  const filteredGithub = githubProjects.filter((p: { name: string }) => !manualNames.has(p.name.toLowerCase()));
   
   const allProjects = [...manualProjects, ...filteredGithub];
 

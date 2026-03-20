@@ -26,7 +26,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
         <div>
           <h1 className="text-5xl font-display font-bold italic mb-2">Curated <span className="text-gradient">Projects</span></h1>
-          <p className="text-text-secondary text-lg">A curated selection of things I've built.</p>
+          <p className="text-text-secondary text-lg">A curated selection of things I&apos;ve built.</p>
         </div>
         <div className="flex gap-2">
           {["All", "Live", "WIP", "GitHub"].map(f => (
