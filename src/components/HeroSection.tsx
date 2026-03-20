@@ -6,13 +6,13 @@ const HeroSection = () => {
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const orbs = document.querySelectorAll('.floating-orb');
+    const orbs = heroRef.current?.querySelectorAll('.floating-orb');
 
     const handleMouseMove = (e: MouseEvent) => {
       const mouseX = e.clientX / window.innerWidth;
       const mouseY = e.clientY / window.innerHeight;
 
-      orbs.forEach((orb, index) => {
+      orbs?.forEach((orb, index) => {
         const speed = (index + 1) * 0.5;
         const x = (mouseX - 0.5) * speed * 50;
         const y = (mouseY - 0.5) * speed * 50;
