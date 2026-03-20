@@ -3,8 +3,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Code2, User, LayoutGrid, Cpu, Trophy, Menu, X, Sparkles, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { Cpu, LayoutGrid, Trophy, Code2, Sparkles, MessageSquare, User, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { name: "Home", href: "/", icon: <Cpu size={18} /> },
@@ -19,34 +19,44 @@ const navItems = [
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-4 backdrop-blur-md bg-base/80 border-b border-border/50"
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300 ${
+          scrolled 
+            ? "bg-base/80 backdrop-blur-xl border-b border-border shadow-lg py-3" 
+            : "bg-transparent"
+        }`}
       >
-        <Link href="/" className="flex flex-col group shrink-0">
-          <span className="font-display font-bold text-xl leading-none group-hover:text-olivx-purple transition-colors">
+        <Link href="/" className="flex flex-col group">
+          <span className="font-display font-bold text-2xl tracking-tight text-text-primary group-hover:text-primary transition-colors">
             Abelink
           </span>
-          <span className="text-[10px] font-mono tracking-widest text-text-secondary uppercase mt-0.5 hidden sm:block">
+          <span className="text-[10px] font-mono tracking-[0.2em] text-text-secondary uppercase">
             Ihsanuddin Salav
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-1">
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-1 bg-surface/40 backdrop-blur-md p-1 rounded-2xl border border-border/50">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 hover:bg-surface/50 ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
                 pathname === item.href
-                  ? "text-olivx-purple bg-surface/80"
-                  : "text-text-secondary hover:text-text-primary"
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface/60"
               }`}
             >
               {item.name}
@@ -54,40 +64,50 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Action Button (Optional/Future: Login) */}
+        <div className="hidden lg:block w-[120px] text-right">
+          <Link href="/contact" className="text-xs font-mono text-primary hover:underline">
+            Let's Talk _
+          </Link>
+        </div>
+
+        {/* Mobile Toggle */}
         <button
-          className="lg:hidden p-2 rounded-xl text-text-secondary hover:text-primary hover:bg-surface/50 transition-all"
+          className="lg:hidden p-2 text-text-secondary hover:text-primary transition-colors"
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </motion.nav>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-base/95 backdrop-blur-xl flex flex-col items-center justify-center gap-4 lg:hidden"
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-40 bg-base/98 backdrop-blur-2xl flex flex-col pt-24 px-8 lg:hidden"
           >
-            {navItems.map((item) => (
-              <Link
+            {navItems.map((item, i) => (
+              <motion.div
                 key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 text-2xl font-display font-bold transition-colors ${
-                  pathname === item.href
-                    ? "text-olivx-purple"
-                    : "text-text-secondary hover:text-text-primary"
-                }`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
               >
-                {item.icon}
-                {item.name}
-              </Link>
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-4 py-4 text-3xl font-display font-bold ${
+                    pathname === item.href ? "text-primary" : "text-text-secondary"
+                  }`}
+                >
+                  <span className="text-primary/50">{item.icon}</span>
+                  {item.name}
+                </Link>
+              </motion.div>
             ))}
           </motion.div>
         )}

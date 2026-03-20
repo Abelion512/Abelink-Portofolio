@@ -19,11 +19,9 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Abelion — Student. Builder. Learner.",
-    template: "%s | Abelion"
-  },
-  description: "Portfolio of Abelion (Ihsanuddin Salav) — second-semester student from Surabaya building things with AI and web technology.",
+  title: "Abelink | Student. Builder. Learner.",
+  description: "Portfolio pribadi Ihsanuddin Salav (Abelion) - Mahasiswa, Pengembang AI & Web di Surabaya.",
+  keywords: ["Abelink", "Abelion", "Ihsanuddin Salav", "Portfolio", "Next.js", "AI Developer"],
 };
 
 export default function RootLayout({
@@ -32,10 +30,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${plusJakarta.variable} ${jetBrainsMono.variable}`} suppressHydrationWarning>
-      <body className="antialiased selection:bg-olivx-purple/30 bg-base text-text-primary min-h-screen">
+    <html lang="en" className={`${syne.variable} ${plusJakarta.variable} ${jetBrainsMono.variable}`}>
+      <body className="antialiased bg-base text-text-primary font-body">
         <Navbar />
-        {children}
+        <main className="min-h-screen pt-16">
+          {children}
+        </main>
       </body>
     </html>
   );
