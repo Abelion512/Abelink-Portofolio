@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { Eye, Zap, Shield } from 'lucide-react';
-import avatarImage from '@/assets/avatar.jpg';
 
 const values = [
   {
