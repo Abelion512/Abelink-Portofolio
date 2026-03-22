@@ -1,17 +1,31 @@
 "use client";
 
 import { motion } from "motion/react";
-import { projects, Project } from "@/data/projects";
-import { Github, ExternalLink, Code2, LayoutGrid, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Github, ExternalLink, Code2 } from "lucide-react";
 import Link from "next/link";
+import { useLangStore } from "@/store/languageStore";
+
+export type ProjectStatus = 'live' | 'wip' | 'preview';
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  coverImage: string;
+  status: ProjectStatus;
+  tech: string[];
+  githubUrl?: string;
+  liveUrl?: string;
+  isPinned: boolean;
+}
 
 interface ProjectsGridProps {
   initialProjects?: Project[];
 }
 
 export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
-  const displayProjects = initialProjects || projects;
+  const { t } = useLangStore();
+  const displayProjects = initialProjects || [];
 
   return (
     <section className="py-24 px-6 overflow-hidden">
@@ -19,14 +33,14 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="flex flex-col">
             <h2 className="text-sm font-mono text-primary uppercase tracking-[0.3em] mb-4">
-              Selected Works
+              {t('projects.subtitle')}
             </h2>
             <h3 className="text-4xl md:text-5xl font-display font-bold text-text-primary tracking-tight">
-              Featured Projects
+              {t('projects.title')}
             </h3>
           </div>
           <p className="max-w-md text-text-secondary font-body">
-            A collection of my recent projects, from AI experiments to fullstack web applications.
+            {t('projects.description')}
           </p>
         </div>
 
@@ -42,7 +56,7 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
             target="_blank"
             className="flex items-center gap-2 text-sm font-mono text-text-secondary hover:text-primary transition-colors group"
           >
-            <span>VIEW ALL ON GITHUB</span>
+            <span>{t('projects.viewAll')}</span>
             <Github size={16} className="group-hover:rotate-12 transition-transform" />
           </Link>
         </div>
@@ -52,6 +66,7 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
 }
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const { t } = useLangStore();
   const statusColors = {
     live: "bg-[#1D9E75]/20 border-[#1D9E75]/30 text-[#1D9E75]",
     wip: "bg-[#BA7517]/20 border-[#BA7517]/30 text-[#BA7517]",
@@ -70,7 +85,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       <div className="relative aspect-[16/9] overflow-hidden bg-surface/50">
         {/* Status Badge */}
         <div className={`absolute top-4 right-4 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${statusColors[project.status as keyof typeof statusColors]}`}>
-          {project.status}
+          {project.status === 'live' ? 'LIVE' : project.status === 'wip' ? 'WIP' : 'PREVIEW'}
         </div>
         
         {/* Placeholder Gradient if image missing */}
@@ -95,9 +110,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         </p>
 
         <div className="flex flex-wrap gap-2 mb-6">
-          {project.tech.map((t: string) => (
-            <span key={t} className="px-2 py-0.5 rounded-md bg-surface/80 border border-border/50 text-[10px] font-mono text-text-secondary">
-              {t}
+          {project.tech.map((tech: string) => (
+            <span key={tech} className="px-2 py-0.5 rounded-md bg-surface/80 border border-border/50 text-[10px] font-mono text-text-secondary">
+              {tech}
             </span>
           ))}
         </div>
@@ -118,7 +133,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               target="_blank"
               className="px-4 py-2 bg-base/50 border border-border/50 rounded-xl text-xs font-bold text-primary hover:bg-primary/10 transition-all"
             >
-              LIVE PREVIEW
+              {t('projects.livePreview')}
             </Link>
           )}
         </div>

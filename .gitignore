@@ -2,5 +2,4 @@
 .env*.local
 node_modules
 .next
-OlivX_Portfolio_PRD.md
 testsprite_tests/

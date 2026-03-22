@@ -1,117 +1,126 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cpu, LayoutGrid, Trophy, Code2, Sparkles, MessageSquare, User, Menu, X } from "lucide-react";
+import { Command as CmdIcon } from "lucide-react";
 import { useState, useEffect } from "react";
-
-const navItems = [
-  { name: "Home", href: "/", icon: <Cpu size={18} /> },
-  { name: "Projects", href: "/projects", icon: <LayoutGrid size={18} /> },
-  { name: "Achievements", href: "/achievements", icon: <Trophy size={18} /> },
-  { name: "Stack", href: "/stack", icon: <Code2 size={18} /> },
-  { name: "Chat", href: "/chat", icon: <Sparkles size={18} /> },
-  { name: "Guestbook", href: "/guestbook", icon: <MessageSquare size={18} /> },
-  { name: "About", href: "/about", icon: <User size={18} /> },
-];
+import { useLangStore } from "@/store/languageStore";
+import { NAV_ITEMS } from "@/constants/nav";
+import LiveClock from "@/components/ui/LiveClock";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const { lang, setLang, t } = useLangStore();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
+  // Filter main nav items for desktop (first 4 items: Home, Projects, Achievements, Stack)
+  const mainNav = NAV_ITEMS.slice(0, 4);
+
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300 ${
-          scrolled 
-            ? "bg-base/80 backdrop-blur-xl border-b border-border shadow-lg py-3" 
-            : "bg-transparent"
-        }`}
-      >
-        <Link href="/" className="flex flex-col group">
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 transition-all duration-300 ${
+        scrolled 
+          ? "bg-base/80 backdrop-blur-xl border-b border-border shadow-lg py-3" 
+          : "bg-transparent"
+      }`}
+    >
+      {/* Left: Branding & Clock */}
+      <div className="flex items-center gap-6">
+        <Link href="/" className="flex flex-col group py-2">
           <span className="font-display font-bold text-2xl tracking-tight text-text-primary group-hover:text-primary transition-colors">
-            Abelink
-          </span>
-          <span className="text-[10px] font-mono tracking-[0.2em] text-text-secondary uppercase">
             Ihsanuddin Salav
           </span>
         </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-1 bg-surface/40 backdrop-blur-md p-1 rounded-2xl border border-border/50">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                pathname === item.href
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : "text-text-secondary hover:text-text-primary hover:bg-surface/60"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden md:block">
+          <LiveClock />
         </div>
+      </div>
 
-        {/* Action Button (Optional/Future: Login) */}
-        <div className="hidden lg:block w-[120px] text-right">
-          <Link href="/contact" className="text-xs font-mono text-primary hover:underline">
-            Let's Talk _
-          </Link>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button
-          className="lg:hidden p-2 text-text-secondary hover:text-primary transition-colors"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </motion.nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-40 bg-base/98 backdrop-blur-2xl flex flex-col pt-24 px-8 lg:hidden"
+      {/* Center: Desktop Nav */}
+      <div className="hidden lg:flex items-center gap-1 bg-surface/40 backdrop-blur-md p-1 rounded-2xl border border-border/50">
+        {mainNav.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+              pathname === item.href
+                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface/60"
+            }`}
           >
-            {navItems.map((item, i) => (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
+            {t(item.label)}
+          </Link>
+        ))}
+        
+        {/* Command Palette Trigger Icon */}
+        <button 
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+          className="p-2 ml-1 text-text-secondary hover:text-primary transition-colors"
+          title="Search (⌘K)"
+        >
+          <CmdIcon size={18} />
+        </button>
+      </div>
+
+      {/* Right: Language & Contact */}
+      <div className="hidden lg:flex items-center justify-end gap-6 min-w-[200px]">
+        {mounted && (
+          <div className="flex items-center border border-border/50 rounded-full overflow-hidden bg-surface/40">
+            {(['en', 'id'] as const).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`px-3 py-1.5 text-[10px] font-mono font-bold uppercase transition-all ${
+                  lang === l 
+                    ? "bg-primary text-white" 
+                    : "text-text-secondary hover:text-text-primary"
+                }`}
               >
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={`flex items-center gap-4 py-4 text-3xl font-display font-bold ${
-                    pathname === item.href ? "text-primary" : "text-text-secondary"
-                  }`}
-                >
-                  <span className="text-primary/50">{item.icon}</span>
-                  {item.name}
-                </Link>
-              </motion.div>
+                {l}
+              </button>
             ))}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </>
+
+        <Link href="/contact" className="text-xs font-mono text-primary hover:underline hover:text-primary-light transition-colors whitespace-nowrap">
+          {t('nav.contact')}
+        </Link>
+      </div>
+
+      {/* Mobile Header (Minimal) */}
+      <div className="flex items-center gap-3 lg:hidden">
+        {mounted && (
+          <button
+            onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+            className="flex items-center justify-center p-2 text-text-secondary hover:text-primary rounded-full bg-surface/40 border border-border/50"
+          >
+            <span className="text-xs font-mono font-bold uppercase">{lang}</span>
+          </button>
+        )}
+        <button 
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+          className="p-2 text-text-secondary"
+        >
+          <CmdIcon size={20} />
+        </button>
+      </div>
+    </motion.nav>
   );
 }

@@ -1,12 +1,30 @@
 import { Metadata } from "next";
-import { stackData } from "@/constants/stack";
+import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
-  title: "Tech Stack | Abelion",
+  title: "Tech Stack | Ihsanuddin Salav",
   description: "The tools, languages, and frameworks used to build digital experiences by Ihsanuddin Salav.",
 };
 
-export default function StackPage() {
+export const revalidate = 3600;
+
+export default async function StackPage() {
+  const { data, error } = await supabase
+    .from('stack_items')
+    .select('*')
+    .eq('is_visible', true)
+    .order('sort_order', { ascending: true });
+
+  let stackData: { category: string; items: string[] }[] = [];
+
+  if (data && !error) {
+    const categories = Array.from(new Set(data.map(item => item.category)));
+    stackData = categories.map(cat => ({
+      category: cat,
+      items: data.filter(i => i.category === cat).map(i => i.name)
+    }));
+  }
+
   return (
     <main className="pt-32 px-6 max-w-5xl mx-auto mb-24">
       <h1 className="text-5xl font-display font-bold mb-4 italic">Tech <span className="text-gradient">Stack</span></h1>
