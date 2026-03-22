@@ -6,7 +6,7 @@ import { ExternalLink, Calendar, Award, CheckCircle2, Trophy } from "lucide-reac
 import Link from "next/link";
 import { useLangStore } from "@/store/languageStore";
 
-export type AchievementType = "cert" | "part" | "award";
+export type AchievementType = "certificate" | "participation";
 
 export interface Achievement {
   id: string;
@@ -32,7 +32,7 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
     <div className="space-y-12">
       {/* Filter Tabs */}
       <div className="flex flex-wrap gap-2">
-        {(["all", "cert", "part", "award"] as const).map((type) => (
+        {(["all", "certificate", "participation"] as const).map((type) => (
           <button
             key={type}
             onClick={() => setFilter(type)}
@@ -42,9 +42,9 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
                 : "bg-surface/50 text-text-secondary border-border/50 hover:bg-surface hover:text-text-primary"
             }`}
           >
-            {type === 'cert' ? t('achievements.filter.certs') : 
-             type === 'part' ? t('achievements.filter.participation') : 
-             type === 'award' ? t('achievements.filter.awards') : t('common.all')}
+            {type === 'certificate' ? t('achievements.filter.certificate') : 
+             type === 'participation' ? t('achievements.filter.participation') : 
+             t('common.all')}
           </button>
         ))}
       </div>
@@ -85,7 +85,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
         
         {/* Type Badge */}
         <div className="absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border border-white/10 bg-black/20 text-white flex items-center gap-1.5">
-          {achievement.type === 'cert' ? <Award size={12} className="text-gold" /> : <CheckCircle2 size={12} className="text-accent" />}
+          {achievement.type === 'certificate' ? <Award size={12} className="text-gold" /> : <CheckCircle2 size={12} className="text-accent" />}
           {achievement.type}
         </div>
 

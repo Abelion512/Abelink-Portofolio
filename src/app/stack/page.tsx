@@ -34,11 +34,11 @@ export default async function StackPage() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {stackData.map((section, idx) => (
-          <div key={idx} className="glass border border-border bg-surface/30 p-8 rounded-[2rem] hover:border-olivx-purple/30 transition-all duration-300 group">
+          <div key={idx} className="glass border border-border bg-surface/30 p-8 rounded-[2rem] hover:border-primary/30 transition-all duration-300 group">
             <h2 className="text-xl font-display font-bold mb-6 text-text-primary group-hover:text-gradient transition-all">{section.category}</h2>
             <div className="flex flex-wrap gap-3">
               {section.items.map(item => (
-                <span key={item} className="px-3 py-1.5 bg-base/80 backdrop-blur-md border border-border/50 text-sm font-mono text-text-secondary rounded-lg hover:text-ai-teal hover:border-ai-teal/30 hover:-translate-y-1 transition-all cursor-default shadow-sm">
+                <span key={item} className="px-3 py-1.5 bg-base/80 backdrop-blur-md border border-border/50 text-sm font-mono text-text-secondary rounded-lg hover:text-accent hover:border-accent/30 hover:-translate-y-1 transition-all cursor-default shadow-sm">
                   {item}
                 </span>
               ))}

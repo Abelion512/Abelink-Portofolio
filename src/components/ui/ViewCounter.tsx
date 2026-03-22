@@ -9,27 +9,24 @@ export default function ViewCounter({ slug, table = "projects" }: { slug: string
 
   useEffect(() => {
     const fetchAndIncrementViews = async () => {
-      // 1. Fetch current views
-      const { data, error } = await supabase
-        .from(table)
-        .select("views")
-        .eq("slug", slug)
-        .single();
+      // Use Supabase RPC for atomic increment (SR-04)
+      const { data, error } = await supabase.rpc("increment_view", { 
+        page_slug: slug 
+      });
       
-      if (error || !data) {
-        console.error("Error fetching views:", error);
+      if (error) {
+        console.error("Error incrementing views:", error);
+        // Fallback: Fetch current if RPC fails (might happen if not seeded yet)
+        const { data: fetchResult } = await supabase
+          .from(table)
+          .select("views")
+          .eq("id", slug)
+          .single();
+        if (fetchResult) setViews(fetchResult.views);
         return;
       }
 
-      const currentViews = data.views || 0;
-      setViews(currentViews + 1);
-
-      // 2. Increment view count (in a real app, use an RPC for atomicity)
-      // This is a simple optimistic update for demonstration
-      await supabase
-        .from(table)
-        .update({ views: currentViews + 1 })
-        .eq("slug", slug);
+      setViews(data);
     };
 
     fetchAndIncrementViews();
