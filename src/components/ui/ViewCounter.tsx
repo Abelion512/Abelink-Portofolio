@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Eye } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ViewCounter({ slug, table = "projects" }: { slug: string, table?: string }) {
-  const [views, setViews] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchAndIncrementViews = async () => {
+  const { data: views, isError } = useQuery({
+    queryKey: ["views", table, slug],
+    queryFn: async () => {
       // Use Supabase RPC for atomic increment (SR-04)
       const { data, error } = await supabase.rpc("increment_view", { 
         page_slug: slug 
@@ -16,23 +15,23 @@ export default function ViewCounter({ slug, table = "projects" }: { slug: string
       
       if (error) {
         console.error("Error incrementing views:", error);
-        // Fallback: Fetch current if RPC fails (might happen if not seeded yet)
+        // Fallback: Fetch current if RPC fails
         const { data: fetchResult } = await supabase
           .from(table)
           .select("views")
           .eq("id", slug)
           .single();
-        if (fetchResult) setViews(fetchResult.views);
-        return;
+        return fetchResult?.views ?? 0;
       }
 
-      setViews(data);
-    };
+      return data as number;
+    },
+    // Don't refetch on window focus to avoid spamming the RPC
+    refetchOnWindowFocus: false,
+    staleTime: 60 * 1000,
+  });
 
-    fetchAndIncrementViews();
-  }, [slug, table]);
-
-  if (views === null) return null;
+  if (views === undefined || isError) return null;
 
   return (
     <div className="flex items-center gap-1.5 text-xs font-mono text-text-secondary bg-surface/50 px-2 py-1 rounded-md border border-white/5 w-fit">

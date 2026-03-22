@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import BottomNav from "@/components/layout/BottomNav";
 import CommandPalette from "@/components/ui/CommandPalette";
+import QueryProvider from "@/components/providers/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
 
 const syne = Syne({
@@ -77,7 +78,9 @@ export default function RootLayout({
         <Navbar />
         <CommandPalette />
         <main className="min-h-screen pt-16 pb-24 lg:pb-0">
-          {children}
+          <QueryProvider>
+            {children}
+          </QueryProvider>
         </main>
         <BottomNav />
         <Analytics />
