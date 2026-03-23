@@ -99,7 +99,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
             </div>
 
             <p className="text-sm text-text-secondary/70 leading-relaxed font-body">
-              This certification validates professional expertise and dedication to continuous learning in web technology and AI development.
+              {t('achievements.description')}
             </p>
           </div>
 

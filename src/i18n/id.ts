@@ -94,4 +94,5 @@ export const id: Record<string, string> = {
   'about.view_card': 'Lihat Kartu Saya',
   'about.biz_profile': 'Profil Bisnis',
   'common.all_achievements': 'Semua Pencapaian',
+  'achievements.description': 'Sertifikasi ini memvalidasi keahlian profesional dan dedikasi untuk pembelajaran berkelanjutan dalam teknologi web dan pengembangan AI.',
 };

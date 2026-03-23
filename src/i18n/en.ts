@@ -121,4 +121,5 @@ export const en: Record<string, string> = {
   'about.view_card': 'View My Card',
   'about.biz_profile': 'Business Profile',
   'common.all_achievements': 'Semua Pencapaian',
+  'achievements.description': 'This certification validates professional expertise and dedication to continuous learning in web technology and AI development.',
 };
