@@ -1485,3 +1485,421 @@ Task SELESAI hanya jika SEMUA ini terpenuhi:
    - Step 12: `bun run build` — verify zero error
    - Step 13: Jalankan Supabase seed SQL
 
+
+---
+
+## 34. CODEBASE SYNC — 22 March 2026 (dari zip terbaru)
+
+### Yang sudah FIXED dibanding review sebelumnya ✅
+
+| Item | Status |
+|---|---|
+| `page.module.css` | ✅ Dihapus |
+| `src/data/` folder | ✅ Dihapus |
+| `BioToggle.tsx` | ✅ Dihapus |
+| `olivx-purple` / `ai-teal` class | ✅ 0 occurrences |
+| `page.tsx` — `<ProjectsGrid />` di Home | ✅ Dihapus, Home = Hero only |
+| i18n en.ts + id.ts | ✅ Semua keys dari PRD Section 7 sudah ada |
+| AchievementsGrid type filter | ✅ Pakai `"certificate"/"participation"` + keys benar |
+| Contact page — no form | ✅ Sudah link list only |
+| `gemini.ts` — model version | ✅ `gemini-2.5-flash` |
+| ViewCounter — atomic RPC | ✅ Pakai `supabase.rpc('increment_view')` |
+| GuestbookForm — stripTags | ✅ Ada `stripTags()` sebelum insert |
+| `.gitignore` — `.gemini/` | ✅ Sudah include |
+| JSON-LD layout.tsx | ✅ Static object, aman |
+
+---
+
+### Bug baru yang ditemukan dari kode terbaru
+
+**CR-NEW-01 — `achievements/page.tsx` column mapping salah**
+- File: `src/app/achievements/page.tsx`
+- Problem:
+  ```ts
+  // SALAH — column tidak match Supabase schema
+  date:  a.date      // schema: tidak ada kolom 'date', ada 'created_at'
+  type:  a.type || 'cert'  // fallback 'cert' bukan 'certificate'
+  image: a.image_url // schema: kolom bernama 'image_path'
+  url:   a.url       // schema: kolom bernama 'credential_url'
+  ```
+  Query juga `.order('date', ...)` — kolom `date` tidak ada di schema.
+- Fix:
+  ```ts
+  // BENAR
+  date:  a.created_at || new Date().toISOString(),
+  type:  (a.type || 'certificate') as AchievementType,
+  image: a.image_path || undefined,
+  url:   a.credential_url || undefined,
+  // Query: .order('sort_order', { ascending: true })
+  ```
+
+**CR-NEW-02 — GuestbookForm i18n keys tidak ada**
+- File: `src/components/guestbook/GuestbookForm.tsx`
+- Problem: Pakai keys yang tidak terdaftar di en.ts/id.ts:
+  - `t('guestbook.namePlaceholder')` → tidak ada (ada: `guestbook.name`)
+  - `t('guestbook.messagePlaceholder')` → tidak ada (ada: `guestbook.message`)
+  - `t('guestbook.error')` → tidak ada
+- Fix: Ganti ke keys yang benar, atau tambahkan keys baru ke en.ts/id.ts:
+  ```ts
+  // Option A: rename di component
+  placeholder={t('guestbook.name')}
+  placeholder={t('guestbook.message')}
+  alert(t('common.error'))
+  // Option B: tambah keys baru di en.ts/id.ts
+  'guestbook.namePlaceholder': 'Your Name',
+  'guestbook.messagePlaceholder': 'Write your message here...',
+  'guestbook.error': 'Failed to send. Please try again.',
+  ```
+
+**CR-NEW-03 — GuestbookForm column name salah**
+- File: `src/components/guestbook/GuestbookForm.tsx`
+- Problem: Insert ke `user_name` tapi Supabase schema (PRD Section 8) pakai `name`.
+  ```ts
+  .insert([{ user_name: sanitizedName, message: sanitizedMessage }])
+  // Schema: kolom = 'name', bukan 'user_name'
+  ```
+- Fix: Ganti ke `name` atau update Supabase schema untuk tambahkan kolom `user_name`.
+  Keputusan: update schema pakai `user_name` untuk privacy (tidak tampilkan sebagai "name") → update schema DDL di PRD.
+
+**CR-NEW-04 — GuestbookForm tidak ada maxLength dan cooldown**
+- File: `src/components/guestbook/GuestbookForm.tsx`
+- Problem: stripTags ada tapi tidak ada `maxLength` di input dan tidak ada cooldown state.
+- Fix:
+  ```tsx
+  <input maxLength={60} ... />   // name
+  <input maxLength={500} ... />  // message
+  // Tambah cooldown state:
+  const [cooldown, setCooldown] = useState(false);
+  // Di handleSubmit setelah sukses:
+  setCooldown(true);
+  setTimeout(() => setCooldown(false), 12_000);
+  ```
+
+**CR-NEW-05 — Dashboard masih CRUD admin panel, ada spinner**
+- File: `src/app/dashboard/page.tsx`
+- Problem: Dashboard saat ini adalah panel edit/delete projects dan achievements. PRD Section 9.10 menetapkan dashboard adalah **living profile feed** (read-only untuk visitor), bukan admin panel.
+- Juga ada spinner yang melanggar PRD (harus skeleton).
+- Fix: Rewrite dashboard sesuai PRD Section 9.10:
+  - Sections: Status, Currently Building, Currently Learning, GitHub Activity, Now Playing, Learning Log
+  - Read-only dari Supabase
+  - Admin CRUD tetap via Supabase Table Editor (tidak perlu UI custom)
+  - Ganti spinner dengan `<SkeletonCard />`
+
+**CR-NEW-06 — Contact page ada LinkedIn, tidak ada Instagram**
+- File: `src/app/contact/page.tsx`
+- Problem: contactLinks punya LinkedIn (`https://linkedin.com/in/abelion`) tapi PRD Section 1 tidak mendaftarkan LinkedIn. Instagram (`@ihsanovid`) ada di PRD tapi tidak di contact page.
+- Fix: Ganti LinkedIn → Instagram sesuai PRD:
+  ```ts
+  { id: 'instagram', label: 'Instagram', value: '@ihsanovid', href: 'https://instagram.com/ihsanovid', icon: <Instagram size={24} /> }
+  ```
+
+**CR-NEW-07 — Contact page tidak cek availability dari Supabase**
+- File: `src/app/contact/page.tsx`
+- Problem: Badge "Open to collaborate" hardcode, tidak fetch dari `settings.open_to_work`.
+- Fix: Jadikan server component, fetch `settings`.
+
+**CR-NEW-08 — layout.tsx domain salah di metadata**
+- File: `src/app/layout.tsx`
+- Problem: `url: 'https://ihsanuddinsalav.my.id'` di JSON-LD dan `authors`. PRD menetapkan domain adalah `*.vercel.app`.
+- Fix: Ganti ke URL Vercel actual atau buat env var:
+  ```ts
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://abelink-portofolio-preview.vercel.app';
+  ```
+
+**CR-NEW-09 — `@tanstack/react-query` tidak ada di PRD tech stack**
+- File: `package.json`, `src/components/providers/QueryProvider.tsx`
+- Problem: Package ditambahkan tapi tidak terdaftar di PRD. Ini bukan masalah breaking, tapi perlu dicatat.
+- Keputusan: Tambahkan ke PRD tech stack karena sudah dipakai di ViewCounter.
+
+**CR-NEW-10 — `public/certs/` ada di repo**
+- Temuan: File cert ada di zip (sudah di-commit). PRD Section 19 bilang "tidak di-commit ke GitHub".
+- Keputusan: Boleh tetap di repo jika ukuran total masih reasonable untuk Vercel build. Jika butuh pindah ke Storage: ikuti langkah Section 19.
+- Update `.gitignore`: hapus atau pertahankan `public/certs/` tergantung keputusan ini.
+
+---
+
+### Update PRD — perubahan dari temuan terbaru
+
+**Update Section 3 (Tech Stack) — tambahkan:**
+```
+| Data Fetching | @tanstack/react-query ^5.x | ViewCounter + future async queries |
+```
+
+**Update Section 8 (Supabase Schema) — guestbook table fix:**
+```sql
+-- Guestbook: kolom user_name (bukan 'name' — lebih privacy-friendly)
+CREATE TABLE IF NOT EXISTS guestbook (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_name  text NOT NULL,   -- BUKAN 'name'
+  message    text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+```
+
+**Update Section 8 (Supabase Schema) — achievements table: tidak ada kolom `date`:**
+Achievements tidak punya kolom `date` — gunakan `created_at` untuk ordering dan display.
+
+**Update Section 9.4 (Achievements page):**
+```ts
+// Fetch: .order('sort_order', { ascending: true })  ← BUKAN 'date'
+// Mapping:
+date:  a.created_at,
+type:  (a.type || 'certificate') as AchievementType,
+image: a.image_path,
+url:   a.credential_url,
+```
+
+**Update Section 7 (i18n) — tambahkan keys yang dipakai GuestbookForm:**
+```ts
+// en.ts & id.ts — tambahkan:
+'guestbook.namePlaceholder':    'Your Name',          // id: 'Nama Kamu'
+'guestbook.messagePlaceholder': 'Write your message...', // id: 'Tulis pesan...'
+'guestbook.error':              'Failed to send. Please try again.',  // id: 'Gagal mengirim.'
+```
+
+---
+
+### Phase 2 Remaining Fixes — Updated
+
+Berdasarkan temuan terbaru, checklist diupdate:
+
+**Sudah DONE (tidak perlu dikerjakan):**
+- ~~Fix i18n missing keys~~ ✅
+- ~~Fix AchievementsGrid type filter~~ ✅
+- ~~Hapus ProjectsGrid dari Home~~ ✅
+- ~~Ganti olivx-purple/ai-teal~~ ✅
+- ~~Hapus Contact form~~ ✅
+- ~~Fix gemini model~~ ✅
+- ~~Hapus BioToggle~~ ✅
+- ~~Fix ViewCounter race condition~~ ✅
+- ~~Delete page.module.css~~ ✅
+- ~~Tambah .gemini/ ke .gitignore~~ ✅
+
+**Masih perlu dikerjakan (satu per satu):**
+- [ ] CR-NEW-01: Fix `achievements/page.tsx` column mapping (date→created_at, image_url→image_path, url→credential_url, type fallback)
+- [ ] CR-NEW-02: Fix GuestbookForm i18n keys (namePlaceholder, messagePlaceholder, error) + tambahkan keys ke en.ts/id.ts
+- [ ] CR-NEW-03: Konfirmasi Supabase guestbook schema — `user_name` atau `name`? Update DDL di PRD Section 8.
+- [ ] CR-NEW-04: Tambah maxLength + cooldown ke GuestbookForm
+- [ ] CR-NEW-05: Rewrite Dashboard sesuai PRD Section 9.10 (living feed, bukan admin panel)
+- [ ] CR-NEW-06: Contact page — ganti LinkedIn → Instagram
+- [ ] CR-NEW-07: Contact page — fetch `settings.open_to_work` dari Supabase
+- [ ] CR-NEW-08: Fix domain di layout.tsx metadata (gunakan env var)
+- [ ] Jalankan Supabase seed SQL (Section 8)
+- [ ] Verify `bun run build` — zero error
+
+
+---
+
+## 35. FINAL COMPLETE BUG LIST — 22 March 2026 (full codebase review)
+
+### BLOCKING PHASE 3 — Fix sebelum lanjut
+
+**BLK-01 — `rag.ts` query ke tabel tidak ada**
+- File: `src/lib/rag.ts`
+- Problem: `from('projects_status')` — tabel ini tidak ada. Seharusnya `from('settings')`.
+- Impact: Live context AI chat tidak pernah berhasil, selalu return `''`.
+- Fix:
+  ```ts
+  const { data } = await supabase
+    .from('settings')  // BUKAN 'projects_status'
+    .select('status, currently_learning, currently_building')
+    .single();
+  ```
+
+**BLK-02 — `about/page.tsx` pakai i18n keys yang tidak ada**
+- File: `src/app/about/page.tsx`, `src/i18n/en.ts`, `src/i18n/id.ts`
+- Problem: `t('about.p1')`, `t('about.p2')`, `t('about.tech')` — tidak ada di en.ts/id.ts. Raw keys tampil.
+- Fix: Tambahkan ke en.ts dan id.ts:
+  ```ts
+  // en.ts
+  'about.p1': 'Born in Surabaya, Indonesia. Building with AI and web technology to bridge local innovation with global standards.',
+  'about.p2': 'Driven by curiosity and the goal of contributing to technology that matters. Every project is a step toward a more efficient future.',
+  'about.tech': 'Technical Core',
+  // id.ts
+  'about.p1': 'Lahir di Surabaya, Indonesia. Membangun dengan AI dan teknologi web untuk menjembatani inovasi lokal dengan standar global.',
+  'about.p2': 'Didorong rasa ingin tahu dan tujuan berkontribusi pada teknologi yang bermakna. Setiap proyek adalah langkah menuju masa depan yang lebih efisien.',
+  'about.tech': 'Inti Teknis',
+  ```
+
+**BLK-03 — `achievements/page.tsx` column mapping salah**
+- File: `src/app/achievements/page.tsx`
+- Problem: Mapping ke kolom yang tidak ada di Supabase schema:
+  ```ts
+  date:  a.date          // kolom tidak ada → undefined → NaN tahun
+  type:  a.type || 'cert' // fallback 'cert' tidak match type filter
+  image: a.image_url     // kolom bernama 'image_path'
+  url:   a.url           // kolom bernama 'credential_url'
+  // Query: .order('date') — kolom tidak ada, error
+  ```
+- Fix:
+  ```ts
+  // Query:
+  .order('sort_order', { ascending: true })
+
+  // Mapping:
+  date:  a.created_at || new Date().toISOString(),
+  type:  (a.type || 'certificate') as AchievementType,
+  image: a.image_path || undefined,
+  url:   a.credential_url || undefined,
+  ```
+
+**BLK-04 — `uses/page.tsx` category types tidak match seed data**
+- File: `src/app/uses/page.tsx`
+- Problem: TypeScript interface define `"Hardware" | "Software" | "Workspace"` tapi Supabase seed data punya `"Hardware" | "Editor" | "Terminal" | "Apps" | "AI Stack"`. CategoryIcon switch juga tidak handle kategori seed.
+- Fix:
+  ```ts
+  // Hapus type literal, pakai string saja:
+  interface UseItem {
+    id: string;
+    name: string;
+    description: string;
+    category: string;  // BUKAN literal union
+    url?: string;
+  }
+
+  // Update CategoryIcon switch:
+  case "Hardware":   return <Cpu size={24} className="text-primary" />;
+  case "Editor":     return <Code2 size={24} className="text-accent" />;
+  case "Terminal":   return <Terminal size={24} className="text-text-secondary" />;
+  case "Apps":       return <AppWindow size={24} className="text-gold" />;
+  case "AI Stack":   return <Sparkles size={24} className="text-primary" />;
+  default:           return <Wrench size={24} />;
+  ```
+
+**BLK-05 — `card/page.tsx` email dan domain salah**
+- File: `src/app/card/page.tsx`
+- Problem:
+  - Email: `hello@ihsanuddinsalav.my.id` → seharusnya `agen.salva@gmail.com`
+  - Domain: `https://ihsanuddinsalav.my.id` → seharusnya URL Vercel
+  - LinkedIn di social links → seharusnya Instagram (@ihsanovid)
+  - QR code encode vCard (PRD: encode URL card)
+  - Title hardcode "Fullstack Engineer" → seharusnya pakai i18n atau "Student. Builder. Learner."
+- Fix: Update semua referensi ke nilai yang benar sesuai PRD Section 1.
+
+**BLK-06 — `dashboard/page.tsx` adalah admin CRUD panel**
+- File: `src/app/dashboard/page.tsx`
+- Problem: Dashboard adalah custom admin panel dengan edit/delete buttons dan spinner loader. PRD Section 9.10 menetapkan dashboard sebagai living profile feed (read-only). Spinner juga melanggar PRD (harus skeleton).
+- Fix: Rewrite sepenuhnya ke living feed:
+  - Status block (dari `settings.status`)
+  - Currently Building + Learning (dari `settings`)
+  - GitHub Activity (dari `activity` table)
+  - Now Playing (dari `now_playing` table)
+  - Learning Log (dari `learning_log` table)
+  - Skeleton loading, bukan spinner
+  - Tidak ada edit/delete/add buttons
+
+---
+
+### NON-BLOCKING — Fix bisa bersamaan atau setelah Phase 3
+
+**NB-01 — `Hero.tsx` — `if (!mounted) return null` menyebabkan CLS**
+- File: `src/components/sections/Hero.tsx`
+- Problem: Hero return null sampai client mount. Ini menyebabkan layout shift dan blank screen sebentar. Buruk untuk LCP (Lighthouse).
+- Fix: Render static fallback saat SSR, animasi masuk saat mounted:
+  ```tsx
+  // HAPUS: if (!mounted) return null;
+  // GANTI: kondisional hanya pada bagian yang butuh client (lang toggle)
+  // Hero content bisa di-render server-side
+  ```
+
+**NB-02 — `stack/page.tsx` tidak pakai i18n**
+- File: `src/app/stack/page.tsx`
+- Problem: Title "Tech Stack" dan subtitle hardcode bahasa Inggris.
+- Fix: Wrap dengan `useLangStore()` atau jadikan server component yang pass string ke client component.
+
+**NB-03 — `api/chat/route.ts` tidak ada rate limiting**
+- File: `src/app/api/chat/route.ts`
+- Problem: Sama sekali tidak ada rate limiting. PII dan injection check sudah ada tapi rate limit tidak.
+- Fix: Tambahkan in-memory rate limit (Phase 2) → Supabase-based rate limit (Phase 3).
+
+**NB-04 — `rag.ts` — `Anthropic SDK` masih ada di knowledge base**
+- File: `src/lib/rag.ts`
+- Problem: Stack knowledge base masih mention "Anthropic SDK" di `stack` doc. Ini tidak akurat.
+- Fix: Update content:
+  ```ts
+  content: `Tech stack: Next.js 16, TypeScript, Tailwind CSS v4, Motion v12, Supabase, 
+  PostgreSQL, Node.js, Docker, Linux, n8n, Gemini API, OpenRouter, Groq, Vercel.`
+  ```
+
+**NB-05 — `GuestbookForm` missing i18n keys + no maxLength + no cooldown**
+- Detail: Lihat CR-NEW-02 dan CR-NEW-04 di Section 34.
+
+**NB-06 — `Contact page` tidak fetch Supabase + ada LinkedIn**
+- Detail: Lihat CR-NEW-06 dan CR-NEW-07 di Section 34.
+
+**NB-07 — `layout.tsx` domain metadata salah**
+- Detail: Lihat CR-NEW-08 di Section 34.
+
+---
+
+## 36. KEPUTUSAN — PHASE 2 vs PHASE 3
+
+### Fix dulu sebelum Phase 3
+
+Phase 3 akan membutuhkan:
+- Dashboard live data → tidak bisa tanpa BLK-06 (rewrite dashboard)
+- Achievements tampil → tidak bisa tanpa BLK-03 (column mapping)
+- AI chat dengan live context → tidak bisa tanpa BLK-01 (rag.ts)
+- /card yang benar → tidak bisa tanpa BLK-05 (email/domain)
+
+### Urutan fix yang direkomendasikan (1 task per konfirmasi):
+
+**Batch A — Pure code fixes, zero DB dependency:**
+1. BLK-01: Fix `rag.ts` table name (`projects_status` → `settings`)
+2. BLK-02: Tambah keys `about.p1`, `about.p2`, `about.tech` ke en.ts + id.ts
+3. BLK-05: Fix card email, domain, LinkedIn→Instagram, QR URL
+4. NB-04: Fix RAG stack knowledge (hapus Anthropic SDK reference)
+
+**Batch B — Component fixes:**
+5. BLK-03: Fix achievements/page.tsx column mapping + order
+6. BLK-04: Fix uses/page.tsx category types + CategoryIcon
+7. NB-02: Wire i18n ke stack/page.tsx
+8. NB-01: Fix Hero mounted/CLS issue
+
+**Batch C — Rewrites:**
+9. BLK-06: Rewrite dashboard/page.tsx ke living feed
+10. CR-NEW-02/04/05: Fix GuestbookForm (i18n keys + maxLength + cooldown)
+11. CR-NEW-06/07: Fix contact (LinkedIn→Instagram + Supabase fetch)
+12. NB-03: Tambah rate limiting ke api/chat/route.ts
+
+**Batch D — DB + Seed:**
+13. Jalankan Supabase seed SQL (Section 8)
+14. Verify `bun run build` — zero error
+
+**→ Setelah Batch D selesai: lanjut Phase 3**
+
+---
+
+## 35. BATCH-BASED ROADMAP (FINAL PHASE 2)
+
+Sesuai instruksi, perbaikan akan dilakukan dalam batch terstruktur sebelum masuk ke Phase 3:
+
+### Batch A: Core Logic & Metadata
+- [ ] Fix `rag.ts`: Ganti table `projects_status` dengan table yang benar (e.g. `projects`).
+- [ ] Fix `about.tsx`: Tambahkan 3 i18n keys yang missing agar tidak tampil raw keys.
+- [ ] Fix `card/page.tsx`: Koreksi email (`hello@ihsanuddinsalav.my.id` → `agen.salva@gmail.com`) dan domain/LinkedIn.
+- [ ] Update RAG Knowledge: Sinkronisasi data RAG dengan state terbaru.
+
+### Batch B-C: UI Components & Dashboard Rewrite
+- [ ] Fix `achievements/page.tsx`: Final mapping (image_path, credential_url, created_at).
+- [ ] Fix `uses/page.tsx`: Koreksi typo category types agar match dengan seed data.
+- [ ] Fix Hero CLS: Pastikan transisi hero tidak menyebabkan layout shift.
+- [ ] **Rewrite Dashboard**: Perubahan total dari Admin CRUD menjadi *Living Feed* (Apple HIG Style).
+
+### Batch D: Integrity & Deployment
+- [ ] Update Supabase Seed SQL.
+- [ ] `bun run build` Clean Check.
+
+---
+
+## 36. CRITICAL BLOCKERS (PHASE 2 - POST REVIEW)
+
+Berikut adalah detail teknis blocker yang harus difix:
+
+1. **RAG Table Collision**: `rag.ts` mencoba query ke `projects_status` yang tidak ada dalam schema PRD v7.0.
+2. **Missing i18n Keys**: `about.tsx` memanggil keys yang belum didefinisikan di `en.ts`/`id.ts`.
+3. **Invalid Contact Info**: `card/page.tsx` masih menggunakan placeholders/email lama yang tidak valid.
+4. **Achievement Sync**: Mapping kolom `image_url` dan `url` masih belum mengarah ke kolom Supabase yang benar (`image_path`, `credential_url`).
+5. **Uses Type Mismatch**: Kategori "Hardware", "Software", "Workspace" pada `uses/page.tsx` tidak sesuai dengan data di database.
+
+---

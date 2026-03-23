@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { useState, useEffect } from "react";
-import { Download, Share2, Mail, Github, Linkedin, Briefcase } from "lucide-react";
+import { Download, Share2, Mail, Github, Instagram, Briefcase } from "lucide-react";
 
 export default function DigitalCard() {
   const [vcard, setVcard] = useState("");
@@ -18,8 +18,8 @@ VERSION:3.0
 N:Salav;Ihsanuddin;;;
 FN:Ihsanuddin Salav
 TITLE:Software Engineer / Fullstack Developer
-EMAIL:hello@ihsanuddinsalav.my.id
-URL:https://ihsanuddinsalav.my.id
+EMAIL:agen.salva@gmail.com
+URL:https://abelion.vercel.app
 NOTE:Builder, Learner, crafting zero-knowledge software and experimental interfaces.
 END:VCARD`;
     setVcard(vcardString);
@@ -40,7 +40,7 @@ END:VCARD`;
         await navigator.share({
           title: "Ihsanuddin Salav - Digital Card",
           text: "Check out Ihsanuddin Salav's portfolio and digital business card.",
-          url: "https://ihsanuddinsalav.my.id",
+          url: "https://abelion.vercel.app",
         });
       } catch (err) {
         console.error("Error sharing:", err);
@@ -118,14 +118,14 @@ END:VCARD`;
 
           {/* Social Links */}
           <div className="flex justify-center gap-4 pt-6 border-t border-white/10">
-            <a href="mailto:hello@ihsanuddinsalav.my.id" className="p-3 bg-surface rounded-full text-text-secondary hover:text-primary transition-colors hover:scale-110">
+            <a href="mailto:agen.salva@gmail.com" className="p-3 bg-surface rounded-full text-text-secondary hover:text-primary transition-colors hover:scale-110">
               <Mail size={18} />
             </a>
             <a href="https://github.com/Abelion512" target="_blank" rel="noopener noreferrer" className="p-3 bg-surface rounded-full text-text-secondary hover:text-text-primary transition-colors hover:scale-110">
               <Github size={18} />
             </a>
-            <a href="#" className="p-3 bg-surface rounded-full text-text-secondary hover:text-[#0077b5] transition-colors hover:scale-110">
-              <Linkedin size={18} />
+            <a href="https://instagram.com/ihsanovid" target="_blank" rel="noopener noreferrer" className="p-3 bg-surface rounded-full text-text-secondary hover:text-[#E4405F] transition-colors hover:scale-110">
+              <Instagram size={18} />
             </a>
           </div>
         </div>

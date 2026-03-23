@@ -1,10 +1,11 @@
 import { Home, FolderOpen, Trophy, Layers, Sparkles, BookOpen,
-         User, LayoutDashboard, Phone, Wrench, Clock, CreditCard } from 'lucide-react';
+         User, LayoutDashboard, Phone, Wrench, Clock, CreditCard, Play } from 'lucide-react';
 
 export const NAV_ITEMS = [
   { href: '/',             label: 'nav.home',        icon: Home },
   { href: '/projects',     label: 'nav.projects',    icon: FolderOpen },
   { href: '/achievements', label: 'nav.achievements',icon: Trophy },
+  { href: '/creation',     label: 'nav.creation',    icon: Play },
   { href: '/stack',        label: 'nav.stack',       icon: Layers },
   { href: '/chat',         label: 'nav.chat',        icon: Sparkles },
   { href: '/guestbook',    label: 'nav.guestbook',   icon: BookOpen },

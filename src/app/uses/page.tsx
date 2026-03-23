@@ -12,10 +12,11 @@ interface UseItem {
 }
 
 const CategoryIcon = ({ category }: { category: string }) => {
-  switch (category) {
-    case "Hardware": return <Cpu size={24} className="text-primary" />;
-    case "Software": return <Terminal size={24} className="text-accent" />;
-    case "Workspace": return <Monitor size={24} className="text-text-primary" />;
+  const norm = category.toLowerCase();
+  switch (norm) {
+    case "hardware": return <Cpu size={24} className="text-primary" />;
+    case "software": return <Terminal size={24} className="text-accent" />;
+    case "workspace": return <Monitor size={24} className="text-text-primary" />;
     default: return <Wrench size={24} />;
   }
 };
@@ -27,8 +28,9 @@ export default async function UsesPage() {
     .order("category", { ascending: true });
 
   const groupedItems = items?.reduce((acc: Record<string, UseItem[]>, item: UseItem) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
+    const cat = item.category || "Other";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
     return acc;
   }, {} as Record<string, UseItem[]>) || {};
 

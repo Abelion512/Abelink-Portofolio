@@ -27,7 +27,8 @@ export default function Hero({
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  // Hydration fix: keep the min-height wrapper to avoid CLS
+  const showContent = mounted;
 
   const container: Variants = {
     hidden: { opacity: 0 },
@@ -60,10 +61,10 @@ export default function Hero({
       <motion.div
         variants={container}
         initial="hidden"
-        animate="show"
-        className="w-full max-w-7xl mx-auto z-10"
+        animate={showContent ? "show" : "hidden"}
+        className={`w-full max-w-7xl mx-auto z-10 ${!showContent ? 'invisible' : ''}`}
       >
-        <div className="max-w-4xl">
+        <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
           {/* 1. Status Badge */}
           <motion.div variants={item} className="mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-border/50 bg-surface/30">
@@ -90,7 +91,7 @@ export default function Hero({
           </motion.div>
 
           {/* 4. Bio Text */}
-          <motion.div variants={item} className="max-w-2xl mb-10">
+          <motion.div variants={item} className="max-w-2xl mx-auto mb-10">
             <p className="text-lg md:text-xl text-text-secondary leading-relaxed font-body">
               {t('hero.desc')}
             </p>
@@ -110,7 +111,7 @@ export default function Hero({
           </motion.div>
 
           {/* 6. CTA Buttons */}
-          <motion.div variants={item} className="flex flex-wrap gap-4 mb-16">
+          <motion.div variants={item} className="flex flex-wrap justify-center gap-4 mb-16">
             <Link 
               href="/projects" 
               className="px-8 py-4 bg-primary text-white rounded-2xl font-bold flex items-center gap-2 hover:shadow-[0_0_30px_rgba(108,99,255,0.4)] hover:-translate-y-1 transition-all duration-300"
@@ -126,7 +127,7 @@ export default function Hero({
           </motion.div>
 
           {/* 7. Social Links */}
-          <motion.div variants={item} className="flex items-center gap-8">
+          <motion.div variants={item} className="flex items-center justify-center gap-8">
             {[
               { icon: <Github size={22} />, href: "https://github.com/Abelion512", label: "GitHub" },
               { icon: <Instagram size={22} />, href: "https://instagram.com/ihsanovid", label: "Instagram" },

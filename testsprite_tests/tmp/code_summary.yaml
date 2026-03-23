@@ -2,70 +2,54 @@ version: "2"
 type: frontend
 tech_stack:
   - TypeScript
-  - Next.js (App Router)
-  - Tailwind CSS
-  - Framer Motion (motion/react)
-  - Lucide React
+  - Next.js
+  - Tailwind CSS (Vanilla CSS for core)
+  - Motion (Framer Motion)
   - Supabase
-  - NextAuth.js
+  - React Three Fiber (3D elements)
 routes:
   - path: /
     file: src/app/page.tsx
     auth_required: false
-    description: Home page with Hero and sections
+    description: Homepage with Hero and Pulse indicators.
   - path: /projects
     file: src/app/projects/page.tsx
     auth_required: false
-    description: Projects gallery
+    description: Portfolio projects showcase.
+  - path: /achievements
+    file: src/app/achievements/page.tsx
+    auth_required: false
+    description: Certificates and awards page.
   - path: /about
     file: src/app/about/page.tsx
     auth_required: false
-    description: About page with Bio Toggle
-  - path: /guestbook
-    file: src/app/guestbook/page.tsx
+    description: Personal bio and tech stack.
+  - path: /contact
+    file: src/app/contact/page.tsx
     auth_required: false
-    description: Guestbook with Supabase integration
-  - path: /chat
-    file: src/app/chat/page.tsx
+    description: Contact form and social links.
+  - path: /dashboard
+    file: src/app/dashboard/page.tsx
     auth_required: false
-    description: AI Chat interface
+    description: Pulse Living Feed dashboard.
 features:
-  - name: Global Navigation
-    description: Premium Navbar with 7 nav items and mobile responsiveness
+  - name: Multilingual Support (i18n)
+    description: Toggle between English and Indonesian.
     files:
-      - src/components/layout/Navbar.tsx
+      - src/i18n/en.ts
+      - src/i18n/id.ts
+      - src/store/languageStore.ts
     entry_route: /
     user_interactions:
-      - Scroll to see glass effect
-      - Click nav items to navigate
-      - Open mobile hamburger menu on small screens
-  - name: Hero Profile
-    description: Animated hero section with parallax and status
+      - Click EN/ID toggle in Navbar.
+    auth_required: false
+  - name: Living Feed Dashboard
+    description: Real-time system status and activity feed.
     files:
-      - src/components/sections/Hero.tsx
-    entry_route: /
-    user_interactions:
-      - Hover to see parallax effect on orbs
-      - Click social links
-  - name: Guestbook
-    description: Message board using Supabase Realtime
-    files:
-      - src/components/guestbook/GuestbookForm.tsx
-    entry_route: /guestbook
-    user_interactions:
-      - Fill name and message
-      - Click Send to submit
-      - See message list update
-    api_calls:
-      - method: POST
-        endpoint: supabase guestbook table
-  - name: AI Chat
-    description: Chatbot interface for Abelion AI
-    files:
-      - src/components/guestbook/ChatClient.tsx
-    entry_route: /chat
-    user_interactions:
-      - Type message in input
-      - Send message to AI
-      - View AI streaming response
-known_limitations: []
+      - src/app/dashboard/page.tsx
+    entry_route: /dashboard
+    auth_required: false
+known_limitations:
+  - issue: Achievements data fails to load due to potential schema mismatch.
+    location: src/app/achievements/page.tsx
+    impact: Achievements page shows "No achievements found".

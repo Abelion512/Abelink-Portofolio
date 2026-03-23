@@ -16,7 +16,7 @@ interface GuestbookEntry {
 
 export default function GuestbookForm({ initialEntries }: { initialEntries: GuestbookEntry[] }) {
   const [entries, setEntries] = useState<GuestbookEntry[]>(initialEntries);
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { t, lang } = useLangStore();
@@ -25,11 +25,11 @@ export default function GuestbookForm({ initialEntries }: { initialEntries: Gues
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !message.trim() || isSubmitting) return;
+    if (!userName.trim() || !message.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
     try {
-      const sanitizedName = stripTags(name.trim());
+      const sanitizedName = stripTags(userName.trim());
       const sanitizedMessage = stripTags(message.trim());
 
       const { data, error } = await supabase
@@ -42,7 +42,7 @@ export default function GuestbookForm({ initialEntries }: { initialEntries: Gues
 
       if (data) {
         setEntries([data, ...entries]);
-        setName("");
+        setUserName("");
         setMessage("");
       }
     } catch (error) {
@@ -83,8 +83,8 @@ export default function GuestbookForm({ initialEntries }: { initialEntries: Gues
             <input
               type="text"
               placeholder={t("guestbook.namePlaceholder")}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
               className="md:col-span-1 bg-base/40 border border-border rounded-xl px-4 py-3 outline-none focus:border-primary/50 transition-all text-sm"
               required
             />

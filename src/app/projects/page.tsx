@@ -26,7 +26,7 @@ async function getSupabaseProjects(): Promise<Project[]> {
     id: p.id,
     name: p.name,
     description: p.description || "",
-    coverImage: p.cover_image || "/projects/placeholder.jpg",
+    coverImage: p.cover_image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200",
     status: (p.status || 'live') as ProjectStatus,
     tech: p.tech || [],
     githubUrl: p.github_url || undefined,
@@ -62,7 +62,7 @@ async function getGithubProjects(): Promise<Project[]> {
         description: repo.description || "Open source project on GitHub.",
         tech: repo.language ? [repo.language] : ["Source"],
         githubUrl: repo.html_url,
-        coverImage: "/projects/placeholder.jpg",
+        coverImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=1200",
         isPinned: false
       }));
   } catch {

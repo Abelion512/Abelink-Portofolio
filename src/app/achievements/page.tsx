@@ -15,16 +15,16 @@ export default async function AchievementsPage() {
     .from('achievements')
     .select('*')
     .eq('is_visible', true)
-    .order('date', { ascending: false });
+    .order('created_at', { ascending: false });
 
-  const achievementsData: Achievement[] = (data || []).map(a => ({
+const achievementsData: Achievement[] = (data || []).map(a => ({
     id: a.id,
     title: a.title,
     issuer: a.issuer || "Unknown",
-    date: a.date || new Date().toISOString(),
-    type: (a.type || 'cert') as AchievementType,
-    image: a.image_url || undefined,
-    url: a.url || undefined,
+    year: a.year || 2024,
+    type: (a.type || 'certificate') as AchievementType,
+    image_path: a.image_path || undefined,
+    url: a.credential_url || undefined,
     is_visible: a.is_visible,
   }));
 

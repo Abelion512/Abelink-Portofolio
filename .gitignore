@@ -1,6 +1,30 @@
 .env*.local
-.next
-node_modules
-testsprite_tests/.gemini/
+.next/
+node_modules/
 .vercel
 .gemini/
+.agents/
+.DS_Store
+*.log
+
+# Supabase Temp
+supabase/.temp/
+
+# Testing & Development junk
+testsprite_tests/
+coverage/
+screenshots/
+recordings/
+.tmp/
+tmp/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+out/
+build/

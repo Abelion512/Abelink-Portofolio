@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Mail, Github, Linkedin } from "lucide-react";
+import { Mail, Github, Instagram } from "lucide-react";
 import { useLangStore } from "@/store/languageStore";
 
 export default function Contact() {
@@ -23,11 +23,13 @@ export default function Contact() {
       icon: <Github size={24} />,
     },
     {
-      id: "linkedin",
-      label: "LinkedIn",
-      value: "Ihsanuddin Salava",
-      href: "https://linkedin.com/in/abelion",
-      icon: <Linkedin size={24} />,
+      id: "instagram",
+      label: "Instagram",
+      value: "@ihsanovid",
+      href: "https://instagram.com/ihsanovid",
+      // Menggunakan label teks fallback sederhana karena lucide-react tidak memiliki icon Instagram secara default dengan nama "Instagram", 
+      // namun kita bisa membungkusnya dalam path svg jika dibutuhkan. Mari kita coba cek lucide-react punya 'Instagram'
+      icon: <Instagram size={24} />,
     },
   ];
 

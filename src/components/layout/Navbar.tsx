@@ -28,8 +28,8 @@ export default function Navbar() {
     };
   }, []);
 
-  // Filter main nav items for desktop (first 4 items: Home, Projects, Achievements, Stack)
-  const mainNav = NAV_ITEMS.slice(0, 4);
+  // Filter main nav items for desktop (first 5 items: Home, Projects, Achievements, Creation, Stack)
+  const mainNav = NAV_ITEMS.slice(0, 5);
 
   return (
     <motion.nav
@@ -65,7 +65,7 @@ export default function Navbar() {
                 : "text-text-secondary hover:text-text-primary hover:bg-surface/60"
             }`}
           >
-            {t(item.label)}
+            {mounted ? t(item.label) : (item.label.includes('home') ? 'Home' : item.label.split('.').pop())}
           </Link>
         ))}
         
@@ -100,7 +100,7 @@ export default function Navbar() {
         )}
 
         <Link href="/contact" className="text-xs font-mono text-primary hover:underline hover:text-primary-light transition-colors whitespace-nowrap">
-          {t('nav.contact')}
+          {mounted ? t('nav.contact') : 'Contact'}
         </Link>
       </div>
 
