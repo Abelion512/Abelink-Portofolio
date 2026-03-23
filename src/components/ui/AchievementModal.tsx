@@ -27,7 +27,8 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
       {/* Modal Container */}
       <motion.div
         layoutId={`card-${achievement.id}`}
-        className="relative z-[110] w-full max-w-5xl bg-[#0a0a0c] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl"
+        className="relative z-[110] w-full max-w-5xl bg-base border border-border rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl"
+        style={{ backgroundColor: 'var(--color-base)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Mobile */}
@@ -57,7 +58,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
 
           {/* Secure Badge */}
           <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/5 text-[10px] font-mono font-bold uppercase tracking-wider text-green-400">
-            <ShieldCheck size={12} /> Secure Preview
+            <ShieldCheck size={12} /> {t('common.secure_preview')}
           </div>
         </div>
 
@@ -83,21 +84,21 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
               <p className="text-primary font-medium">{achievement.issuer}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 py-6 border-y border-white/5">
+            <div className="grid grid-cols-2 gap-4 py-6 border-y border-border/10">
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">Year</p>
-                <div className="flex items-center gap-2 text-sm text-neutral-200">
-                  <Calendar size={14} className="text-neutral-500" />
+                <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">{t('common.year')}</p>
+                <div className="flex items-center gap-2 text-sm text-text-secondary">
+                  <Calendar size={14} className="text-text-muted" />
                   {achievement.year}
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">Type</p>
-                <p className="text-sm text-neutral-200 capitalize">{achievement.type}</p>
+                <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">{t('common.type')}</p>
+                <p className="text-sm text-text-secondary capitalize">{achievement.type}</p>
               </div>
             </div>
 
-            <p className="text-sm text-neutral-400 leading-relaxed">
+            <p className="text-sm text-text-secondary/70 leading-relaxed font-body">
               This certification validates professional expertise and dedication to continuous learning in web technology and AI development.
             </p>
           </div>

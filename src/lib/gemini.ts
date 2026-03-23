@@ -9,7 +9,7 @@ export interface ChatMessage {
 }
 
 export async function generateChatResponse(messages: ChatMessage[], systemPrompt: string) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
   const lastMsg = messages[messages.length - 1].content;
   const context = await getRelevantContext(lastMsg);

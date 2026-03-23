@@ -45,7 +45,7 @@ export default function CreationPage() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'creation' },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: RealtimePostgresChangesPayload<CreationItem>) => {
           if (payload.eventType === 'INSERT') {
             const newItem = payload.new as CreationItem;
             setItems((prev) => [newItem, ...prev]);

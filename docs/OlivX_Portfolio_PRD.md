@@ -1868,38 +1868,569 @@ Phase 3 akan membutuhkan:
 
 **→ Setelah Batch D selesai: lanjut Phase 3**
 
----
-
-## 35. BATCH-BASED ROADMAP (FINAL PHASE 2)
-
-Sesuai instruksi, perbaikan akan dilakukan dalam batch terstruktur sebelum masuk ke Phase 3:
-
-### Batch A: Core Logic & Metadata
-- [ ] Fix `rag.ts`: Ganti table `projects_status` dengan table yang benar (e.g. `projects`).
-- [ ] Fix `about.tsx`: Tambahkan 3 i18n keys yang missing agar tidak tampil raw keys.
-- [ ] Fix `card/page.tsx`: Koreksi email (`hello@ihsanuddinsalav.my.id` → `agen.salva@gmail.com`) dan domain/LinkedIn.
-- [ ] Update RAG Knowledge: Sinkronisasi data RAG dengan state terbaru.
-
-### Batch B-C: UI Components & Dashboard Rewrite
-- [ ] Fix `achievements/page.tsx`: Final mapping (image_path, credential_url, created_at).
-- [ ] Fix `uses/page.tsx`: Koreksi typo category types agar match dengan seed data.
-- [ ] Fix Hero CLS: Pastikan transisi hero tidak menyebabkan layout shift.
-- [ ] **Rewrite Dashboard**: Perubahan total dari Admin CRUD menjadi *Living Feed* (Apple HIG Style).
-
-### Batch D: Integrity & Deployment
-- [ ] Update Supabase Seed SQL.
-- [ ] `bun run build` Clean Check.
 
 ---
 
-## 36. CRITICAL BLOCKERS (PHASE 2 - POST REVIEW)
+## 37. ARCHITECTURE DECISIONS — 22 March 2026
 
-Berikut adalah detail teknis blocker yang harus difix:
-
-1. **RAG Table Collision**: `rag.ts` mencoba query ke `projects_status` yang tidak ada dalam schema PRD v7.0.
-2. **Missing i18n Keys**: `about.tsx` memanggil keys yang belum didefinisikan di `en.ts`/`id.ts`.
-3. **Invalid Contact Info**: `card/page.tsx` masih menggunakan placeholders/email lama yang tidak valid.
-4. **Achievement Sync**: Mapping kolom `image_url` dan `url` masih belum mengarah ke kolom Supabase yang benar (`image_path`, `credential_url`).
-5. **Uses Type Mismatch**: Kategori "Hardware", "Software", "Workspace" pada `uses/page.tsx` tidak sesuai dengan data di database.
+Keputusan final untuk 5 pertanyaan arsitektur. Semua keputusan ini override spec lama yang relevan.
 
 ---
+
+### 37.1 HOME vs DASHBOARD — Boundary yang jelas
+
+**Keputusan:** Keduanya tetap, tapi konten dipisah tegas.
+
+| | Home `/` | Dashboard `/dashboard` |
+|---|---|---|
+| Pertanyaan | Siapa Ihsanuddin? | Apa yang sedang Ihsanuddin lakukan? |
+| Konten | Hero, tagline, CTA, social links, status badge | Status, building, learning, GitHub activity, now playing, learning log |
+| Audience | Visitor baru, pertama kali datang | Follower, yang sudah kenal, ingin update terkini |
+| Data | `settings.open_to_work` saja | Semua fields settings + activity + now_playing + learning_log |
+
+**Yang harus diubah di Home:**
+- Hapus `currently_learning` card dari hero — pindah ke Dashboard
+- Tetap: status badge open/busy (satu info, tidak lebih)
+- Tambah: link kecil "→ Dashboard" di status card sebagai teaser
+
+**Yang harus ada di Dashboard:**
+- Status block (dari `settings.status`)
+- Currently Building (dari `settings.currently_building`)
+- Currently Learning (dari `settings.currently_learning`)
+- GitHub Activity (dari `activity` table)
+- Now Playing (dari `now_playing` table)
+- Learning Log (dari `learning_log` table)
+- Tidak ada edit/delete/CRUD UI — admin via Supabase Table Editor
+
+---
+
+### 37.2 CARD — Page + Modal dari About
+
+**Keputusan:** `/card` tetap sebagai dedicated page. Tambah akses modal dari `/about`.
+
+**Reasoning:** QR code harus encode URL yang shareable dan bisa dibuka langsung. `/card` sebagai page adalah requirement teknis dari QR code itu sendiri.
+
+**Implementasi:**
+- `/card/page.tsx` — tetap ada, konten card penuh
+- `/about/page.tsx` — tambah tombol "View My Card" yang buka modal
+- Modal overlay berisi `<QRCard />` component yang sama
+
+```tsx
+// Di about/page.tsx — tambahkan:
+const [showCard, setShowCard] = useState(false);
+
+// Tombol:
+<button onClick={() => setShowCard(true)}
+  className="flex items-center gap-2 text-xs font-mono text-text-muted hover:text-primary transition-colors">
+  <CreditCard size={14} /> View My Card
+</button>
+
+// Modal overlay:
+<AnimatePresence>
+  {showCard && (
+    <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-base/90 backdrop-blur-sm"
+      onClick={() => setShowCard(false)}>
+      <motion.div onClick={e => e.stopPropagation()}>
+        <QRCard />
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
+**QR code encode:** URL `/card` page — bukan vCard string. vCard download tetap sebagai tombol di dalam card.
+
+---
+
+### 37.3 ABOUT vs CONTACT — Boundary yang jelas
+
+**Keputusan:** Keduanya tetap sebagai page terpisah, tapi konten diperketat.
+
+| | About `/about` | Contact `/contact` |
+|---|---|---|
+| Isi | Story, bio, foto, mindset, "View My Card" button | Email, GitHub, Instagram, availability status, location |
+| Yang DILARANG | Link sosmed, contact info | Bio, cerita personal, tech stack detail |
+| Tone | Personal, narrative | Minimal, functional |
+
+**Yang harus diubah di About:**
+- Hapus tech stack list hardcode (`Next.js 16, TypeScript...`) — ini duplikat `/stack`
+- Ganti dengan narasi: kenapa suka tech, apa yang dikejar, aspirasi Shanghai
+- Tambah "View My Card" button
+- Photo slot: pakai `public/avatar.jpg` bukan `[Photo Asset]` placeholder
+
+**Yang tetap di Contact:**
+- Hanya link list: Email, GitHub, Instagram, Location
+- Availability status dari Supabase
+- Zero form, zero bio
+
+---
+
+### 37.4 CHAT — Floating Widget, Hapus `/chat` page
+
+**Keputusan:** Chat AI dipindah ke floating widget bottom-right. `/chat` page dihapus. `/guestbook` tetap sebagai dedicated page.
+
+**Reasoning:**
+- Guestbook = visitor kirim pesan ke Ihsanuddin (sosial, satu arah, disimpan permanen)
+- Chat AI = visitor tanya kepada AI tentang Ihsanuddin (tools, informatif, ephemeral)
+- Merge → membingungkan, dua fungsi berbeda
+- Full page chat → orang tidak "navigate to chat", mereka mau akses cepat sambil browse
+- Floating widget = Apple HIG Deference — UI melayani konten, tidak mengganggu
+
+**Implementasi floating chat widget:**
+
+```tsx
+// src/components/ui/ChatWidget.tsx — komponen baru
+'use client';
+import { useState } from 'react';
+import { Sparkles, X, Send, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export default function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([{
+    role: 'assistant',
+    content: "Hi! Ask me anything about Ihsanuddin's portfolio."
+  }]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // ... handleSubmit sama dengan ChatClient.tsx saat ini
+
+  return (
+    <>
+      {/* Trigger button — fixed bottom-right */}
+      <button
+        onClick={() => setOpen(true)}
+        aria-label="Chat with AI"
+        className={`fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-white
+          flex items-center justify-center shadow-overlay
+          hover:scale-105 transition-all duration-200
+          lg:bottom-6 bottom-20`}  // avoid BottomNav on mobile
+      >
+        <Sparkles size={20} />
+      </button>
+
+      {/* Chat panel */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed bottom-20 right-6 z-40 w-80 h-[420px] lg:bottom-20
+              bg-surface border border-border rounded-2xl shadow-overlay
+              flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Sparkles size={15} className="text-primary" />
+                <span className="text-sm font-mono text-text-primary">Abelion AI</span>
+              </div>
+              <button onClick={() => setOpen(false)} aria-label="Close chat"
+                className="text-text-muted hover:text-text-primary transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* ... messages list */}
+            </div>
+
+            {/* Input */}
+            <div className="p-3 border-t border-border">
+              <div className="flex gap-2">
+                <input value={input} onChange={e => setInput(e.target.value)}
+                  placeholder={t('chat.placeholder')}
+                  className="flex-1 text-sm bg-base/50 border border-border rounded-xl px-3 py-2 outline-none focus:border-primary/50 transition-colors" />
+                <button disabled={!input.trim() || loading}
+                  className="p-2 bg-primary text-white rounded-xl disabled:opacity-30 transition-all">
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+```
+
+**Wire di `layout.tsx`:**
+```tsx
+import ChatWidget from '@/components/ui/ChatWidget';
+// Di dalam <body>, setelah <BottomNav />:
+<ChatWidget />
+```
+
+**Perubahan yang mengikuti:**
+- DELETE: `src/app/chat/page.tsx`
+- DELETE: `src/components/guestbook/ChatClient.tsx` (logic pindah ke ChatWidget)
+- HAPUS dari `NAV_ITEMS`: entry `nav.chat` dan `/chat` href
+- HAPUS dari `BottomNav` ITEMS: entry Chat
+- BottomNav items jadi 4: Home, Projects, Dashboard, Contact
+
+**Update nav.ts:**
+```ts
+// Hapus: { href: '/chat', label: 'nav.chat', icon: Sparkles }
+// BottomNav: hapus Sparkles/Chat item
+```
+
+---
+
+### 37.5 USES + STACK — Tetap dua page, konten diperketat
+
+**Keputusan:** Keduanya tetap sebagai page terpisah dengan positioning yang jelas.
+
+| | Stack `/stack` | Uses `/uses` |
+|---|---|---|
+| Pertanyaan | Apa yang bisa saya bangun? | Bagaimana saya bekerja? |
+| Konten | Bahasa, framework, library, tools teknis | Hardware, editor, terminal, apps harian, AI stack |
+| Format | Grid chip/badge (+ VTuber logo jika ada) | List per kategori dengan deskripsi singkat |
+| Audience | Potential collaborator, tech recruiter | Developer yang curious tentang workflow |
+
+**Yang harus diubah di Stack:**
+- Hapus hardcode subtitle bahasa Inggris — pakai `t('stack.subtitle')`
+- Siapkan slot `logo_url` kolom di Supabase untuk VTuber logos (Phase 3)
+- Group by category, order by sort_order
+
+**Yang harus diubah di Uses:**
+- Fix category types: hapus `"Hardware" | "Software" | "Workspace"`, ganti ke `string`
+- Fix CategoryIcon: tambah case untuk `"Editor" | "Terminal" | "Apps" | "AI Stack"`
+- Pastikan match dengan seed data
+
+---
+
+### 37.6 SITEMAP PAGES — Final (setelah semua keputusan)
+
+| Route | Tipe | Tersedia via | Status |
+|---|---|---|---|
+| `/` | Page | Navbar | Ada |
+| `/projects` | Page | Navbar + BottomNav | Ada |
+| `/achievements` | Page | Navbar | Ada |
+| `/stack` | Page | Navbar + Command | Ada |
+| `/guestbook` | Page | Navbar + Command | Ada |
+| `/about` | Page | Navbar + Command | Ada |
+| `/dashboard` | Page | BottomNav + Command | Ada (perlu rewrite) |
+| `/contact` | Page | BottomNav + Command | Ada |
+| `/uses` | Page | Command | Ada |
+| `/changelog` | Page | Command | Belum ada |
+| `/card` | Page | Command + /about modal | Ada |
+| Chat AI | Widget | Floating button (semua page) | Belum (perlu buat) |
+
+**Nav items berkurang dari 12 → 10 (hapus /chat dan /card dari main nav):**
+```ts
+// nav.ts — FINAL
+export const NAV_ITEMS = [
+  { href: '/',             label: 'nav.home',        icon: Home },
+  { href: '/projects',     label: 'nav.projects',    icon: FolderOpen },
+  { href: '/achievements', label: 'nav.achievements',icon: Trophy },
+  { href: '/stack',        label: 'nav.stack',       icon: Layers },
+  { href: '/guestbook',    label: 'nav.guestbook',   icon: BookOpen },
+  { href: '/about',        label: 'nav.about',       icon: User },
+  { href: '/dashboard',    label: 'nav.dashboard',   icon: LayoutDashboard },
+  { href: '/contact',      label: 'nav.contact',     icon: Phone },
+  { href: '/uses',         label: 'nav.uses',        icon: Wrench },
+  { href: '/changelog',    label: 'nav.changelog',   icon: Clock },
+] as const;
+// /card: tetap bisa diakses via /card URL langsung atau modal di /about
+// Chat: floating widget, tidak perlu nav entry
+```
+
+**BottomNav (mobile) — 4 items:**
+```ts
+const ITEMS = [
+  { href: '/',          icon: Home,            label: 'Home' },
+  { href: '/projects',  icon: FolderOpen,      label: 'Projects' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/contact',   icon: Phone,           label: 'Contact' },
+];
+// Hapus: Chat (Sparkles) — diganti floating ChatWidget
+```
+
+---
+
+### 37.7 PHASE 2 TASK UPDATE — Tambahan dari keputusan arsitektur
+
+Tambahkan ke Batch B (setelah fixes existing):
+
+- [ ] Buat `src/components/ui/ChatWidget.tsx` (floating widget)
+- [ ] Wire `<ChatWidget />` di `layout.tsx`
+- [ ] DELETE `src/app/chat/page.tsx`
+- [ ] DELETE `src/components/guestbook/ChatClient.tsx`
+- [ ] Update `src/constants/nav.ts` — hapus `/chat` entry
+- [ ] Update `src/components/layout/BottomNav.tsx` — 4 items, hapus Chat
+- [ ] Update `src/app/about/page.tsx`:
+  - Tambah "View My Card" button + modal overlay
+  - Hapus tech stack list hardcode
+  - Ganti dengan narasi personal (pakai i18n `about.p1`, `about.p2`)
+  - Photo slot: pakai `public/avatar.jpg`
+- [ ] Update `src/app/page.tsx` (Home):
+  - Hapus `currently_learning` card dari hero
+  - Tambah link kecil "→ Dashboard" di status area
+- [ ] Update i18n: tambah `about.p1`, `about.p2`, `about.tech` (lihat BLK-02)
+
+
+---
+
+## 38. REVISI KEPUTUSAN — 22 March 2026
+
+Revisi dari feedback. Override Section 37 yang bertentangan.
+
+---
+
+### 38.1 HOME — TIDAK DIUBAH
+
+**Keputusan:** Home tetap seperti sekarang. Tidak ada perubahan.
+
+Current state sudah benar:
+- Hero dengan `openToWork` + `currentlyLearning` dari Supabase
+- Ini bukan duplikat Dashboard — ini preview/teaser, Dashboard adalah detail penuh
+
+**Override Section 37.1:** Hapus instruksi "hapus currently_learning dari Home" dan "tambah teaser Dashboard". Home tidak disentuh.
+
+**Yang tetap difix di Home (bugs, bukan perubahan fitur):**
+- NB-01: Fix `if (!mounted) return null` → CLS issue di Hero.tsx
+
+---
+
+### 38.2 DASHBOARD — EXPANDED LIVING FEED
+
+**Keputusan:** Rewrite total. Bukan admin panel, bukan minimal — ini adalah living profile feed yang **diperluas**.
+
+**Sections yang harus ada (urut atas ke bawah):**
+
+```
+┌─ Status ──────────────────────────────────────────────────┐
+│ Icon + status text + "X waktu lalu" timestamp             │
+└───────────────────────────────────────────────────────────┘
+
+┌─ Currently ───────────────────────────────────────────────┐
+│ Building: [nama project]                                  │
+│ Learning: [topik]                                         │
+└───────────────────────────────────────────────────────────┘
+
+┌─ GitHub Stats ─────────────────────────────────────────────┐
+│ Repos · Followers · Following (dari GitHub API public)     │
+│ Recent commits: repo + message + timestamp                 │
+└───────────────────────────────────────────────────────────┘
+
+┌─ WakaTime ────────────────────────────────────────────────┐
+│ This week: Xh Xm coding                                   │
+│ Top language: TypeScript 68%                               │
+└───────────────────────────────────────────────────────────┘
+
+┌─ Now Playing ─────────────────────────────────────────────┐
+│ [track] — [artist] via [platform]                         │
+│ Fallback: "Nothing playing right now."                    │
+└───────────────────────────────────────────────────────────┘
+
+┌─ Learning Log ────────────────────────────────────────────┐
+│ Journal entries, newest first, max 5 visible              │
+└───────────────────────────────────────────────────────────┘
+
+┌─ Changelog ───────────────────────────────────────────────┐
+│ Latest portfolio/project updates, versioned               │
+└───────────────────────────────────────────────────────────┘
+```
+
+**Data sources:**
+
+| Section | Source | Update method |
+|---|---|---|
+| Status | `settings.status` + `status_updated_at` | Telegram `/status` → n8n |
+| Currently Building | `settings.currently_building` | Telegram `/build` → n8n |
+| Currently Learning | `settings.currently_learning` | Supabase Table Editor |
+| GitHub Stats | GitHub API public (no auth needed) | Client-side fetch atau n8n cron |
+| GitHub Commits | Supabase `activity` table | n8n GitHub Sync cron |
+| WakaTime | Supabase `settings.wakatime_summary` | n8n WakaTime cron daily |
+| Now Playing | Supabase `now_playing` | Telegram `/playing` → n8n |
+| Learning Log | Supabase `learning_log` | Telegram `/log` → n8n |
+| Changelog | Supabase `changelog_entries` | Manual Table Editor insert |
+
+**Loading:** Skeleton shimmer per section — bukan spinner, bukan global loader.
+
+**Tidak ada:** Edit/Delete/Add buttons, CRUD UI, Settings tab. Semua admin via Supabase Table Editor.
+
+**Tambah kolom ke `settings` table:**
+```sql
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS wakatime_summary jsonb;
+-- Format: {"hours": 14, "minutes": 32, "top_language": "TypeScript", "percentage": 68}
+```
+
+---
+
+### 38.3 CARD — STYLE IFALF.COM
+
+**Referensi:** ifalf.com — minimal, clean, link-list + QR code yang bersih.
+
+**Yang dipertahankan dari kode saat ini:**
+- Download vCard button
+- Share button (Web Share API)
+- QR code
+
+**Yang diubah:**
+
+1. **QR code encode URL `/card`** — bukan vCard string:
+   ```ts
+   const CARD_URL = 'https://abelink-portofolio-preview.vercel.app/card';
+   // QR: value={CARD_URL}
+   ```
+
+2. **Fix semua data yang salah:**
+   ```ts
+   // vCard content:
+   EMAIL:agen.salva@gmail.com       // BUKAN hello@ihsanuddinsalav.my.id
+   URL:https://abelink-portofolio-preview.vercel.app
+   TITLE:Student. Builder. Learner.  // BUKAN Fullstack Engineer
+   ```
+
+3. **Social links — hapus LinkedIn, ganti Instagram:**
+   ```tsx
+   // HAPUS: <a href="#"> (LinkedIn placeholder)
+   // TAMBAH:
+   <a href="https://instagram.com/ihsanovid" target="_blank" rel="noopener noreferrer">
+     <Instagram size={18} />
+   </a>
+   ```
+
+4. **"Shine Effect" animation — HAPUS** (gimmick test gagal: tidak menyampaikan informasi):
+   ```tsx
+   // HAPUS: <div className="...animate-shine...">
+   ```
+
+5. **Profile avatar — ganti IS gradient dengan foto atau IS wordmark yang proper:**
+   - Jika `public/avatar.jpg` ada: gunakan `<Image>`
+   - Jika tidak: gunakan IS initial dengan font display, styling sederhana
+
+6. **Layout mengikuti semangat ifalf.com — minimal, satu kolom, clean:**
+   - Nama + tagline (Student. Builder. Learner.)
+   - Link list: portfolio URL, GitHub, email, Instagram
+   - QR code
+   - Download + Share buttons
+
+**Spec final card:**
+```tsx
+// Urutan konten di dalam card:
+// 1. Avatar/photo atau IS initial
+// 2. Nama: Ihsanuddin Salav
+// 3. Tagline: Student · Builder · Learner  (font mono, muted)
+// 4. Lokasi: Surabaya, Indonesia (font mono, muted)
+// 5. Divider
+// 6. Link list (portfolio, github, email, instagram) — icon + text
+// 7. Divider
+// 8. QR code (encode URL /card)
+// 9. "Scan to visit portfolio" label
+// 10. Download vCard + Share buttons
+```
+
+---
+
+### 38.4 CONTACT — EXPANDED (referensi farisafra.com)
+
+**Keputusan:** Contact diperluas. Bukan minimal link-list saja — ini jadi hub koneksi yang proper.
+
+**Yang tetap ada:**
+- Availability status dari Supabase
+- Email, GitHub, Instagram (ganti LinkedIn)
+- Location
+
+**Yang ditambahkan:**
+
+**1. Support / Ko-fi / Buy Me a Coffee:**
+```tsx
+{
+  id: 'support',
+  label: 'Support',
+  value: 'Buy me a coffee',
+  href: 'https://ko-fi.com/abelion',  // atau saweria.co jika prefer Indo
+  icon: <Coffee size={24} />,  // lucide-react punya Coffee icon
+  badge: 'Optional'  // badge kecil untuk context
+}
+```
+> Platform: **Ko-fi** (international, gratis, no fee) atau **Saweria** (Indonesia, lebih relatable untuk audience lokal). Keputusan platform ini perlu dikonfirmasi. PRD sementara pakai Ko-fi.
+
+**2. Response time note:**
+```tsx
+// Di bawah link list:
+<p className="text-xs font-mono text-text-muted text-center mt-8">
+  Usually responds within 24–48 hours.
+</p>
+```
+
+**3. Availability card yang lebih informatif:**
+```tsx
+// Bukan hanya dot + teks. Tambah info:
+<div className="glass border border-border rounded-2xl p-4">
+  <div className="flex items-center gap-2 mb-2">
+    <span className={`w-2 h-2 rounded-full ${available ? 'bg-accent animate-pulse' : 'bg-text-muted'}`} />
+    <span className="text-sm font-mono">
+      {available ? t('contact.available') : t('contact.unavailable')}
+    </span>
+  </div>
+  <p className="text-xs text-text-muted">
+    {available 
+      ? 'Open for AI/web projects, collabs, and technical discussions.'
+      : 'Focused on active projects. Feel free to reach out anyway.'}
+  </p>
+</div>
+```
+
+**4. Contact links — FINAL list (update dari kode saat ini):**
+```ts
+// HAPUS: LinkedIn (tidak ada di PRD Identity)
+// TAMBAH: Instagram @ihsanovid
+// TAMBAH: Support/Ko-fi
+// TETAP: Email, GitHub
+
+const contactLinks = [
+  { id: 'email',     label: 'Email',     value: 'agen.salva@gmail.com',     href: 'mailto:agen.salva@gmail.com',     icon: <Mail /> },
+  { id: 'github',    label: 'GitHub',    value: '@Abelion512',               href: 'https://github.com/Abelion512',   icon: <Github /> },
+  { id: 'instagram', label: 'Instagram', value: '@ihsanovid',                href: 'https://instagram.com/ihsanovid', icon: <Instagram /> },
+  { id: 'support',   label: 'Support',   value: 'Ko-fi / Buy me a coffee',   href: 'https://ko-fi.com/abelion',       icon: <Coffee /> },
+];
+```
+
+**5. i18n keys baru yang dibutuhkan:**
+```ts
+// en.ts
+'contact.openFor':    'Open for AI/web projects, collabs, and technical discussions.',
+'contact.stillReach': 'Focused on active projects. Feel free to reach out anyway.',
+'contact.response':   'Usually responds within 24–48 hours.',
+'contact.support':    'Buy me a coffee',
+// id.ts
+'contact.openFor':    'Terbuka untuk proyek AI/web, kolaborasi, dan diskusi teknis.',
+'contact.stillReach': 'Sedang fokus proyek aktif. Tetap boleh kirim pesan.',
+'contact.response':   'Biasanya membalas dalam 24–48 jam.',
+'contact.support':    'Traktir kopi',
+```
+
+**6. Contact menjadi server component** (fetch availability dari Supabase):
+```tsx
+// HAPUS: 'use client'
+// TAMBAH: async function, fetch settings
+export default async function Contact() {
+  const { data } = await supabase.from('settings').select('open_to_work').single();
+  const available = data?.open_to_work ?? true;
+  // ...
+}
+// Client parts (animation) dipindah ke child client component jika perlu
+```
+
+---
+
+### 38.5 UPDATE TASK LIST
+
+**Tambahkan ke Batch B (Phase 2 fixes):**
+- [ ] Rewrite `dashboard/page.tsx` ke living feed (Section 38.2)
+- [ ] Fix `card/page.tsx`: data, QR URL, LinkedIn→Instagram, hapus shine (Section 38.3)
+- [ ] Update `contact/page.tsx`: LinkedIn→Instagram, tambah Ko-fi, availability card informatif, server component (Section 38.4)
+- [ ] Tambah i18n keys baru ke en.ts + id.ts (contact.openFor, contact.stillReach, contact.response, contact.support)
+- [ ] Tambah kolom `wakatime_summary` ke Supabase settings table
+
+**Konfirmasi yang dibutuhkan sebelum implementasi contact:**
+- Platform support: Ko-fi atau Saweria?
+- Ada tambahan "lainnya" yang masih dipikirkan — update PRD saat sudah ada keputusan

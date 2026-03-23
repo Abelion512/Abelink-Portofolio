@@ -36,7 +36,7 @@ export default function Dashboard() {
   const [settings, setSettings] = useState<Setting | null>(null);
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLangStore();
+  useLangStore();
 
   useEffect(() => {
     async function fetchDashboardData() {

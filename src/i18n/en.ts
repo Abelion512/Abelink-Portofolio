@@ -1,3 +1,4 @@
+// src/i18n/en.ts
 export const en: Record<string, string> = {
   // Hero
   'hero.greeting':        "Hi, I'm",
@@ -16,13 +17,15 @@ export const en: Record<string, string> = {
   'nav.stack':        'Stack',
   'nav.chat':         'Chat',
   'nav.guestbook':    'Guestbook',
-  'nav.creation':     'Creation',
   'nav.about':        'About',
   'nav.dashboard':    'Dashboard',
   'nav.contact':      'Contact',
   'nav.uses':         'Uses',
   'nav.changelog':    'Changelog',
   'nav.card':         'My Card',
+  'nav.creation':     'Creations',
+  'common.search':    'Search everything...',
+  'common.viewDetail': 'View Detail',
 
   // Projects
   'projects.title':       'Curated Projects',
@@ -45,12 +48,9 @@ export const en: Record<string, string> = {
   'guestbook.title':    'The Guestbook',
   'guestbook.subtitle': 'Leave a message, feedback, or just say hi.',
   'guestbook.name':     'Your Name',
-  'guestbook.namePlaceholder': 'Your Name',
   'guestbook.message':  'Write your message here...',
-  'guestbook.messagePlaceholder': 'Write your message here...',
   'guestbook.send':     'Send',
   'guestbook.empty':    'No messages yet. Be the first to leave a trace!',
-  'guestbook.error':    'Failed to send. Please try again.',
 
   // Contact
   'contact.title':       "Let's connect",
@@ -81,9 +81,9 @@ export const en: Record<string, string> = {
 
   // About
   'about.title':    'About',
-  'about.p1':       "I'm Ihsanuddin Salav, a second-semester Software Engineering student driven by curiosity and the goal of building meaningful digital solutions. I focus on creating seamless web experiences and robust AI automation systems.",
-  'about.p2':       "My journey in tech began with a deep interest in how the digital world works. Today, I dive into Fullstack Development, Linux Architecture, and AI Agents to bridge the gap between complex logic and minimalist design.",
-  'about.tech':     'Core Technologies',
+  'about.p1':       "I'm a second-semester Software Engineering student based in Surabaya, Indonesia, specializing in Fullstack Development, AI Automation, and Linux Architecture.",
+  'about.p2':       "I build functional, beautiful, and scalable applications. My focus is on turning complex technical problems into seamless user experiences, leveraging modern tools to create high-impact solutions.",
+  'about.tech':     'Technical Core',
   'about.techcore': 'Technical Core',
 
   // Stack
@@ -112,4 +112,13 @@ export const en: Record<string, string> = {
   'common.retry':    'Retry',
   'common.all':      'All',
   'common.verify':   'Verify',
+  'common.year':     'Year',
+  'common.type':     'Type',
+  'common.secure_preview': 'Secure Preview',
+  'about.missions': 'Missions',
+  'about.missions_v': 'Visual',
+  'about.missions_sub': 'High-End VTuber Collaborations',
+  'about.view_card': 'View My Card',
+  'about.biz_profile': 'Business Profile',
+  'common.all_achievements': 'Semua Pencapaian',
 };

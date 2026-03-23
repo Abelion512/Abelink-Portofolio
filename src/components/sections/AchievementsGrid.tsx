@@ -1,12 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ExternalLink, Calendar, Award, Trophy } from "lucide-react";
+import { Calendar, Award, Trophy } from "lucide-react";
 import { useLangStore } from "@/store/languageStore";
 import AchievementModal from "@/components/ui/AchievementModal";
 import { supabase } from "@/lib/supabase";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+
+interface AchievementRecord {
+  id: string;
+  title: string;
+  issuer?: string;
+  year?: number;
+  type?: string;
+  image_path?: string;
+  credential_url?: string;
+  is_visible: boolean;
+}
 
 export type AchievementType = "certificate" | "participation";
 
@@ -25,22 +36,23 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
   const { t } = useLangStore();
   const [filter, setFilter] = useState<"all" | AchievementType>("all");
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
+  const [prevInitial, setPrevInitial] = useState(initialAchievements);
   const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements || []);
 
-  useEffect(() => {
-    // Sync with initialAchievements if they change (e.g. from parent)
-    if (initialAchievements) {
-      setAchievements(initialAchievements);
-    }
+  if (initialAchievements !== prevInitial) {
+    setPrevInitial(initialAchievements);
+    setAchievements(initialAchievements || []);
+  }
 
+  useEffect(() => {
     const channel = supabase
       .channel('achievements_realtime')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'achievements' },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload) => {
           if (payload.eventType === 'INSERT') {
-            const newItem = payload.new;
+            const newItem = payload.new as AchievementRecord;
             const mappedItem: Achievement = {
               id: newItem.id,
               title: newItem.title,
@@ -53,7 +65,7 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
             };
             setAchievements((prev) => [mappedItem, ...prev]);
           } else if (payload.eventType === 'UPDATE') {
-            const updatedItem = payload.new;
+            const updatedItem = payload.new as AchievementRecord;
             setAchievements((prev) => prev.map((item) => (item.id === updatedItem.id ? {
               ...item,
               title: updatedItem.title,
@@ -65,7 +77,8 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
               is_visible: updatedItem.is_visible,
             } : item)));
           } else if (payload.eventType === 'DELETE') {
-            setAchievements((prev) => prev.filter((item) => item.id === payload.old.id));
+            const oldId = (payload.old as { id: string }).id;
+            setAchievements((prev) => prev.filter((item) => item.id !== oldId));
           }
         }
       )
@@ -145,16 +158,19 @@ function AchievementCard({ achievement, onSelect }: { achievement: Achievement; 
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.3 }}
       onClick={onSelect}
-      className="group relative cursor-pointer bg-[#0a0a0c] border border-neutral-800/80 rounded-[2rem] overflow-hidden hover:border-neutral-600 transition-all duration-500 hover:shadow-[0_0_40px_-15px_rgba(59,130,246,0.15)] mt-4"
+      className="group relative cursor-pointer bg-surface/30 border border-border/50 rounded-[2rem] overflow-hidden hover:border-primary/40 transition-all duration-500 hover:shadow-[0_0_40px_-15px_rgba(108,99,255,0.15)] mt-4"
     >
       <div className="relative aspect-[4/3] bg-neutral-900/50 overflow-hidden border-b border-neutral-800/80">
         {achievement.image_path ? (
-          <motion.img 
-            layoutId={`image-${achievement.id}`}
-            src={achievement.image_path} 
-            alt={achievement.title}
-            className="w-full h-full object-contain p-2"
-          />
+          <div className="w-full h-full relative p-2">
+            <Image 
+              src={achievement.image_path} 
+              alt={achievement.title}
+              width={600}
+              height={450}
+              className="w-full h-full object-contain"
+            />
+          </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <Award size={40} className="text-neutral-800" />
@@ -163,8 +179,8 @@ function AchievementCard({ achievement, onSelect }: { achievement: Achievement; 
         
         {/* Minimal Hover Overlay */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1px]">
-          <div className="px-4 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-wider rounded-md transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-            {t('common.viewDetail') || 'View Detail'}
+          <div className="px-5 py-2.5 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-full shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+            {t('common.viewDetail')}
           </div>
         </div>
 
@@ -175,15 +191,15 @@ function AchievementCard({ achievement, onSelect }: { achievement: Achievement; 
       </div>
 
       <div className="p-4">
-        <div className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+        <div className="text-[10px] font-mono text-text-muted uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
           <Calendar size={10} /> {achievement.year}
         </div>
         
-        <h3 className="text-sm font-bold text-neutral-200 mb-0.5 leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+        <h3 className="text-sm font-bold text-text-primary mb-0.5 leading-tight line-clamp-1 group-hover:text-primary transition-colors font-display">
           {achievement.title}
         </h3>
         
-        <p className="text-[11px] text-neutral-500 font-medium pb-2">
+        <p className="text-[11px] text-text-secondary font-medium pb-2 font-body">
           {achievement.issuer}
         </p>
       </div>

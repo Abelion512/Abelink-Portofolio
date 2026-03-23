@@ -62,7 +62,7 @@ export default function Hero({
         variants={container}
         initial="hidden"
         animate={showContent ? "show" : "hidden"}
-        className={`w-full max-w-7xl mx-auto z-10 ${!showContent ? 'invisible' : ''}`}
+        className="w-full max-w-7xl mx-auto z-10"
       >
         <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
           {/* 1. Status Badge */}

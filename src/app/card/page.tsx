@@ -3,44 +3,23 @@
 import { motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { useState, useEffect } from "react";
-import { Download, Share2, Mail, Github, Instagram, Briefcase } from "lucide-react";
+import { Share, Mail, Github, Instagram, Link as LinkIcon } from "lucide-react";
 
 export default function DigitalCard() {
-  const [vcard, setVcard] = useState("");
   const [mounted, setMounted] = useState(false);
+  const portfolioUrl = "https://abelion.vercel.app";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    // Create vCard string
-    const vcardString = `BEGIN:VCARD
-VERSION:3.0
-N:Salav;Ihsanuddin;;;
-FN:Ihsanuddin Salav
-TITLE:Software Engineer / Fullstack Developer
-EMAIL:agen.salva@gmail.com
-URL:https://abelion.vercel.app
-NOTE:Builder, Learner, crafting zero-knowledge software and experimental interfaces.
-END:VCARD`;
-    setVcard(vcardString);
   }, []);
-
-  const handleDownload = () => {
-    const blob = new Blob([vcard], { type: "text/vcard" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Ihsanuddin_Salav.vcf";
-    link.click();
-  };
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Ihsanuddin Salav - Digital Card",
-          text: "Check out Ihsanuddin Salav's portfolio and digital business card.",
-          url: "https://abelion.vercel.app",
+          title: "Ihsanuddin Salav",
+          url: portfolioUrl,
         });
       } catch (err) {
         console.error("Error sharing:", err);
@@ -51,82 +30,80 @@ END:VCARD`;
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
-      {/* Background Glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] -z-10" />
-
+    <div className="min-h-screen flex items-center justify-center p-6 sm:p-12 relative bg-[--color-base]">
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-sm"
       >
-        {/* The Card */}
-        <div className="glass rounded-[2rem] border border-white/10 p-8 shadow-2xl relative overflow-hidden group">
-          {/* Shine Effect */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:animate-shine z-10 pointer-events-none" />
-
-          {/* Profile Section */}
-          <div className="flex flex-col items-center text-center space-y-4 mb-8">
-            <div className="w-24 h-24 rounded-full border-2 border-primary/50 overflow-hidden relative shadow-[0_0_20px_rgba(108,99,255,0.3)]">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="font-display font-black text-3xl text-white">IS</span>
-              </div>
-            </div>
+        <div className="relative group">
+          {/* External Border Glow (Silver) */}
+          <div className="absolute -inset-[1px] bg-gradient-to-br from-neutral-400 via-neutral-100 to-neutral-500 rounded-[2.6rem] blur-[1px] opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
+          
+          <div className="relative rounded-[2.5rem] bg-neutral-950 border border-white/10 p-8 shadow-2xl overflow-hidden">
+            {/* Metallic Edge (Inner Stroke) */}
+            <div className="absolute inset-0 rounded-[2.5rem] p-[1.5px] bg-gradient-to-br from-neutral-200/40 via-neutral-500/20 to-neutral-200/40 opacity-70 pointer-events-none" />
             
-            <div>
-              <h1 className="font-display font-bold text-2xl text-text-primary tracking-tight">Ihsanuddin Salav</h1>
-              <p className="font-mono text-sm text-primary mt-1 flex items-center justify-center gap-2">
-                <Briefcase size={14} /> Fullstack Engineer
-              </p>
-            </div>
-          </div>
+            {/* Glossy Reflective Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none" />
 
-          {/* QR Code */}
-          <div className="flex justify-center mb-8 relative">
-            <div className="p-4 bg-white rounded-2xl shadow-xl transition-transform hover:scale-105 duration-300">
-              <QRCodeSVG 
-                value={vcard} 
-                size={160} 
-                level="M" 
-                includeMargin={false}
-                fgColor="#0A0A0A"
-              />
-            </div>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-surface border border-white/10 rounded-full text-[10px] font-mono text-text-secondary whitespace-nowrap">
-              Scan to save contact
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 mb-6">
-            <button 
-              onClick={handleDownload}
-              className="flex-1 py-3 bg-primary text-white rounded-xl font-bold flex flex-col items-center justify-center gap-1 hover:shadow-[0_0_20px_rgba(108,99,255,0.4)] transition-all"
-            >
-              <Download size={18} />
-              <span className="text-[10px] uppercase tracking-wider">Save</span>
-            </button>
+            {/* Subtle top-right share action */}
             <button 
               onClick={handleShare}
-              className="flex-1 py-3 bg-surface/80 border border-white/10 text-text-primary rounded-xl font-bold flex flex-col items-center justify-center gap-1 hover:bg-white/10 transition-all"
+              className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors z-10"
+              aria-label="Share"
             >
-              <Share2 size={18} />
-              <span className="text-[10px] uppercase tracking-wider">Share</span>
+              <Share size={18} strokeWidth={1.5} />
             </button>
-          </div>
 
-          {/* Social Links */}
-          <div className="flex justify-center gap-4 pt-6 border-t border-white/10">
-            <a href="mailto:agen.salva@gmail.com" className="p-3 bg-surface rounded-full text-text-secondary hover:text-primary transition-colors hover:scale-110">
-              <Mail size={18} />
-            </a>
-            <a href="https://github.com/Abelion512" target="_blank" rel="noopener noreferrer" className="p-3 bg-surface rounded-full text-text-secondary hover:text-text-primary transition-colors hover:scale-110">
-              <Github size={18} />
-            </a>
-            <a href="https://instagram.com/ihsanovid" target="_blank" rel="noopener noreferrer" className="p-3 bg-surface rounded-full text-text-secondary hover:text-[#E4405F] transition-colors hover:scale-110">
-              <Instagram size={18} />
-            </a>
+            {/* Core Profile Focus */}
+            <div className="flex flex-col items-start space-y-6 mt-4 relative z-10">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center shadow-xl backdrop-blur-md">
+                <span className="font-display font-black text-2xl text-white tracking-widest">IS</span>
+              </div>
+              
+              <div className="space-y-1">
+                <h1 className="font-display font-bold text-3xl tracking-tight text-white">Ihsanuddin Salav</h1>
+                <p className="font-mono text-sm text-neutral-400">Software Engineer & Builder</p>
+              </div>
+
+              <p className="text-sm text-neutral-500 leading-relaxed font-body max-w-[240px]">
+                Crafting minimal, functional, and scalable intelligence. Based in Surabaya, Indonesia.
+              </p>
+            </div>
+
+          <div className="h-px w-full bg-[--color-border]/30 my-8" />
+
+            {/* Socials & Small QR aligned elegantly */}
+            <div className="flex items-center justify-between relative z-10 mt-8">
+              <div className="flex gap-4">
+                <a href="mailto:agen.salva@gmail.com" className="text-white/40 hover:text-white transition-all hover:scale-110">
+                  <Mail size={20} strokeWidth={1.5} />
+                </a>
+                <a href="https://github.com/Abelion512" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-all hover:scale-110">
+                  <Github size={20} strokeWidth={1.5} />
+                </a>
+                <a href="https://instagram.com/ihsanovid" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-all hover:scale-110">
+                  <Instagram size={20} strokeWidth={1.5} />
+                </a>
+                <a href={portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-all hover:scale-110">
+                  <LinkIcon size={20} strokeWidth={1.5} />
+                </a>
+              </div>
+
+              {/* Minimal QR Code (Scan Only) */}
+              <div className="p-1.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 opacity-80 hover:opacity-100 transition-opacity">
+                <QRCodeSVG 
+                  value={`${portfolioUrl}/card`} 
+                  size={48} 
+                  level="M" 
+                  includeMargin={false}
+                  fgColor="#FFFFFF"
+                  bgColor="transparent"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>

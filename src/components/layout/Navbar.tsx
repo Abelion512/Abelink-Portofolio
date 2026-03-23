@@ -28,8 +28,8 @@ export default function Navbar() {
     };
   }, []);
 
-  // Filter main nav items for desktop (first 5 items: Home, Projects, Achievements, Creation, Stack)
-  const mainNav = NAV_ITEMS.slice(0, 5);
+  // Filter main nav items for desktop (Primary items)
+  const mainNav = NAV_ITEMS.slice(0, 6);
 
   return (
     <motion.nav

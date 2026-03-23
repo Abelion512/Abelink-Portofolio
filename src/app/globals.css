@@ -2,23 +2,21 @@
 
 @theme {
   --font-display: "Syne", sans-serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-body:    "Plus Jakarta Sans", sans-serif;
+  --font-mono:    "JetBrains Mono", monospace;
 
-  /* PRD Primary Colors v6.0 */
-  --color-base: #0a0a0f;
-  --color-surface: #12121e;
-  --color-primary: #6C63FF;
-  --color-primary-light: #8E87FF;
-  --color-accent: #00D4AA;
-  --color-gold: #C9A84C;
-  --color-text-primary: #F0F0F5;
+  --color-base:           #0a0a0f;
+  --color-surface:        #12121e;
+  --color-surface-2:      #1a1a2e;
+  --color-primary:        #6C63FF;
+  --color-accent:         #00D4AA;
+  --color-gold:           #C9A84C;
+  --color-text-primary:   #F0F0F5;
   --color-text-secondary: #9999BB;
-  --color-text-muted: #666688;
-  --color-border: rgba(108, 99, 255, 0.12);
-  
-  /* Shadows */
-  --shadow-overlay: 0 12px 40px -8px rgba(0, 0, 0, 0.5);
+  --color-text-muted:     #44445a;
+  --color-border:         rgba(108, 99, 255, 0.12);
+  --color-border-hover:   rgba(108, 99, 255, 0.35);
+  --shadow-overlay:       0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 @layer base {

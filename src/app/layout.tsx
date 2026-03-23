@@ -5,6 +5,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
 import CommandPalette from "@/components/ui/CommandPalette";
+import ChatWidget from "@/components/chat/ChatWidget";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,6 +46,7 @@ export default function RootLayout({
           <CommandPalette />
           <Navbar />
           {children}
+          <ChatWidget />
           <BottomNav />
           <Analytics />
         </QueryProvider>

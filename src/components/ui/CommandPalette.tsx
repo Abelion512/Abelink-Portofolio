@@ -40,11 +40,11 @@ export default function CommandPalette() {
         label="Global Command Menu"
       >
         <div className="flex items-center gap-3 px-4 border-b border-border/50">
-          <Search size={18} className="text-text-secondary" />
+          <Search size={18} className="text-primary" />
           <Command.Input 
             autoFocus
-            placeholder={t('common.loading').replace('...', '...')} // Fallback if no search placeholder in i18n
-            className="w-full bg-transparent p-4 text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-0 font-body text-lg"
+            placeholder={t('common.search') || 'Search everything...'} 
+            className="w-full bg-transparent p-4 text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-0 font-body text-lg"
           />
         </div>
 
@@ -53,7 +53,7 @@ export default function CommandPalette() {
             {lang === 'id' ? 'Tidak ada hasil ditemukan.' : 'No results found.'}
           </Command.Empty>
 
-          <Command.Group heading="Navigation" className="px-3 py-2 text-[10px] font-mono text-text-muted uppercase tracking-widest">
+          <Command.Group heading="Navigation" className="px-3 py-2 text-[10px] font-mono text-primary uppercase tracking-widest">
             {NAV_ITEMS.map((item) => (
               <Command.Item 
                 key={item.href}
@@ -65,7 +65,7 @@ export default function CommandPalette() {
             ))}
           </Command.Group>
 
-          <Command.Group heading="Actions" className="px-3 py-2 mt-2 text-[10px] font-mono text-text-muted uppercase tracking-widest border-t border-border/50">
+          <Command.Group heading="Actions" className="px-3 py-2 mt-2 text-[10px] font-mono text-accent uppercase tracking-widest border-t border-border/50">
             <Command.Item 
               onSelect={() => runCommand(() => setLang(lang === 'en' ? 'id' : 'en'))}
               className="flex items-center gap-3 p-3 mt-1 rounded-xl text-text-primary text-sm hover:cursor-pointer hover:bg-white/5 aria-selected:bg-primary aria-selected:text-white transition-all"
@@ -92,10 +92,10 @@ export default function CommandPalette() {
           </Command.Group>
         </Command.List>
 
-        <div className="px-4 py-3 border-t border-border/50 flex gap-6 text-[9px] font-mono text-text-muted uppercase tracking-widest bg-base/30">
-          <span className="flex items-center gap-1"><kbd className="bg-white/10 px-1 rounded">↵</kbd> select</span>
-          <span className="flex items-center gap-1"><kbd className="bg-white/10 px-1 rounded">↑↓</kbd> navigate</span>
-          <span className="flex items-center gap-1"><kbd className="bg-white/10 px-1 rounded">esc</kbd> close</span>
+        <div className="px-4 py-3 border-t border-border/50 flex gap-6 text-[11px] font-mono text-text-primary/70 uppercase tracking-wider bg-surface/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">↵</kbd> select</span>
+          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">↑↓</kbd> navigate</span>
+          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">esc</kbd> close</span>
         </div>
       </Command>
     </div>

@@ -7,7 +7,7 @@ interface UseItem {
   id: string;
   name: string;
   description: string;
-  category: "Hardware" | "Software" | "Workspace";
+  category: string;
   url?: string;
 }
 
@@ -16,8 +16,8 @@ const CategoryIcon = ({ category }: { category: string }) => {
   switch (norm) {
     case "hardware": return <Cpu size={24} className="text-primary" />;
     case "software": return <Terminal size={24} className="text-accent" />;
-    case "workspace": return <Monitor size={24} className="text-text-primary" />;
-    default: return <Wrench size={24} />;
+    case "workspace": return <Monitor size={24} className="text-white" />;
+    default: return <Wrench size={24} className="text-text-secondary" />;
   }
 };
 
@@ -27,12 +27,18 @@ export default async function UsesPage() {
     .select("*")
     .order("category", { ascending: true });
 
-  const groupedItems = items?.reduce((acc: Record<string, UseItem[]>, item: UseItem) => {
+  const groupedItems = (items || []).reduce((acc: Record<string, UseItem[]>, item: UseItem) => {
     const cat = item.category || "Other";
     if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(item);
+    acc[cat].push({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      category: cat,
+      url: item.url
+    });
     return acc;
-  }, {} as Record<string, UseItem[]>) || {};
+  }, {} as Record<string, UseItem[]>);
 
   return (
     <div className="container mx-auto px-6 py-32 min-h-screen">

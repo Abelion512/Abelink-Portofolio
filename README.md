@@ -14,12 +14,22 @@ Portofolio modern yang dibangun dengan fokus pada **Apple Human Interface Guidel
 - **Easter Egg Interactions**: Detail mikro-interaksi pada nama dan elemen UI untuk pengalaman pengguna yang menyenangkan.
 - **High-End SEO/AEO**: Optimasi Meta Tags dan JSON-LD untuk visibilitas maksimal di search engine tradisional maupun AI (Gemini, Perplexity, GPT-4).
 
-## 🛠 Tech Stack
-- **Frontend**: Next.js 15+ (App Router), React 19, Tailwind CSS v4.
+## 🛠 Tech Stack & Getting Started
+- **Frontend**: Next.js 16+ (App Router), React 19, Tailwind CSS v4.
 - **Backend & Database**: Supabase (PostgreSQL), Edge Functions.
 - **Runtime**: Bun.
 - **AI Model**: Google Gemini 1.5 Pro.
-- **Design Standard**: Apple Human Interface Guidelines.
+
+```bash
+# Install dependencies
+bun install
+
+# Run development server
+bun dev
+
+# Build for production
+bun run build
+```
 
 ## 📁 Struktur Proyek
 - `src/app`: Routing dan Page views.
