@@ -92,10 +92,10 @@ export default function CommandPalette() {
           </Command.Group>
         </Command.List>
 
-        <div className="px-4 py-3 border-t border-border/50 flex gap-6 text-[11px] font-mono text-text-primary/70 uppercase tracking-wider bg-surface/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
-          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">↵</kbd> select</span>
-          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">↑↓</kbd> navigate</span>
-          <span className="flex items-center gap-2.5"><kbd className="bg-white/15 px-2 py-0.5 rounded-md border border-white/25 text-white shadow-sm min-w-[20px] text-center font-sans tracking-normal">esc</kbd> close</span>
+        <div className="px-4 py-3 border-t border-border/50 flex gap-6 text-[12px] font-mono text-text-primary uppercase tracking-widest bg-surface/90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+          <span className="flex items-center gap-2.5"><kbd className="bg-primary/20 px-2 py-0.5 rounded-md border border-primary/40 text-primary shadow-sm min-w-[22px] text-center font-sans tracking-normal font-bold">↵</kbd> select</span>
+          <span className="flex items-center gap-2.5"><kbd className="bg-primary/20 px-2 py-0.5 rounded-md border border-primary/40 text-primary shadow-sm min-w-[22px] text-center font-sans tracking-normal font-bold">↑↓</kbd> navigate</span>
+          <span className="flex items-center gap-2.5"><kbd className="bg-primary/20 px-2 py-0.5 rounded-md border border-primary/40 text-primary shadow-sm min-w-[22px] text-center font-sans tracking-normal font-bold">esc</kbd> close</span>
         </div>
       </Command>
     </div>
