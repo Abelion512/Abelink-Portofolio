@@ -27,8 +27,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
       {/* Modal Container */}
       <motion.div
         layoutId={`card-${achievement.id}`}
-        className="relative z-[110] w-full max-w-5xl bg-base border border-border rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl"
-        style={{ backgroundColor: 'var(--color-base)' }}
+        className="relative z-[110] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_0_80px_rgba(0,0,0,0.8)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Mobile */}
@@ -65,8 +64,13 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
         {/* Right: Info Section */}
         <div className="w-full md:w-[40%] p-8 md:p-12 flex flex-col border-t md:border-t-0 md:border-l border-white/10">
           <div className="flex justify-between items-start mb-8">
-            <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 text-primary">
-              <Award size={24} />
+            <div className="flex flex-col gap-1">
+              <div className="p-3 w-fit rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-2">
+                <Award size={24} />
+              </div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-primary/80">
+                {achievement.category || "Professional Certification"}
+              </span>
             </div>
             <button
               onClick={onClose}
@@ -81,7 +85,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
               <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-2 tracking-tight">
                 {achievement.title}
               </h2>
-              <p className="text-primary font-medium">{achievement.issuer}</p>
+              <p className="text-text-secondary font-medium">{achievement.issuer}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 py-6 border-y border-border/10">
@@ -93,14 +97,19 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">{t('common.type')}</p>
-                <p className="text-sm text-text-secondary capitalize">{achievement.type}</p>
+                <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">ID / REF</p>
+                <p className="text-xs text-text-secondary font-mono truncate" title={achievement.credential_id}>
+                  {achievement.credential_id || "N/A"}
+                </p>
               </div>
             </div>
 
-            <p className="text-sm text-text-secondary/70 leading-relaxed font-body">
-              {t('achievements.description')}
-            </p>
+            <div className="space-y-4">
+              <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">Description</p>
+              <p className="text-sm text-text-secondary/70 leading-relaxed font-body">
+                {achievement.title} is a verified achievement issued by {achievement.issuer} in {achievement.year}. This certification validates the professional standard and expertise in this specific domain.
+              </p>
+            </div>
           </div>
 
           {achievement.url && (
@@ -109,7 +118,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
                 href={achievement.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-primary text-white font-bold text-sm uppercase tracking-widest hover:bg-primary-dark transition-all shadow-lg shadow-primary/20"
+                className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-primary text-white font-bold text-sm uppercase tracking-widest hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 hover:-translate-y-1 active:scale-[0.98]"
               >
                 {t('achievements.verify')} <ExternalLink size={16} />
               </a>

@@ -213,7 +213,7 @@ export default function GuestbookForm({ initialEntries }: { initialEntries: Gues
               
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-primary shadow-inner">
+                  <div className="w-10 h-10 rounded-xl bg-linear-to-br from-primary/20 to-accent/20 flex items-center justify-center text-primary shadow-inner">
                     <User size={20} />
                   </div>
                   <div className="flex flex-col">

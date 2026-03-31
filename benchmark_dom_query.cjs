@@ -1,3 +1,4 @@
+/* eslint-disable */
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -19,7 +20,7 @@ global.HTMLElement = window.HTMLElement;
 const ITERATIONS = 10000;
 
 function inefficientHandler() {
-  const orbs = document.querySelectorAll('.floating-orb');
+  const orbs = document.querySelectorAll(".floating-orb");
   const mouseX = 0.5;
   const mouseY = 0.5;
 
@@ -35,7 +36,7 @@ function inefficientHandler() {
 }
 
 function createEfficientHandler() {
-  const orbs = document.querySelectorAll('.floating-orb');
+  const orbs = document.querySelectorAll(".floating-orb");
 
   return function efficientHandler() {
     const mouseX = 0.5;
@@ -50,7 +51,7 @@ function createEfficientHandler() {
         orb.style.transform = `translate(${x}px, ${y}px)`;
       }
     });
-  }
+  };
 }
 
 const efficientHandler = createEfficientHandler();
@@ -77,4 +78,6 @@ const timeEfficient = endEfficient - startEfficient;
 
 console.log(`Inefficient (Query every time): ${timeInefficient.toFixed(2)}ms`);
 console.log(`Efficient (Cached Query):       ${timeEfficient.toFixed(2)}ms`);
-console.log(`Improvement:                    ${(timeInefficient / timeEfficient).toFixed(2)}x faster`);
+console.log(
+  `Improvement:                    ${(timeInefficient / timeEfficient).toFixed(2)}x faster`,
+);

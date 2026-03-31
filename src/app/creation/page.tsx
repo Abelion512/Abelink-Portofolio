@@ -125,7 +125,7 @@ export default function CreationPage() {
                   <h3 className="text-2xl font-bold text-white mb-6 leading-tight group-hover:text-primary transition-colors">
                     {item.title}
                   </h3>
-                  <div className="rounded-[1.5rem] overflow-hidden bg-neutral-900 border border-white/5 ring-1 ring-white/10 group-hover:ring-primary/20 transition-all">
+                  <div className="rounded-3xl overflow-hidden bg-neutral-900 border border-white/5 ring-1 ring-white/10 group-hover:ring-primary/20 transition-all">
                     <TikTokCard url={item.embed_url} />
                   </div>
                 </div>
@@ -147,7 +147,7 @@ function CreationSkeleton() {
     <div className="w-full bg-[#0a0a0c] border border-white/5 rounded-[2.5rem] p-8 animate-pulse">
       <div className="w-20 h-5 bg-white/5 rounded-full mb-4" />
       <div className="w-full h-8 bg-white/5 rounded-lg mb-6" />
-      <div className="w-full aspect-[9/16] bg-white/5 rounded-[1.5rem]" />
+      <div className="w-full aspect-[9/16] bg-white/5 rounded-3xl" />
     </div>
   );
 }

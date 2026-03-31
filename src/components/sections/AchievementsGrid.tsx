@@ -27,6 +27,8 @@ export interface Achievement {
   issuer: string;
   year: number;
   type: AchievementType;
+  category?: string;
+  credential_id?: string;
   image_path: string;
   url?: string;
   is_visible: boolean;
@@ -59,6 +61,8 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
               issuer: newItem.issuer || "Unknown",
               year: newItem.year || 2024,
               type: (newItem.type || 'certificate') as AchievementType,
+              category: (newItem as any).category || "Premium",
+              credential_id: (newItem as any).credential_id || undefined,
               image_path: newItem.image_path || "",
               url: newItem.credential_url || undefined,
               is_visible: newItem.is_visible,
@@ -72,6 +76,8 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
               issuer: updatedItem.issuer || item.issuer,
               year: updatedItem.year || item.year,
               type: (updatedItem.type || item.type) as AchievementType,
+              category: (updatedItem as any).category || item.category,
+              credential_id: (updatedItem as any).credential_id || item.credential_id,
               image_path: updatedItem.image_path || item.image_path,
               url: updatedItem.credential_url || item.url,
               is_visible: updatedItem.is_visible,

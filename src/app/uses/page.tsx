@@ -43,7 +43,7 @@ export default async function UsesPage() {
   return (
     <div className="container mx-auto px-6 py-32 min-h-screen">
       <div className="max-w-3xl mx-auto mb-16">
-        <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+        <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 text-transparent bg-clip-text bg-linear-to-r from-primary to-accent">
           Uses
         </h1>
         <p className="text-text-secondary text-lg md:text-xl font-mono leading-relaxed">

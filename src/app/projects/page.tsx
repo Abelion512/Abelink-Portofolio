@@ -1,89 +1,81 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import ProjectsGrid from "@/components/sections/ProjectsGrid";
-import { supabase } from "@/lib/supabase";
-import { Project, ProjectStatus } from "@/components/sections/ProjectsGrid";
+import { motion } from "motion/react";
 import { useLangStore } from "@/store/languageStore";
-
-async function getGithubProjects(): Promise<Project[]> {
-  try {
-    const res = await fetch("https://api.github.com/users/Abelion512/repos?sort=updated&per_page=12");
-    if (!res.ok) return [];
-    const repos = await res.json();
-    if (!Array.isArray(repos)) return [];
-    
-    return repos
-      .filter((repo) => !repo.fork)
-      .map((repo) => ({
-        id: `gh-${repo.id}`,
-        name: repo.name,
-        status: "live" as ProjectStatus,
-        description: repo.description || "Open source project on GitHub.",
-        tech: repo.language ? [repo.language] : ["Source"],
-        githubUrl: repo.html_url,
-        coverImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=1200",
-        isPinned: false
-      }));
-  } catch {
-    return [];
-  }
-}
+import FloatingTitle from "@/components/ui/FloatingTitle";
+import { useProjects } from "@/hooks/useData";
+import ProjectsGrid from "@/components/sections/ProjectsGrid";
+import { useState } from "react";
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const { t } = useLangStore();
-
-  useEffect(() => {
-    async function init() {
-      const [dbRes, githubProjects] = await Promise.all([
-        supabase.from('projects').select('*').eq('is_visible', true).order('sort_order', { ascending: true }),
-        getGithubProjects()
-      ]);
-
-      const dbProjects: Project[] = (dbRes.data || []).map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description || "",
-        coverImage: p.cover_image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200",
-        status: (p.status || 'live') as ProjectStatus,
-        tech: p.tech || [],
-        githubUrl: p.github_url || undefined,
-        liveUrl: p.live_url || undefined,
-        isPinned: p.is_pinned || false
-      }));
-
-      const dbNames = new Set(dbProjects.map(p => p.name.toLowerCase()));
-      const filteredGithub = githubProjects.filter(p => !dbNames.has(p.name.toLowerCase()));
-      
-      setProjects([...dbProjects, ...filteredGithub]);
-      setLoading(false);
-    }
-    init();
-  }, []);
+  const { projects, loading, error } = useProjects();
+  const [titleAnimated, setTitleAnimated] = useState(false);
 
   return (
-    <main className="min-h-screen pt-32 px-6 max-w-7xl mx-auto mb-20">
-      <div className="mb-16">
-        <h1 className="text-5xl md:text-8xl font-display font-bold tracking-tighter text-text-primary mb-6">
-          {t('projects.title').split(' ')[0]} <br />
-          <span className="text-gradient">{t('projects.title').split(' ').slice(1).join(' ')}</span>
-        </h1>
-        <p className="max-w-2xl text-text-secondary text-lg font-body leading-relaxed">
-          {t('projects.subtitle')}
-        </p>
-      </div>
+    <>
+      <FloatingTitle
+        title={t("projects.title")}
+        subtitle={t("projects.subtitle")}
+        onAnimationComplete={() => setTitleAnimated(true)}
+      />
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="aspect-[16/10] bg-surface/30 rounded-[2.5rem] border border-border/50" />
-          ))}
-        </div>
-      ) : (
-        <ProjectsGrid initialProjects={projects} />
-      )}
-    </main>
+      <main className="pt-16 px-4 sm:px-6 max-w-5xl mx-auto mb-16 sm:mb-24 min-h-screen">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: titleAnimated ? 0 : 0.6 }}
+        >
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4" />
+              <p className="text-text-secondary">Loading projects...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="text-red-400 mb-4">Error loading projects</p>
+              <p className="text-text-secondary text-sm">{error}</p>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-surface/50 border border-border/50 flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-text-muted"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-display font-bold text-text-primary mb-3">
+                Projects Coming Soon
+              </h3>
+              <p className="text-text-secondary max-w-md mx-auto mb-6">
+                I&apos;m currently working on some exciting projects. Check back
+                soon to see what I&apos;ve been building!
+              </p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <a
+                  href="https://github.com/Abelion512"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 glass border border-border text-text-primary rounded-2xl font-bold hover:bg-surface/50 transition-all"
+                >
+                  Check My GitHub
+                </a>
+              </div>
+            </div>
+          ) : (
+            <ProjectsGrid initialProjects={projects} />
+          )}
+        </motion.div>
+      </main>
+    </>
   );
 }

@@ -1,0 +1,328 @@
+-- Dynamic Knowledge Base Migration
+-- Run this in Supabase SQL Editor: https://app.supabase.com
+
+-- ============================================
+-- 1. CREATE TABLES
+-- ============================================
+
+-- Knowledge documents (main table for AI RAG)
+CREATE TABLE IF NOT EXISTS knowledge_docs (
+  id SERIAL PRIMARY KEY,
+  doc_id TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  security_level TEXT DEFAULT 'public' CHECK (security_level IN ('public', 'sensitive', 'private')),
+  category TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Projects (auto-syncs to knowledge_docs)
+CREATE TABLE IF NOT EXISTS projects (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  tech_stack TEXT[],
+  url TEXT,
+  github_url TEXT,
+  is_featured BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Certificates (auto-syncs to knowledge_docs)
+CREATE TABLE IF NOT EXISTS certificates (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  issuer TEXT NOT NULL,
+  date_issued DATE,
+  credential_url TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ============================================
+-- 2. CREATE INDEXES
+-- ============================================
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_docs_active ON knowledge_docs(is_active);
+CREATE INDEX IF NOT EXISTS idx_knowledge_docs_security ON knowledge_docs(security_level);
+CREATE INDEX IF NOT EXISTS idx_projects_active ON projects(is_active);
+CREATE INDEX IF NOT EXISTS idx_certificates_active ON certificates(is_active);
+
+-- ============================================
+-- 3. CREATE TRIGGERS FOR AUTO-SYNC
+-- ============================================
+
+-- Function to update knowledge_docs from projects
+CREATE OR REPLACE FUNCTION sync_projects_to_knowledge()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE knowledge_docs
+  SET
+    content = COALESCE(
+      (SELECT string_agg(
+        name || ': ' || COALESCE(description, '') || E'\n' ||
+        'Tech: ' || array_to_string(COALESCE(tech_stack, ARRAY[]::TEXT[]), ', ') || E'\n' ||
+        'URL: ' || COALESCE(url, 'N/A') || E'\n\n',
+        E'\n'
+      )
+      FROM projects WHERE is_active = true),
+      'No active projects'
+    ),
+    updated_at = NOW()
+  WHERE doc_id = 'projects';
+
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update knowledge_docs from certificates
+CREATE OR REPLACE FUNCTION sync_certificates_to_knowledge()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE knowledge_docs
+  SET
+    content = COALESCE(
+      (SELECT string_agg(
+        title || ' - ' || issuer ||
+        COALESCE(' (' || to_char(date_issued, 'YYYY') || ')', '') || E'\n' ||
+        COALESCE('Credential: ' || credential_url || E'\n', ''),
+        E'\n'
+      )
+      FROM certificates WHERE is_active = true),
+      'No certificates'
+    ),
+    updated_at = NOW()
+  WHERE doc_id = 'achievements';
+
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Triggers
+DROP TRIGGER IF EXISTS projects_sync_trigger ON projects;
+CREATE TRIGGER projects_sync_trigger
+AFTER INSERT OR UPDATE OR DELETE ON projects
+FOR EACH STATEMENT
+EXECUTE FUNCTION sync_projects_to_knowledge();
+
+DROP TRIGGER IF EXISTS certificates_sync_trigger ON certificates;
+CREATE TRIGGER certificates_sync_trigger
+AFTER INSERT OR UPDATE OR DELETE ON certificates
+FOR EACH STATEMENT
+EXECUTE FUNCTION sync_certificates_to_knowledge();
+
+-- ============================================
+-- 4. SEED INITIAL DATA
+-- ============================================
+
+-- About
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('about', 'About Ihsanuddin',
+'Ihsanuddin Salav is a second-semester Software Engineering student based in Surabaya, Indonesia.
+He specializes in Fullstack Development, AI Automation (n8n), and Linux Architecture.
+Tagline: Student. Builder. Learner.
+GitHub: github.com/abelion512
+Instagram: @ihsanovid
+
+Background:
+- Currently studying Software Engineering
+- Passionate about web development and AI
+- Based in Surabaya, East Java, Indonesia
+- Active in open source community
+
+Personality:
+- Curious and driven by learning
+- Enjoys building practical solutions
+- Focuses on scalable architecture
+- Values clean code and best practices',
+'public', 'about')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- Tech Stack
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('stack', 'Tech Stack',
+'Frontend:
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- Motion (Framer Motion) v12
+- Three.js / React Three Fiber
+
+Backend:
+- Node.js
+- Supabase (PostgreSQL)
+- Docker
+- Linux server administration
+- n8n workflow automation
+
+AI/ML:
+- Gemini API
+- Anthropic SDK (Claude)
+- OpenRouter
+- Groq for fast inference
+
+Deployment:
+- Vercel
+- Docker containers
+- Linux servers',
+'public', 'stack')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- Projects (will be auto-updated by trigger)
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('projects', 'Projects',
+'Active Projects:
+- Abelink Portfolio: Personal portfolio with AI chat
+- Lembaran: CLI TUI note-taking app
+- LearnInk AI: AI-first LMS
+- Ab-Pay: Payment system with Midtrans
+- Abelion Notes: Zero-knowledge encrypted notes
+- Abelion Finance: Crypto analysis automation',
+'public', 'projects')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- Achievements (will be auto-updated by trigger)
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('achievements', 'Achievements',
+'Certificates (7 total):
+- Dicoding: Dasar AI, Financial Literacy (2026)
+- IBM SkillsBuild: Generative AI, Granite Models (2025)
+- Dibimbing.id: RPA, DevOps, Data Science & ML (2025/2026)',
+'public', 'achievements')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- Contact
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('contact', 'Contact Information',
+'Email: agen.salva@gmail.com
+For business inquiries and collaborations only.
+
+Social Media:
+- GitHub: github.com/abelion512
+- Instagram: @ihsanovid
+- Portfolio: abelion.vercel.app
+
+Location:
+- City: Surabaya
+- Province: East Java
+- Country: Indonesia',
+'sensitive', 'contact')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- Explorer
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('explorer', 'Explorer & Interests',
+'Ihsanuddin is also an explorer and adventurer.
+He enjoys discovering new technologies, experimenting with cutting-edge tools,
+and pushing the boundaries of what''s possible with AI and web development.
+
+Interests:
+- Exploring new web technologies
+- AI and machine learning experimentation
+- Building automation workflows
+- Open source contributions
+- Learning emerging frameworks
+- VTuber and digital content creation
+
+Mission:
+- Build innovative solutions
+- Share knowledge with community
+- Push technical boundaries
+- Create impactful projects',
+'public', 'explorer')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- VTuber Collaborations
+INSERT INTO knowledge_docs (doc_id, title, content, security_level, category) VALUES
+('vtuber_collabs', 'VTuber Collaborations',
+'VTuber Collaborations (Missions Visual):
+
+1. Neon Chronicles
+   - Agency: Echo X Luna
+   - Type: High-end VTuber collaboration
+
+2. Synapse Agency
+   - Agency: Neural Arts
+   - Type: VTuber agency project
+
+3. Ah Yu-jin
+   - Group: IVE
+   - Type: Video content
+
+These collaborations showcase high-end VTuber and digital content creation work.',
+'public', 'vtuber')
+ON CONFLICT (doc_id) DO NOTHING;
+
+-- ============================================
+-- 5. SEED SAMPLE PROJECTS
+-- ============================================
+
+INSERT INTO projects (name, description, tech_stack, url, github_url, is_featured) VALUES
+('Abelink Portfolio', 'Personal portfolio with AI chat and VTuber collaborations',
+ ARRAY['Next.js 16', 'TypeScript', 'Tailwind v4', 'Motion v12', 'Supabase'],
+ 'https://abelion.vercel.app',
+ 'https://github.com/Abelion512/Abelink-Portofolio',
+ true),
+('Lembaran', 'CLI TUI note-taking app with multi-environment support',
+ ARRAY['Node.js', 'TypeScript', 'Ink', 'React'],
+ NULL,
+ 'https://github.com/Abelion512/lembaran',
+ false),
+('LearnInk AI', 'AI-first Learning Management System with code execution',
+ ARRAY['Next.js', 'Python', 'Pyodide', 'AI'],
+ NULL,
+ NULL,
+ true),
+('Ab-Pay', 'Modern payment system with Midtrans integration',
+ ARRAY['Node.js', 'Midtrans', 'PostgreSQL'],
+ NULL,
+ NULL,
+ false)
+ON CONFLICT DO NOTHING;
+
+-- ============================================
+-- 6. SEED SAMPLE CERTIFICATES
+-- ============================================
+
+INSERT INTO certificates (title, issuer, date_issued) VALUES
+('Dasar Artificial Intelligence', 'Dicoding', '2026-01-15'),
+('Financial Literacy', 'Dicoding', '2026-02-20'),
+('Generative AI Fundamentals', 'IBM SkillsBuild', '2025-11-10'),
+('IBM Granite Models', 'IBM SkillsBuild', '2025-12-05'),
+('Robotic Process Automation', 'Dibimbing.id', '2025-10-20'),
+('DevOps Engineering', 'Dibimbing.id', '2025-11-15'),
+('Data Science & Machine Learning', 'Dibimbing.id', '2026-01-30')
+ON CONFLICT DO NOTHING;
+
+-- ============================================
+-- 7. ENABLE ROW LEVEL SECURITY (Optional)
+-- ============================================
+
+-- If you want to make it public read-only:
+ALTER TABLE knowledge_docs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can view active knowledge docs"
+ON knowledge_docs FOR SELECT
+USING (is_active = true AND security_level = 'public');
+
+CREATE POLICY "Public can view active projects"
+ON projects FOR SELECT
+USING (is_active = true);
+
+CREATE POLICY "Public can view active certificates"
+ON certificates FOR SELECT
+USING (is_active = true);
+
+-- ============================================
+-- DONE! ✅
+-- ============================================
+
+-- Verify data:
+-- SELECT COUNT(*) FROM knowledge_docs;
+-- SELECT COUNT(*) FROM projects;
+-- SELECT COUNT(*) FROM certificates;

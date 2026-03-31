@@ -1,0 +1,56 @@
+-- 1. CLEANUP (Clear previous dummy data)
+TRUNCATE TABLE projects, achievements;
+
+-- 2. PRE-REQUISITE: Ensure columns exist
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='gradient_key') THEN
+        ALTER TABLE projects ADD COLUMN gradient_key text DEFAULT 'default';
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='achievements' AND column_name='is_featured') THEN
+        ALTER TABLE achievements ADD COLUMN is_featured boolean DEFAULT false;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='achievements' AND column_name='sort_order') THEN
+        ALTER TABLE achievements ADD COLUMN sort_order integer DEFAULT 0;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='settings' AND column_name='currently_learning') THEN
+        ALTER TABLE settings ADD COLUMN currently_learning text DEFAULT 'Next.js 16 & AI Automation';
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='settings' AND column_name='currently_building') THEN
+        ALTER TABLE settings ADD COLUMN currently_building text;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='settings' AND column_name='status') THEN
+        ALTER TABLE settings ADD COLUMN status text DEFAULT 'Building';
+    END IF;
+END $$;
+
+-- 2.1 PRE-REQUISITE: Ensure id columns default to gen_random_uuid() to prevent null constraints
+ALTER TABLE projects ALTER COLUMN id SET DEFAULT gen_random_uuid();
+ALTER TABLE achievements ALTER COLUMN id SET DEFAULT gen_random_uuid();
+
+-- 3. PROJECTS (Real Data)
+INSERT INTO projects (name, description, status, gradient_key, tech, github_url, live_url, is_pinned, sort_order)
+VALUES 
+  ('Abelink Portfolio v4', 'Premium portfolio with AI integration, Apple HIG inspired design, and high performance Next.js 16 core.', 'live', 'abelink-v4', ARRAY['Next.js 16', 'Tailwind v4', 'Framer Motion', 'TypeScript'], 'https://github.com/Abelion512/Abelink-Portofolio', 'https://abelink.id', true, 1),
+  ('Lembaran CLI', 'Advanced TUI-based note-taking application built with Bun, featuring multi-environment sync and local-first architecture.', 'wip', 'lembaran', ARRAY['Bun', 'TypeScript', 'TUI', 'SQLite'], 'https://github.com/Abelion512/lembaran', null, true, 2),
+  ('LearnInk AI', 'AI-driven learning management system focusing on niche sustainability and community-driven content.', 'wip', 'learnink', ARRAY['Next.js', 'Anthropic SDK', 'PostgreSQL'], null, null, false, 3),
+  ('AI Automation Engine', 'Enterprise-grade n8n workflows for automated content processing and system management.', 'live', 'automation', ARRAY['n8n', 'Python', 'Docker', 'OpenAI'], null, null, false, 4);
+
+-- 4. ACHIEVEMENTS (Real Data)
+INSERT INTO achievements (title, issuer, year, type, credential_url, is_featured, sort_order) VALUES
+('Belajar Dasar AI', 'Dicoding Indonesia', 2026, 'certificate', 'https://dicoding.com/certificates/07Z6J9NM2XQR', true, 1),
+('IBM Granite Models for Software Development', 'IBM SkillsBuild', 2025, 'certificate', null, true, 2),
+('Introduction to Financial Literacy', 'Dicoding × DBS Foundation', 2026, 'certificate', 'https://dicoding.com/certificates/1RXYQ9NRQZVM', false, 3),
+('Use Generative AI for Software Development', 'IBM SkillsBuild', 2025, 'certificate', null, true, 4);
+
+-- 5. SETTINGS
+UPDATE settings SET 
+  currently_learning = 'Next.js 16, Tailwind v4, & AI Automation',
+  currently_building = 'Abelink Portfolio v4',
+  status = 'Active Development'
+WHERE id = 1;

@@ -123,7 +123,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 px-4 py-2 glass rounded-2xl border border-white/5 bg-surface/30">
           <div className="flex -space-x-1">
             {[1, 2, 3].map(i => (
-              <div key={i} className="w-6 h-6 rounded-full border-2 border-base bg-gradient-to-br from-primary/40 to-accent/40" />
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-base bg-linear-to-br from-primary/40 to-accent/40" />
             ))}
           </div>
           <span className="text-xs font-mono text-text-secondary">
@@ -233,7 +233,7 @@ export default function Dashboard() {
 
         {/* Right: Insights */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="glass p-8 rounded-[2rem] border border-white/10 bg-gradient-to-br from-primary/5 to-accent/5">
+          <div className="glass p-8 rounded-[2rem] border border-white/10 bg-linear-to-br from-primary/5 to-accent/5">
             <div className="flex items-center gap-3 text-primary mb-6">
               <Sparkles size={20} />
               <h3 className="text-xl font-display font-bold">System Insights</h3>

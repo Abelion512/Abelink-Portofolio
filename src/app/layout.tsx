@@ -6,6 +6,7 @@ import QueryProvider from "@/components/providers/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
 import CommandPalette from "@/components/ui/CommandPalette";
 import ChatWidget from "@/components/chat/ChatWidget";
+import BackToTop from "@/components/ui/BackToTop";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,8 +31,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Abelink Portofolio — Ihsanuddin Salav",
-  description: "Creative Developer & AI Builder based in Surabaya building things with AI and web technology.",
-  keywords: ["Ihsanuddin Salav", "Abelion", "Creative Developer", "AI Builder", "Portfolio", "Surabaya"],
+  description:
+    "Creative Developer & AI Builder based in Surabaya building things with AI and web technology.",
+  keywords: [
+    "Ihsanuddin Salav",
+    "Abelion",
+    "Creative Developer",
+    "AI Builder",
+    "Portfolio",
+    "Surabaya",
+  ],
 };
 
 export default function RootLayout({
@@ -40,13 +49,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${inter.variable}`}>
-      <body className="antialiased bg-[#0a0a0f] text-white font-geist-sans selection:bg-blue-500/30">
+    <html
+      lang="id"
+      className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${inter.variable}`}
+    >
+      <body className="antialiased bg-base text-white font-geist-sans selection:bg-blue-500/30">
         <QueryProvider>
           <CommandPalette />
           <Navbar />
           {children}
           <ChatWidget />
+          <BackToTop />
           <BottomNav />
           <Analytics />
         </QueryProvider>

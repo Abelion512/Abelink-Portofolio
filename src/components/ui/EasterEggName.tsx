@@ -1,25 +1,25 @@
 "use client";
 
-import { useState } from 'react';
-import VerifiedBadge from './VerifiedBadge';
+import { useState } from "react";
+import VerifiedBadge from "./VerifiedBadge";
 
 export default function EasterEggName() {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div 
+    <div
       className="inline-flex items-center cursor-default"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="inline-grid [grid-template-areas:'stack'] font-syne text-2xl md:text-3xl font-bold tracking-tight">
-        <span 
+      <div className="inline-grid [grid-template-areas:'stack'] font-syne text-4xl md:text-7xl font-bold tracking-tight">
+        <span
           className="[grid-area:stack] transition-opacity duration-500"
           style={{ opacity: hovered ? 0 : 1 }}
         >
           Ihsanuddin Salav
         </span>
-        <span 
+        <span
           className="[grid-area:stack] transition-opacity duration-500 pointer-events-none text-blue-400"
           style={{ opacity: hovered ? 1 : 0 }}
         >

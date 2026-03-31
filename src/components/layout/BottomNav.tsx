@@ -1,17 +1,17 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, FolderOpen, Trophy, Layers } from 'lucide-react';
-import { motion } from 'motion/react';
-import { useLangStore } from '@/store/languageStore';
-import { useEffect, useState } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, FolderOpen, Trophy, Layers, Search } from "lucide-react";
+import { motion } from "motion/react";
+import { useLangStore } from "@/store/languageStore";
+import { useEffect, useState } from "react";
 
 const ITEMS = [
-  { href: '/',             icon: Home,       label: 'nav.home' },
-  { href: '/projects',     icon: FolderOpen, label: 'nav.projects' },
-  { href: '/achievements', icon: Trophy,     label: 'nav.achievements' },
-  { href: '/stack',        icon: Layers,     label: 'nav.stack' },
+  { href: "/", icon: Home, label: "nav.home" },
+  { href: "/projects", icon: FolderOpen, label: "nav.projects" },
+  { href: "/achievements", icon: Trophy, label: "nav.achievements" },
+  { href: "/stack", icon: Layers, label: "nav.stack" },
 ];
 
 export default function BottomNav() {
@@ -32,16 +32,18 @@ export default function BottomNav() {
         {ITEMS.map(({ href, icon: Icon, label }) => {
           const active = pathname === href;
           return (
-            <Link 
-              key={href} 
-              href={href} 
+            <Link
+              key={href}
+              href={href}
               aria-label={t(label)}
               className={`relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 ${
-                active ? 'text-primary scale-110' : 'text-text-secondary hover:text-text-primary'
+                active
+                  ? "text-primary scale-110"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               <Icon size={24} strokeWidth={active ? 2.5 : 2} />
-              
+
               {active && (
                 <motion.div
                   layoutId="bottom-nav-active"
@@ -53,6 +55,19 @@ export default function BottomNav() {
             </Link>
           );
         })}
+
+        {/* Command Palette Trigger - Mobile (⌘K) */}
+        <button
+          onClick={() =>
+            window.dispatchEvent(
+              new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+            )
+          }
+          className="relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 text-text-secondary hover:text-text-primary"
+          aria-label="Search (⌘K)"
+        >
+          <Search size={24} strokeWidth={2} />
+        </button>
       </div>
     </nav>
   );
