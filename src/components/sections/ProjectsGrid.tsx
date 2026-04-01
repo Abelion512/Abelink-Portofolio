@@ -5,7 +5,7 @@ import { Github, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLangStore } from "@/store/languageStore";
-import { SpotlightCard } from "../ui/SpotlightCard";
+import SpotlightCard from "../ui/SpotlightCard";
 
 export type ProjectStatus = 'live' | 'wip' | 'preview';
 
@@ -33,23 +33,23 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
 
   return (
     <section className="py-12 overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {displayProjects.map((project: Project, i: number) => (
           <ProjectCard key={project.id || project.name} project={project} index={i} />
         ))}
       </div>
       
-      <div className="mt-20 flex justify-center">
+      <div className="mt-24 flex justify-center">
         <Link 
           href="https://github.com/Abelion512" 
           target="_blank" 
-          className="group relative px-8 py-4 bg-surface/30 border border-border/50 rounded-2xl hover:border-primary/40 transition-all duration-300"
+          className="group relative px-10 py-4 bg-white/5 border border-white/10 rounded-full hover:border-primary/40 transition-all duration-500 overflow-hidden"
         >
-          <div className="flex items-center gap-3 text-sm font-mono text-text-secondary group-hover:text-text-primary transition-colors">
+          <div className="relative z-10 flex items-center gap-3 text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-text-secondary group-hover:text-text-primary transition-colors">
             <span>{t('projects.viewAll')}</span>
-            <Github size={18} className="group-hover:rotate-12 transition-transform duration-300" />
+            <Github size={16} className="group-hover:rotate-12 transition-transform duration-300" />
           </div>
-          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity" />
+          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </Link>
       </div>
     </section>
@@ -58,86 +58,87 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
+  const accentColor = project.dominantColor || "#6C63FF";
   
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
       className="group"
     >
       <SpotlightCard 
-        color={project.dominantColor || "var(--color-primary)"}
-        className="h-full flex flex-col"
+        color={accentColor}
+        className="h-full flex flex-col group/card"
       >
-        <div className="relative aspect-16/10 bg-surface/40 overflow-hidden border-b border-border/20">
+        <div className="relative aspect-[16/10] bg-black/40 overflow-hidden border-b border-white/5">
           <Image 
             src={project.coverImage || "/placeholder-project.jpg"} 
             alt={project.name}
-            width={800}
-            height={500}
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.08] group-hover:rotate-1"
+            fill
+            className="object-cover transition-all duration-1000 group-hover/card:scale-110 group-hover/card:blur-[2px] opacity-80 group-hover/card:opacity-60"
           />
           
-          {/* Glow Overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-base via-transparent to-transparent opacity-60" />
+          {/* Subtle Glow Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
           
-          {/* Hover Action */}
-          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-            <div className="px-6 py-3 bg-text-primary text-base text-[11px] font-bold uppercase tracking-[0.2em] rounded-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-2xl flex items-center gap-2">
-              Explore Project <ArrowUpRight size={16} />
+          {/* Elegant Hover Indicator */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 z-30">
+            <div className="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center shadow-2xl scale-50 group-hover/card:scale-100 transition-transform duration-500">
+              <ArrowUpRight size={24} />
             </div>
           </div>
 
           {/* Featured Badge */}
           {project.isPinned && (
-            <div 
-              className="absolute top-6 left-6 z-10 px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest bg-primary/20 text-primary border border-primary/30 backdrop-blur-md"
-              style={{ 
-                color: project.dominantColor, 
-                borderColor: `${project.dominantColor}4d`,
-                backgroundColor: `${project.dominantColor}1a`
-              }}
-            >
-              Featured
+            <div className="absolute top-6 left-6 z-10">
+              <span 
+                className="px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-[0.2em] backdrop-blur-md border"
+                style={{ 
+                  color: accentColor, 
+                  borderColor: `${accentColor}4D`,
+                  backgroundColor: `${accentColor}1A`
+                }}
+              >
+                Featured
+              </span>
             </div>
           )}
         </div>
 
-        <div className="p-8 flex-1 flex flex-col">
+        <div className="p-8 flex-1 flex flex-col relative">
           <div className="flex flex-wrap gap-2 mb-6">
             {project.tech.slice(0, 3).map((tag) => (
               <span 
                 key={tag} 
-                className="px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider text-text-muted bg-surface/40 rounded-full border border-border/40"
+                className="px-2.5 py-1 text-[8px] font-mono font-bold uppercase tracking-widest text-text-muted bg-white/5 rounded border border-white/5"
               >
                 {tag}
               </span>
             ))}
-            {project.tech.length > 3 && (
-              <span className="px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider text-text-muted bg-surface/40 rounded-full border border-border/40">
-                +{project.tech.length - 3}
-              </span>
-            )}
           </div>
           
           <h3 
-            className="text-2xl font-display font-bold text-text-primary mb-3 leading-tight group-hover:text-primary transition-colors tracking-tight"
-            style={{ '--color-primary': project.dominantColor } as React.CSSProperties}
+            className="text-2xl font-display font-bold text-text-primary mb-3 leading-tight tracking-tight group-hover/card:text-primary transition-colors duration-500"
+            style={{ color: project.isPinned ? accentColor : 'inherit' } as any}
           >
             {project.name}
           </h3>
           
-          <p className="text-text-secondary text-sm line-clamp-2 leading-relaxed font-body mb-6">
+          <p className="text-text-secondary text-sm line-clamp-2 leading-relaxed font-body mb-8 opacity-70">
             {project.description}
           </p>
+
+          <div className="mt-auto flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-text-muted group-hover/card:text-text-primary transition-colors duration-500">
+            <span>View Case Study</span>
+            <div className="w-8 h-px bg-white/20 group-hover/card:w-12 group-hover/card:bg-primary transition-all duration-500" />
+          </div>
         </div>
 
         {/* Navigation Link */}
         <Link 
           href={`/projects/${projectSlug}`} 
-          className="absolute inset-0 z-20"
+          className="absolute inset-0 z-40"
           aria-label={project.name}
         />
       </SpotlightCard>

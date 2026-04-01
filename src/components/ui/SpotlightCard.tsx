@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 interface SpotlightCardProps {
   children: React.ReactNode;
@@ -9,20 +9,19 @@ interface SpotlightCardProps {
   color?: string; // Dynamic spotlight color
 }
 
-export const SpotlightCard: React.FC<SpotlightCardProps> = ({
+const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = "",
-  color = "var(--color-primary)", // Default to primary
+  color = "var(--color-primary)",
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   // Smooth movement
-  const smoothX = useSpring(mouseX, { damping: 30, stiffness: 200 });
-  const smoothY = useSpring(mouseY, { damping: 30, stiffness: 200 });
+  const smoothX = useSpring(mouseX, { damping: 40, stiffness: 300 });
+  const smoothY = useSpring(mouseY, { damping: 40, stiffness: 300 });
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -32,48 +31,50 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
 
   return (
     <div
-      ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden rounded-[2.5rem] bg-surface/20 border border-border/40 transition-colors duration-500 hover:border-border/60 ${className}`}
+      className={`relative overflow-hidden rounded-[2rem] bg-surface/10 border border-white/5 transition-all duration-700 hover:border-white/20 hover:bg-surface/20 ${className}`}
     >
-      {/* Dynamic Spotlight Glow */}
+      {/* Premium Spotlight Glow */}
       <motion.div
-        className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-0"
+        className="pointer-events-none absolute -inset-px transition-opacity duration-500 z-0"
         style={{
           opacity: isHovered ? 1 : 0,
           background: `radial-gradient(
-            600px circle at ${smoothX}px ${smoothY}px,
-            ${color}15,
-            transparent 40%
+            500px circle at ${smoothX}px ${smoothY}px,
+            ${color}12,
+            transparent 70%
           )`,
         }}
       />
       
-      {/* Subtle border highlight */}
+      {/* Refined border highlight */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-[2.5rem] z-10"
+        className="pointer-events-none absolute -inset-px rounded-[2rem] z-10"
         style={{
+          opacity: isHovered ? 1 : 0,
           background: `radial-gradient(
-            300px circle at ${smoothX}px ${smoothY}px,
-            ${color}33,
-            transparent 60%
+            250px circle at ${smoothX}px ${smoothY}px,
+            ${color}22,
+            transparent 80%
           )`,
           maskImage: `radial-gradient(
-            300px circle at ${smoothX}px ${smoothY}px,
+            250px circle at ${smoothX}px ${smoothY}px,
             black,
             transparent
           )`,
           WebkitMaskImage: `radial-gradient(
-            300px circle at ${smoothX}px ${smoothY}px,
+            250px circle at ${smoothX}px ${smoothY}px,
             black,
             transparent
           )`,
         }}
       />
 
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-20 h-full w-full">{children}</div>
     </div>
   );
 };
+
+export default SpotlightCard;
