@@ -114,7 +114,7 @@ export default function FloatingTitle({
         ease: [0.16, 1, 0.3, 1],
       }}
       onClick={triggerAnimation}
-      className={`cursor-pointer group ${!isMini && !isMobile ? 'bg-base h-screen' : ''}`}
+      className={`cursor-pointer group`}
     >
       <div className="text-center relative">
         <AnimatePresence>

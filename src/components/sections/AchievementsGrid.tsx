@@ -35,66 +35,87 @@ export interface Achievement {
   is_visible: boolean;
 }
 
+const CERT_DATA: Achievement[] = [
+  {
+    id: "dicoding-financial",
+    title: "Introduction to Financial Literacy",
+    issuer: "Dicoding × DBS Foundation",
+    year: 2026,
+    type: "certificate",
+    image_path: "/certs/dicoding-financial-literacy.jpg",
+    url: "https://dicoding.com/certificates/1RXYQ9NRQZVM",
+    is_visible: true,
+    category: "Software Engineering"
+  },
+  {
+    id: "ibm-gen-ai",
+    title: "Use Generative AI for Software Development",
+    issuer: "IBM SkillsBuild",
+    year: 2025,
+    type: "certificate",
+    image_path: "/certs/ibm-genai-software-dev.jpg",
+    url: "#",
+    is_visible: true,
+    category: "Software Engineering"
+  },
+  {
+    id: "dicoding-dasar-ai",
+    title: "Belajar Dasar AI",
+    issuer: "Dicoding Indonesia",
+    year: 2026,
+    type: "certificate",
+    image_path: "/certs/dicoding-dasar-ai.jpg",
+    url: "https://dicoding.com/certificates/QLZ9RD0Q0Z5D",
+    is_visible: true,
+    category: "Software Engineering"
+  },
+  {
+    id: "ibm-granite",
+    title: "Getting Started with IBM Granite Models",
+    issuer: "IBM SkillsBuild",
+    year: 2025,
+    type: "certificate",
+    image_path: "/certs/ibm-granite-models.jpg",
+    url: "#",
+    is_visible: true,
+    category: "Software Engineering"
+  },
+  {
+    id: "dibimbing-rpa",
+    title: "Robotic Process Automation",
+    issuer: "Dibimbing.id",
+    year: 2024,
+    type: "certificate",
+    image_path: "/certs/dibimbing-rpa.jpg",
+    url: "#",
+    is_visible: true,
+    category: "Automation"
+  },
+  {
+    id: "dibimbing-devops",
+    title: "DevOps Engineering",
+    issuer: "Dibimbing.id",
+    year: 2024,
+    type: "certificate",
+    image_path: "/certs/dibimbing-devops.jpg",
+    url: "#",
+    is_visible: true,
+    category: "Infrastructure"
+  }
+];
+
 export default function AchievementsGrid({ initialAchievements }: { initialAchievements?: Achievement[] }) {
   const { t } = useLangStore();
+  const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<"all" | AchievementType>("all");
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-  const [prevInitial, setPrevInitial] = useState(initialAchievements);
-  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements || []);
-
-  if (initialAchievements !== prevInitial) {
-    setPrevInitial(initialAchievements);
-    setAchievements(initialAchievements || []);
-  }
+  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements || CERT_DATA);
 
   useEffect(() => {
-    const channel = supabase
-      .channel('achievements_realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'achievements' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const newItem = payload.new as AchievementRecord;
-            const mappedItem: Achievement = {
-              id: newItem.id,
-              title: newItem.title,
-              issuer: newItem.issuer || "Unknown",
-              year: newItem.year || 2024,
-              type: (newItem.type || 'certificate') as AchievementType,
-              category: (newItem as any).category || "Premium",
-              credential_id: (newItem as any).credential_id || undefined,
-              image_path: newItem.image_path || "",
-              url: newItem.credential_url || undefined,
-              is_visible: newItem.is_visible,
-            };
-            setAchievements((prev) => [mappedItem, ...prev]);
-          } else if (payload.eventType === 'UPDATE') {
-            const updatedItem = payload.new as AchievementRecord;
-            setAchievements((prev) => prev.map((item) => (item.id === updatedItem.id ? {
-              ...item,
-              title: updatedItem.title,
-              issuer: updatedItem.issuer || item.issuer,
-              year: updatedItem.year || item.year,
-              type: (updatedItem.type || item.type) as AchievementType,
-              category: (updatedItem as any).category || item.category,
-              credential_id: (updatedItem as any).credential_id || item.credential_id,
-              image_path: updatedItem.image_path || item.image_path,
-              url: updatedItem.credential_url || item.url,
-              is_visible: updatedItem.is_visible,
-            } : item)));
-          } else if (payload.eventType === 'DELETE') {
-            const oldId = (payload.old as { id: string }).id;
-            setAchievements((prev) => prev.filter((item) => item.id !== oldId));
-          }
-        }
-      )
-      .subscribe();
+    setMounted(true);
+  }, []);
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [initialAchievements]);
+  if (!mounted) return null;
 
   const filtered = achievements.filter(a => 
     filter === "all" ? true : a.type === filter

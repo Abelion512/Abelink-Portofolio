@@ -32,9 +32,9 @@ export default function AboutPage() {
       isVideo: false,
     },
     {
-      name: "Ah Yu-jin",
+      name: "An Yu-jin",
       agency: "IVE",
-      image: "/Addictions/Ah_Yu-jin.mp4",
+      image: "/Addictions/An_Yu-jin.mp4",
       isVideo: true,
     },
   ];
@@ -58,9 +58,16 @@ export default function AboutPage() {
           <section className="grid lg:grid-cols-12 gap-16 items-start">
             <div className="lg:col-span-8 space-y-10">
               <div className="space-y-6">
-                <p className="text-xl md:text-2xl text-text-primary leading-relaxed font-light">
-                  {t("about.p1")}
-                </p>
+                {mounted && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="text-xl md:text-2xl text-text-primary leading-relaxed font-display"
+                  >
+                    {t("about.p1")}
+                  </motion.p>
+                )}
                 <p className="text-lg text-text-secondary leading-relaxed">
                   {t("about.p2")}
                 </p>

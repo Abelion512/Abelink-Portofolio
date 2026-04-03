@@ -39,7 +39,7 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 transition-all duration-300 ${
         scrolled
           ? "bg-base/90 backdrop-blur-xl border-b border-border/50 shadow-lg py-3"
           : "bg-transparent py-5"
@@ -91,7 +91,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Right: Language & About */}
+      {/* Right: Language */}
       <div className="hidden lg:flex items-center justify-end gap-6 min-w-50">
         {mounted && (
           <div className="flex items-center border border-border/50 rounded-full overflow-hidden bg-surface/40">
@@ -110,13 +110,6 @@ export default function Navbar() {
             ))}
           </div>
         )}
-
-        <Link
-          href="/about"
-          className="text-xs font-mono text-primary hover:underline hover:text-primary-light transition-colors whitespace-nowrap"
-        >
-          {mounted ? t("nav.about") : "About"}
-        </Link>
       </div>
 
       {/* Mobile Header (Minimal) */}

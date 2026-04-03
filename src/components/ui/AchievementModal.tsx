@@ -14,7 +14,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
   const { t } = useLangStore();
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-8 overflow-y-auto">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -27,7 +27,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
       {/* Modal Container */}
       <motion.div
         layoutId={`card-${achievement.id}`}
-        className="relative z-[110] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_0_80px_rgba(0,0,0,0.8)]"
+        className="relative z-[2100] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_0_80px_rgba(0,0,0,0.8)] my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Mobile */}

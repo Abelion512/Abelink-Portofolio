@@ -29,6 +29,14 @@ interface ProjectsGridProps {
 
 export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
   const { t } = useLangStore();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+  
   const displayProjects = initialProjects || [];
 
   return (
