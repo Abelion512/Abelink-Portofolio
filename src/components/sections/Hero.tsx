@@ -79,7 +79,10 @@ export default function Hero({
               <span
                 className={`w-2 h-2 rounded-full ${openToWork ? "bg-accent animate-pulse shadow-[0_0_8px_var(--color-accent)]" : "bg-text-secondary opacity-50"}`}
               />
-              <span className="text-[10px] font-mono tracking-widest uppercase text-text-primary">
+              <span 
+                suppressHydrationWarning
+                className="text-[10px] font-mono tracking-widest uppercase text-text-primary"
+              >
                 {openToWork ? t("hero.status.open") : t("contact.unavailable")}
               </span>
             </div>
@@ -87,7 +90,10 @@ export default function Hero({
 
           {/* 2. Headline with Easter Egg - Fixed typography hierarchy */}
           <motion.div variants={item} className="mb-4">
-            <h1 className="text-2xl md:text-4xl font-display font-bold tracking-tight text-text-secondary inline-block mr-3">
+            <h1 
+              suppressHydrationWarning
+              className="text-2xl md:text-4xl font-display font-bold tracking-tight text-text-secondary inline-block mr-3"
+            >
               {t("hero.greeting")}
             </h1>
             <EasterEggName />
@@ -109,7 +115,10 @@ export default function Hero({
 
           {/* 4. Bio Text */}
           <motion.div variants={item} className="max-w-2xl mx-auto mb-10">
-            <p className="text-lg md:text-xl text-text-secondary leading-relaxed font-body">
+            <p 
+              suppressHydrationWarning
+              className="text-lg md:text-xl text-text-secondary leading-relaxed font-body"
+            >
               {t("hero.desc")}
             </p>
           </motion.div>

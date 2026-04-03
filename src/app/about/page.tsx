@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useLangStore } from "@/store/languageStore";
@@ -11,7 +11,12 @@ import SpotlightCard from "@/components/ui/SpotlightCard";
 
 export default function AboutPage() {
   const { t } = useLangStore();
+  const [mounted, setMounted] = useState(false);
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [selectedMedia, setSelectedMedia] = useState<{
     src: string;
     alt: string;

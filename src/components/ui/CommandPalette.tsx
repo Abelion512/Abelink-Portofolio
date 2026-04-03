@@ -32,11 +32,11 @@ export default function CommandPalette() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] bg-base/80 backdrop-blur-md px-4">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] bg-base/60 backdrop-blur-sm px-4">
       <div className="fixed inset-0" onClick={() => setOpen(false)} />
       
       <Command 
-        className="relative w-full max-w-xl bg-surface/80 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-overlay overflow-hidden"
+        className="relative w-full max-w-xl bg-surface/90 backdrop-blur-xl rounded-2xl border border-white/10 shadow-overlay overflow-hidden will-change-transform"
         label="Global Command Menu"
       >
         <div className="flex items-center gap-3 px-4 border-b border-border/50">
@@ -48,7 +48,7 @@ export default function CommandPalette() {
           />
         </div>
 
-        <Command.List className="max-h-[350px] overflow-y-auto p-2 no-scrollbar">
+        <Command.List className="max-h-[350px] overflow-y-auto p-2 no-scrollbar scroll-smooth">
           <Command.Empty className="p-8 text-center text-text-secondary text-sm font-mono">
             {lang === 'id' ? 'Tidak ada hasil ditemukan.' : 'No results found.'}
           </Command.Empty>
@@ -58,7 +58,7 @@ export default function CommandPalette() {
               <Command.Item 
                 key={item.href}
                 onSelect={() => runCommand(() => router.push(item.href))}
-                className="flex items-center gap-3 p-3 mt-1 rounded-xl text-text-primary text-sm hover:cursor-pointer hover:bg-white/5 aria-selected:bg-primary aria-selected:text-white transition-all"
+                className="flex items-center gap-3 p-3 mt-1 rounded-xl text-text-primary text-sm hover:cursor-pointer hover:bg-white/5 aria-selected:bg-primary aria-selected:text-white transition-[background-color,color] duration-200 will-change-[background-color,color]"
               >
                 <item.icon size={16} /> {t(item.label)}
               </Command.Item>
@@ -68,7 +68,7 @@ export default function CommandPalette() {
           <Command.Group heading="Actions" className="px-3 py-2 mt-2 text-[10px] font-mono text-accent uppercase tracking-widest border-t border-border/50">
             <Command.Item 
               onSelect={() => runCommand(() => setLang(lang === 'en' ? 'id' : 'en'))}
-              className="flex items-center gap-3 p-3 mt-1 rounded-xl text-text-primary text-sm hover:cursor-pointer hover:bg-white/5 aria-selected:bg-primary aria-selected:text-white transition-all"
+              className="flex items-center gap-3 p-3 mt-1 rounded-xl text-text-primary text-sm hover:cursor-pointer hover:bg-white/5 aria-selected:bg-primary aria-selected:text-white transition-[background-color,color] duration-200"
             >
               <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold">
                 {lang.toUpperCase()}

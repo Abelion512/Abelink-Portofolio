@@ -10,8 +10,7 @@ import { supabase } from "../lib/supabase";
 const lowerCaseReplace = (str: string) => str.toLowerCase().replace(/\s+/g, "-");
 
 // ============================================
-// TYPES
-// ============================================
+export type ProjectStatus = "live" | "wip" | "preview";
 
 export interface Project {
   id: string;
@@ -25,7 +24,7 @@ export interface Project {
   dominantColor?: string; // CamelCase version
   coverImage?: string; // Match ProjectsGrid interface
   cover_image?: string; // Supabase column name
-  status?: string;
+  status?: ProjectStatus;
   tech: string[];
   github_url?: string;
   githubUrl?: string; // CamelCase version
@@ -44,13 +43,14 @@ export interface Achievement {
   title: string;
   issuer: string;
   year: number;
-  type: string; // 'certificate' | 'participation', etc.
-  category?: string; // New: Software Engineering, AI, etc.
-  credential_id?: string; // New: ID from issuer
+  type: "certificate" | "participation";
+  category?: string;
+  credential_id?: string;
   image_path?: string;
-  credential_url?: string;
+  url?: string;
+  credential_url?: string; // Keep for compatibility
   featured?: boolean;
-  is_visible?: boolean;
+  is_visible: boolean;
   created_at: string;
 }
 
@@ -145,7 +145,14 @@ export function useAchievements() {
           .order("created_at", { ascending: false });
 
         if (error) throw error;
-        setAchievements(data || []);
+        
+        const mapped = (data || []).map((a) => ({
+          ...a,
+          url: a.credential_url || a.url,
+          is_visible: a.is_visible ?? true,
+        }));
+
+        setAchievements(mapped);
       } catch (err) {
         console.error("Error fetching achievements:", err);
         setError(

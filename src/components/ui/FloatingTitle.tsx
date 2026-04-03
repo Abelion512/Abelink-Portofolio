@@ -75,7 +75,7 @@ export default function FloatingTitle({
       alignItems: "center",
       justifyContent: "center",
       zIndex: 100,
-      height: "80px",
+      height: "70px",
       backgroundColor: "rgba(10, 10, 10, 0.98)",
       backdropFilter: "blur(24px)",
       borderBottom: "1px solid rgba(255, 255, 255, 0.15)",
@@ -124,7 +124,7 @@ export default function FloatingTitle({
               initial="hero"
               animate="hero"
               exit="mini"
-              className="text-xs md:text-sm font-mono text-text-muted uppercase tracking-[0.4em] mb-6"
+              className="text-xs md:text-sm font-mono text-text-muted uppercase tracking-[0.4em] mb-12"
             >
               {subtitle}
             </motion.p>

@@ -30,7 +30,7 @@ export interface Achievement {
   type: AchievementType;
   category?: string;
   credential_id?: string;
-  image_path: string;
+  image_path?: string;
   url?: string;
   is_visible: boolean;
 }

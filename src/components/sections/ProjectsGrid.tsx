@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Github, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -13,13 +14,13 @@ export interface Project {
   id: string;
   name: string;
   slug?: string;
-  description: string;
-  coverImage: string;
-  status: ProjectStatus;
+  description?: string;
+  coverImage?: string;
+  status?: ProjectStatus;
   tech: string[];
   githubUrl?: string;
   liveUrl?: string;
-  isPinned: boolean;
+  isPinned?: boolean;
   dominantColor?: string;
 }
 
