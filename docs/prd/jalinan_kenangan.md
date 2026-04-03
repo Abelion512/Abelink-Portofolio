@@ -1,44 +1,59 @@
-# PRD: Jalinan Kenangan (The Archive)
+# 🌿 PRD Visual: Jalinan Kenangan (The Archive) - v1.3 Final
 
-## 🌿 Filosofi & Visi
-Mengubah fokus dari "rindu/masa lalu" menjadi "Energi Positif & Inspirasi". Ruang ini adalah arsip perjalanan hidup yang memberikan kekuatan bagi siapa pun yang menemukannya.
+> [!IMPORTANT]
+> **Pemisahan Halaman (Network Optimization)**:
+> - **`/archive`**: Halaman utama Bento Grid (Ringan, Tekstual, Foto Terkompresi).
+> - **`/serenity`**: Halaman Imersif (Berat, 3D Scene, Pagar Kenangan, Animasi Gembok).
 
-### Fitur Utama:
-1.  **Gembok Digital (The Positivity Lock)**:
-    - Pengunjung dapat menulis pesan positif atau doa.
-    - Setelah dikirim, pesan "dikunci" (tidak bisa diubah) dan kunci dibuang secara visual.
-    - Melambangkan melepaskan beban dan menyimpan kebaikan.
-2.  **Saksi Kehadiran (Visitor Certificate)**:
-    - Menghitung pengunjung unik (Saksi ke-n).
-    - Logika deteksi IP di sisi server (Supabase Edge Function).
-    - Desain sertifikat premium yang bisa di-share.
-3.  **Bento Grid Media (The Showcase)**:
-    - **TikTok**: Video pilihan dengan credit username yang jelas.
-    - **Fancams**: Fokus pada IVE dan Heart2Hearts (H2H) per member.
-    - **Musik**: Real-time stats dari Last.fm (`abelionz`).
-4.  **Serenity Mode (Time-aware UI)**:
-    - Tema latar belakang berubah dinamis mengikuti waktu lokal pengunjung.
-    - Suasana tenang dan damai untuk membaca arsip.
+---
 
-## 🔒 Keamanan & Akses
-- **Hidden Entrance**: Klik foto profil 5x untuk membuka akses ke `/serenity`.
-- **Owner Bypass**: URL `/serenity?owner=true` memberikan hak akses penuh dan menyimpan flag di `LocalStorage`.
-- **Security Check**: Jika URL bocor, sistem akan meminta "Secret Handshake" (kombinasi klik/gestur rahasia) yang bisa dikonfigurasi via Supabase.
+## 🎨 Visi & Desain: Fakta-Fiksi WIB
+Ruang ini menggunakan siklus 24 jam Jakarta (WIB).
 
-## 🛠️ Integrasi Teknis
-- **Runtime**: Bun (Wajib).
-- **Frontend**: Next.js 15+ (App Router).
-- **Backend**: Supabase (Database + Edge Functions for Telegram Webhook).
-- **External API**: 
-    - Last.fm (Music Tracking).
-    - GitHub (Auto Changelog via `use cache`).
-- **Sync**: Telegram Bot -> Supabase Edge Functions (24/7 Sync).
+- **Siklus Cahaya**: Matahari Terbit (Kabut/Fajar), Terik (Siang), Senja (Jingga), Malam (Lampu Taman & Pagar menyala otomatis).
+- **Asetika TV-UI**: Rounded `32px`, `backdrop-blur-2xl` (fallback ke solid pada low-end device).
 
-## 📊 Data Mapping (Machine Learning Style)
-- **Phase 1: Collection**: Data mentah masuk via Telegram/n8n.
-- **Phase 2: Cleaning**: Filter manual/otomatis oleh Abelion.
-- **Phase 3: Evaluation**: Hanya data berkualitas yang tampil di `/serenity`.
+---
 
-## 📂 Migration Notes
-- Dokumen lama di `@/docs` dipindahkan ke `/docs/archive/`.
-- File `.env.local` harus mencakup `LASTFM_API_KEY` dan `TELEGRAM_BOT_TOKEN`.
+## 🌐 Optimasi Jaringan & Pengalaman User
+Memberikan transparansi kepada pengunjung tentang beratnya aset visual.
+
+*   **WiFi Recommended**: Pada entri `/serenity`, sistem akan menampilkan pesan: *"WiFi Recommended: Anda akan memasuki ruang imersif 3D yang kaya akan detail visual (High Quality Assets)."*
+*   **Loading Gateway**: Sederetan kutipan puitis (Paraphrased Tere Liye) muncul saat aset-aset berat (Three.js/High-Res textures) dimuat di latar belakang.
+*   **Tech Stack Optimization**:
+    - **Media**: Penggunaan format `AV1` untuk video dan `WebP/AVIF` untuk gambar.
+    - **Lazy Loading**: Hanya memuat komponen 3D saat user sudah melewati gerbang entri `/serenity`.
+
+---
+
+## 🗝️ Fitur Ungkapan: Gembok Digital (The Rite of Release)
+Skenario pelepasan memori ke jurang fiksi.
+
+*   **Scene Buang Kunci**: Animasi interaktif di mana karakter/lengan user membuang kunci ke samudera awan setelah gembok terpasang di **Pagar Dataran Tinggi**.
+*   **Kepadatan Gembok**: Gembok lama berubah menjadi bit cahaya puitis untuk menghemat draw call render.
+
+---
+
+## 🔐 Keamanan: Stealth Pixel Handshake
+Akses owner tersembunyi yang tidak terdeteksi bot/AI crawler.
+
+- **Mekanisme**: Satu titik pixel (atau elemen kecil dekorasi taman) yang membutuhkan interaksi spesifik (misal: Tap 3x + Long Press) untuk login sebagai Abelion.
+
+---
+
+## 📊 Mapping Arsitektur
+| Path | Tujuan | Beban Jaringan |
+| :--- | :--- | :--- |
+| `/archive` | Life Log, Music, Meta Media | **Ringan** (4G Optimized) |
+| `/serenity` | The Witness, Gembok, 3D Scene | **Berat** (WiFi Recommended) |
+
+---
+
+## 📅 Roadmap Implementasi (Re-Revised)
+- **Phase 1**: Database Hardening & RLS Setup (Projects FIX). [DONE]
+- **Phase 2**: Struktur Frontend `/archive` & Inisialisasi i18n.
+- **Phase 3**: Pengembangan `/serenity` (3D Pagar & Key-Throw Animation).
+- **Phase 4**: Telegram Webhook Integration & Media Compression.
+
+---
+**Status Dokumen: 🕋 Kiblat Perubahan (V1.3 Final - Network Optimized).**
