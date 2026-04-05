@@ -6,19 +6,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Calendar, Award, Trophy, ExternalLink } from "lucide-react";
 import { useLangStore } from "@/store/languageStore";
 import AchievementModal from "@/components/ui/AchievementModal";
-import { supabase } from "@/lib/supabase";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 
-interface AchievementRecord {
-  id: string;
-  title: string;
-  issuer?: string;
-  year?: number;
-  type?: string;
-  image_path?: string;
-  credential_url?: string;
-  is_visible: boolean;
-}
 
 export type AchievementType = "certificate" | "participation";
 
@@ -109,9 +98,10 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<"all" | AchievementType>("all");
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements || CERT_DATA);
+  const achievements = initialAchievements || CERT_DATA;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -123,16 +113,16 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
 
   return (
     <div className="space-y-12">
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-3 justify-center mb-16">
+      {/* Filter Tabs (Multi-Pill Style) */}
+      <div className="flex flex-wrap gap-2 justify-center mb-16 p-1.5 rounded-2xl glass-liquid w-fit mx-auto border-white/10">
         {(["all", "certificate", "participation"] as const).map((type) => (
           <button
             key={type}
             onClick={() => setFilter(type)}
-            className={`px-8 py-3 rounded-full text-[10px] font-mono uppercase tracking-[0.3em] transition-all border ${
+            className={`px-6 py-2.5 rounded-xl text-[10px] font-mono uppercase tracking-[0.3em] transition-all active-haptic ${
               filter === type 
-                ? "bg-primary text-white border-primary shadow-xl shadow-primary/20" 
-                : "bg-white/5 text-text-secondary border-white/5 hover:bg-white/10 hover:text-text-primary"
+                ? "bg-primary/20 text-white border border-primary/30 shadow-lg shadow-primary/10" 
+                : "text-text-secondary hover:text-text-primary hover:bg-white/5"
             }`}
           >
             {type === 'certificate' ? t('achievements.filter.certificate') : 
@@ -195,14 +185,15 @@ function AchievementCard({ achievement, onSelect }: { achievement: Achievement; 
         className="h-full group cursor-pointer"
       >
         <div onClick={onSelect}>
-          <div className="relative aspect-[16/10] overflow-hidden bg-black/40 border-b border-white/5">
+          <div className="relative aspect-video overflow-hidden bg-black/60">
             {achievement.image_path ? (
-              <div className="w-full h-full relative p-4 group-hover:scale-105 transition-transform duration-700">
+              <div className="w-full h-full relative group-hover:scale-110 transition-transform duration-1000 ease-[0.16, 1, 0.3, 1]">
                 <Image 
-                  src={achievement.image_path} 
-                  alt={achievement.title}
-                  fill
-                  className="object-contain p-4 drop-shadow-2xl"
+                   src={achievement.image_path.replace(/^\/?public\//, '/')} 
+                   alt={achievement.title}
+                   fill
+                   className="object-cover"
+                   priority
                 />
               </div>
             ) : (

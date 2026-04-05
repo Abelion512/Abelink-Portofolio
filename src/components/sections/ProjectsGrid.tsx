@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Github, ArrowUpRight } from "lucide-react";
+import { Github, ArrowUpRight, Briefcase } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLangStore } from "@/store/languageStore";
@@ -33,6 +33,7 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -81,12 +82,24 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         className="h-full flex flex-col group/card"
       >
         <div className="relative aspect-[16/10] bg-black/40 overflow-hidden border-b border-white/5">
-          <Image 
-            src={project.coverImage || "/placeholder-project.jpg"} 
-            alt={project.name}
-            fill
-            className="object-cover transition-all duration-1000 group-hover/card:scale-110 group-hover/card:blur-[2px] opacity-80 group-hover/card:opacity-60"
-          />
+          {(project.coverImage && project.coverImage !== "/placeholder-project.jpg") ? (
+            <Image 
+              src={project.coverImage} 
+              alt={project.name}
+              fill
+              className="object-cover transition-all duration-1000 group-hover/card:scale-110 group-hover/card:blur-[2px] opacity-80 group-hover/card:opacity-60"
+            />
+          ) : (
+            <div 
+              className="absolute inset-0 bg-linear-to-br from-surface to-base flex flex-col items-center justify-center overflow-hidden"
+              style={{ 
+                backgroundImage: `linear-gradient(135deg, ${accentColor}1A 0%, rgba(0,0,0,0.6) 100%)` 
+              }}
+            >
+              <Briefcase size={40} className="text-primary opacity-20 group-hover/card:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-5" />
+            </div>
+          )}
           
           {/* Subtle Glow Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
@@ -129,7 +142,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           
           <h3 
             className="text-2xl font-display font-bold text-text-primary mb-3 leading-tight tracking-tight group-hover/card:text-primary transition-colors duration-500"
-            style={{ color: project.isPinned ? accentColor : 'inherit' } as any}
+            style={{ color: project.isPinned ? accentColor : 'inherit' }}
           >
             {project.name}
           </h3>

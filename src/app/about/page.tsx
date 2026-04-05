@@ -4,17 +4,16 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { useLangStore } from "@/store/languageStore";
-import CardModal from "@/components/ui/CardModal";
 import MediaPopup from "@/components/ui/MediaPopup";
-import FloatingTitle from "@/components/ui/FloatingTitle";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 
 export default function AboutPage() {
   const { t } = useLangStore();
   const [mounted, setMounted] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
   const [selectedMedia, setSelectedMedia] = useState<{
@@ -46,16 +45,11 @@ export default function AboutPage() {
 
   return (
     <>
-      <FloatingTitle
-        title={t("about.title")}
-        subtitle={t("about.missions_sub")}
-        onAnimationComplete={() => setIsReady(true)}
-      />
 
-      <main className="relative z-10 pt-36 md:pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
+      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: isReady ? 1 : 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           className="space-y-16"
         >
@@ -115,7 +109,7 @@ export default function AboutPage() {
                     </div>
                     <div>
                       <p className="text-sm text-text-muted font-mono leading-relaxed italic">
-                        "Constant learning is the only way to navigate the evolving digital horizon."
+                        &quot;Constant learning is the only way to navigate the evolving digital horizon.&quot;
                       </p>
                     </div>
                   </div>

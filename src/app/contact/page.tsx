@@ -1,15 +1,10 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useLangStore } from "@/store/languageStore";
-import FloatingTitle from "@/components/ui/FloatingTitle";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { Mail, Instagram, Linkedin, Github, Send } from "lucide-react";
-import { useState } from "react";
 
 export default function ContactPage() {
-  const { t } = useLangStore();
-  const [isReady, setIsReady] = useState(false);
 
   const contactMethods = [
     {
@@ -44,22 +39,17 @@ export default function ContactPage() {
 
   return (
     <>
-      <FloatingTitle
-        title={t("contact.title")}
-        subtitle={t("contact.subtitle")}
-        onAnimationComplete={() => setIsReady(true)}
-      />
 
-      <main className="relative z-10 pt-36 md:pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
+      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: isReady ? 1 : 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           className="space-y-16"
         >
           {/* Contact Methods Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {contactMethods.map((method, idx) => (
+            {contactMethods.map((method) => (
               <a 
                 key={method.label} 
                 href={method.href}
@@ -100,7 +90,7 @@ export default function ContactPage() {
                   Ready to start a <span className="text-gradient">new project?</span>
                 </h3>
                 <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-                  I'm always open to discussing new opportunities, creative ideas, or specialized development projects.
+                  I&apos;m always open to discussing new opportunities, creative ideas, or specialized development projects.
                 </p>
                 <div className="pt-4">
                   <a 

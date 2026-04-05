@@ -9,7 +9,7 @@ export default function BackToTop() {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      setIsVisible(window.pageYOffset > 500);
+      setIsVisible(window.scrollY > 500);
     };
 
     window.addEventListener("scroll", toggleVisibility);
@@ -35,10 +35,10 @@ export default function BackToTop() {
             damping: 20 
           }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-[1001] w-14 h-14 rounded-3xl bg-primary/20 backdrop-blur-md border border-primary/30 text-primary flex items-center justify-center hover:bg-primary/30 transition-all"
+          className="fixed bottom-24 right-6 md:right-8 z-[1000] w-11 h-11 rounded-2xl bg-surface/30 backdrop-blur-2xl border border-white/10 text-primary flex items-center justify-center hover:bg-surface/50 transition-all shadow-2xl group ring-1 ring-white/5 shadow-primary/10"
           aria-label="Back to top"
         >
-          <ArrowUp size={20} />
+          <ArrowUp size={18} className="group-hover:-translate-y-0.5 transition-transform" />
         </motion.button>
       )}
     </AnimatePresence>

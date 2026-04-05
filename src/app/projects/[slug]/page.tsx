@@ -2,7 +2,7 @@
 
 import { useProjectBySlug } from "@/hooks/useData";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
 import { 
@@ -14,16 +14,15 @@ import {
   ChevronRight,
   ArrowLeft
 } from "lucide-react";
-import ProjectNavbar from "@/components/layout/ProjectNavbar";
 import FloatingActions from "@/components/ui/FloatingActions";
-import { useLangStore } from "@/store/languageStore";
 import Link from "next/link";
+import { useLangStore } from "@/store/languageStore";
 
 export default function ProjectDetailPage() {
+  const { t } = useLangStore();
   const params = useParams();
   const slug = params.slug as string;
   const { project, loading, error } = useProjectBySlug(slug);
-  const { t } = useLangStore();
 
   if (loading) {
     return (
@@ -31,7 +30,7 @@ export default function ProjectDetailPage() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
           <p className="text-text-secondary font-mono text-xs animate-pulse">
-            LOADING CASE STUDY...
+            {t("projects.loading_case_study")}
           </p>
         </div>
       </div>
@@ -46,16 +45,16 @@ export default function ProjectDetailPage() {
             <ArrowLeft className="text-red-500" size={32} />
           </div>
           <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
-            Project Not Found
+            {t("projects.not_found_title")}
           </h1>
           <p className="text-text-secondary mb-8">
-            The project you are looking for doesn&apos;t exist or has been moved.
+            {t("projects.not_found_desc")}
           </p>
           <Link 
             href="/projects"
             className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-light transition-all shadow-lg shadow-primary/20"
           >
-            Back to Projects
+            {t("projects.back_to_projects")}
           </Link>
         </div>
       </div>
@@ -64,14 +63,9 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-base pb-32">
-      <ProjectNavbar 
-        title={project.name} 
-        githubUrl={project.githubUrl} 
-        liveUrl={project.liveUrl} 
-      />
 
       {/* Hero Section */}
-      <section className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden pt-20 flex items-center justify-center">
+      <section className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden pt-32 flex items-center justify-center">
         {/* Dynamic Glow Background */}
         <div 
           className="absolute inset-0 opacity-20 blur-[120px]"
@@ -89,7 +83,7 @@ export default function ProjectDetailPage() {
           >
             <div className="flex items-center gap-3 mb-6">
               <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-mono font-bold tracking-widest uppercase">
-                Featured Case Study
+                {t("projects.featuredCaseStudy")}
               </span>
               <div className="h-px w-12 bg-border" />
             </div>
@@ -118,15 +112,32 @@ export default function ProjectDetailPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="relative aspect-video rounded-3xl overflow-hidden border border-border/50 shadow-2xl group"
+              className="relative aspect-video rounded-3xl overflow-hidden border border-border/50 shadow-2xl group flex items-center justify-center"
             >
-              <Image
-                src={project.coverImage || "/placeholder-project.jpg"}
-                alt={project.name}
-                fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                priority
-              />
+              {(project.coverImage && project.coverImage !== "/placeholder-project.jpg") ? (
+                <Image
+                  src={project.coverImage}
+                  alt={project.name}
+                  fill
+                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                  priority
+                />
+              ) : (
+                <div 
+                  className="absolute inset-0 bg-linear-to-br from-surface to-base flex flex-col items-center justify-center"
+                  style={{ 
+                    backgroundImage: `linear-gradient(135deg, ${project.dominantColor}1A 0%, rgba(0,0,0,0.4) 100%)` 
+                  }}
+                >
+                  <div className="relative z-10 flex flex-col items-center gap-4 opacity-40">
+                    <Briefcase size={64} className="text-primary" />
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em]">{t("projects.visual_pending")}</span>
+                  </div>
+                  {/* Subtle Grid Pattern */}
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-10" />
+                </div>
+              )}
               <div className="absolute inset-0 bg-linear-to-t from-base/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.div>
 
@@ -167,7 +178,7 @@ export default function ProjectDetailPage() {
                     </blockquote>
                   }}
                 >
-                  {project.content || "Case study content is currently being prepared. Check back soon!"}
+                  {project.content || t("projects.content_pending")}
                 </ReactMarkdown>
               </div>
             </motion.article>
@@ -183,14 +194,14 @@ export default function ProjectDetailPage() {
             >
               <h3 className="text-xl font-display font-bold text-text-primary mb-8 flex items-center gap-2">
                 <Briefcase size={20} className="text-primary" />
-                Project Details
+                {t("projects.projectDetails")}
               </h3>
 
               <div className="space-y-8">
                 {/* Role */}
                 <div>
                   <p className="text-text-muted text-xs font-mono uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <Briefcase size={12} /> Role
+                    <Briefcase size={12} /> {t("projects.role")}
                   </p>
                   <p className="text-text-primary font-semibold text-lg">
                     {project.role || "Lead Developer"}
@@ -200,7 +211,7 @@ export default function ProjectDetailPage() {
                 {/* Timeline */}
                 <div>
                   <p className="text-text-muted text-xs font-mono uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <Calendar size={12} /> Timeline
+                    <Calendar size={12} /> {t("projects.timeline")}
                   </p>
                   <p className="text-text-primary font-semibold text-lg">
                     {project.timeline || "In Development"}
@@ -210,7 +221,7 @@ export default function ProjectDetailPage() {
                 {/* Tech Stack */}
                 <div>
                   <p className="text-text-muted text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Wrench size={12} /> Technologies
+                    <Wrench size={12} /> {t("projects.technologies")}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {project.tech.map((tool) => (
@@ -233,7 +244,7 @@ export default function ProjectDetailPage() {
                       className="w-full py-4 bg-primary text-white rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-primary-light transition-all shadow-xl shadow-primary/20"
                     >
                       <ExternalLink size={18} />
-                      Live Demo
+                      {t("projects.liveDemo")}
                     </a>
                   )}
                   {project.githubUrl && (
@@ -244,7 +255,7 @@ export default function ProjectDetailPage() {
                       className="w-full py-4 glass border-white/10 text-text-primary rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-surface/50 transition-all font-mono text-sm"
                     >
                       <Github size={18} />
-                      view_source_code
+                      {t("projects.viewSource")}
                     </a>
                   )}
                 </div>

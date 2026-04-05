@@ -3,6 +3,7 @@
 @theme {
   --font-display: "Syne", sans-serif;
   --font-body:    "Plus Jakarta Sans", sans-serif;
+  --font-inter:   "Inter", sans-serif;
   --font-mono:    "JetBrains Mono", monospace;
 
   --color-base:           #0a0a0f;
@@ -39,7 +40,15 @@
 
 @layer utilities {
   .glass {
-    @apply bg-surface/60 backdrop-blur-xl border border-border;
+    @apply bg-surface/60 backdrop-blur-xl border border-border rounded-2xl;
+  }
+
+  /* Apple 2025 Liquid Glass */
+  .glass-liquid {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.05);
   }
 
   .glass-dark {
@@ -50,12 +59,39 @@
     @apply bg-clip-text text-transparent bg-linear-to-r from-primary to-accent;
   }
 
+  /* Haptic Visual Feedback */
+  .active-haptic {
+    @apply transition-transform duration-200 active:scale-95;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Custom Apple-style Scrollbar with Auto-hide */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    background-clip: content-box;
+    transition: background 0.4s ease;
+  }
+  
+  *:hover > ::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-thumb:active {
+    background: rgba(255, 255, 255, 0.15);
+    background-clip: content-box;
   }
 
   .pb-safe {

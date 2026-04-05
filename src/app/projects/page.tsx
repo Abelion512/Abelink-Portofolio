@@ -1,30 +1,20 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useLangStore } from "@/store/languageStore";
-import FloatingTitle from "@/components/ui/FloatingTitle";
 import { useProjects } from "@/hooks/useData";
 import ProjectsGrid from "@/components/sections/ProjectsGrid";
-import { useState } from "react";
 
 export default function ProjectsPage() {
-  const { t } = useLangStore();
   const { projects, loading, error } = useProjects();
-  const [isReady, setIsReady] = useState(false);
 
   return (
     <>
-      <FloatingTitle
-        title={t("projects.title")}
-        subtitle={t("projects.subtitle")}
-        onAnimationComplete={() => setIsReady(true)}
-      />
 
       <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 1, delay: 0.2 }}
         >
           {loading ? (
             <div className="flex flex-col items-center justify-center py-40">

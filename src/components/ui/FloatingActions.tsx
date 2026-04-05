@@ -2,15 +2,12 @@
 
 import { motion } from "motion/react";
 import { Github, ExternalLink, Globe } from "lucide-react";
-import { useLangStore } from "@/store/languageStore";
-
 interface FloatingActionsProps {
   githubUrl?: string;
   liveUrl?: string;
 }
 
 export default function FloatingActions({ githubUrl, liveUrl }: FloatingActionsProps) {
-  const { t } = useLangStore();
 
   if (!githubUrl && !liveUrl) return null;
 

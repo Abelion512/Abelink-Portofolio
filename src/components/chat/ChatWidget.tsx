@@ -10,10 +10,10 @@ import {
   Loader2,
   X,
   MessageCircle,
-  Minimize2,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useLangStore } from "@/store/languageStore";
+
 
 interface Message {
   role: "user" | "assistant";
@@ -116,7 +116,7 @@ export default function ChatWidget() {
                   <h3 className="font-display font-bold text-sm tracking-tight">
                     AI Assistant
                   </h3>
-                  <p className="text-[10px] font-mono text-primary animate-pulse uppercase tracking-widest">
+                  <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">
                     Online
                   </p>
                 </div>
@@ -218,17 +218,11 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-3xl bg-primary text-white shadow-2xl flex items-center justify-center relative overflow-hidden group"
+        className="w-11 h-11 rounded-2xl bg-surface/30 backdrop-blur-2xl border border-white/10 text-primary shadow-2xl flex items-center justify-center relative overflow-hidden group z-[1000] ring-1 ring-white/5"
       >
-        <div className="absolute inset-0 bg-linear-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        {isOpen ? <Minimize2 size={20} /> : <MessageCircle size={20} />}
-        {!isOpen && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-accent rounded-full border-2 border-base animate-pulse"
-          />
-        )}
+        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {isOpen ? <X size={18} /> : <MessageCircle size={18} />}
+
       </motion.button>
     </div>
   );

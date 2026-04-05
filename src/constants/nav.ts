@@ -19,4 +19,5 @@ export const NAV_ITEMS = [
   { href: "/creation", label: "nav.creation", icon: Play },
   { href: "/changelog", label: "nav.changelog", icon: Clock },
   { href: "/card", label: "nav.card", icon: CreditCard },
+  { href: "/contact", label: "nav.contact", icon: User }, // Or use Mail if appropriate, but the user requested Contact label.
 ] as const;

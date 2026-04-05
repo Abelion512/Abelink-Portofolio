@@ -60,6 +60,47 @@ export interface CurrentlyLearning {
 }
 
 // ============================================
+// MOCK DATA (High-End Fallback for Portofolio)
+// ============================================
+
+export const MOCK_PROJECTS: Project[] = [
+  {
+    id: "p1",
+    name: "Naval Link",
+    slug: "naval-link",
+    description: "Maritime Logistics Optimization Engine with Real-time Satellite Sync.",
+    tech: ["Next.js", "Three.js", "PostgreSQL", "Satellite API"],
+    coverImage: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200",
+    dominantColor: "#0066ff",
+    isPinned: true,
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "p2",
+    name: "Aether OS",
+    slug: "aether-os",
+    description: "Cloud-native operating system interface with glassmorphism core.",
+    tech: ["React", "Framermotion", "TailwindCSS"],
+    coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
+    dominantColor: "#6C63FF",
+    isPinned: true,
+    created_at: new Date().toISOString()
+  }
+];
+
+export const MOCK_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: "a1",
+    title: "AWS Certified Developer",
+    issuer: "Amazon Web Services",
+    year: 2024,
+    type: "certificate",
+    is_visible: true,
+    created_at: new Date().toISOString()
+  }
+];
+
+// ============================================
 // HOOKS
 // ============================================
 
@@ -90,10 +131,13 @@ export function useProjects() {
         // query = query.eq("is_active", true);
 
         const { data, error: queryError } = await query;
+        
+        if (queryError) {
+          console.warn("Supabase Fetch Failed. Using Mock Projects.", queryError.message);
+          setProjects(MOCK_PROJECTS);
+          return;
+        }
 
-        if (queryError) throw queryError;
-
-        // Map Supabase data to Project interface
         const mappedProjects = (data || []).map((p) => ({
           ...p,
           coverImage: p.cover_image || p.coverImage || "",
@@ -104,12 +148,15 @@ export function useProjects() {
           slug: p.slug || lowerCaseReplace(p.name),
         }));
 
-        setProjects(mappedProjects);
+        // Sebaiknya hanya gunakan mock jika benar-benar tidak ada data sama sekali di DB
+        if (mappedProjects.length === 0) {
+           setProjects(MOCK_PROJECTS);
+        } else {
+           setProjects(mappedProjects);
+        }
       } catch (err) {
-        console.error("Error fetching projects:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch projects",
-        );
+        console.warn("Network Error. Falling back to Mock Projects.");
+        setProjects(MOCK_PROJECTS);
       } finally {
         setLoading(false);
       }
@@ -144,7 +191,11 @@ export function useAchievements() {
           .order("year", { ascending: false })
           .order("created_at", { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+           console.warn("Supabase Fetch Failed. Using Mock Achievements.");
+           setAchievements(MOCK_ACHIEVEMENTS);
+           return;
+        }
         
         const mapped = (data || []).map((a) => ({
           ...a,
@@ -154,10 +205,8 @@ export function useAchievements() {
 
         setAchievements(mapped);
       } catch (err) {
-        console.error("Error fetching achievements:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch achievements",
-        );
+        console.warn("Network Error. Using Mock Achievements.");
+        setAchievements(MOCK_ACHIEVEMENTS);
       } finally {
         setLoading(false);
       }

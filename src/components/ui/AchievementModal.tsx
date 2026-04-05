@@ -27,7 +27,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
       {/* Modal Container */}
       <motion.div
         layoutId={`card-${achievement.id}`}
-        className="relative z-[2100] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_0_80px_rgba(0,0,0,0.8)] my-auto"
+        className="relative z-[2100] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_64px_128px_-16px_rgba(0,0,0,0.8)] my-auto h-fit max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Mobile */}
@@ -38,25 +38,22 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
           <CloseIcon size={24} />
         </button>
 
-        {/* Left: Image Section */}
-        <div className="relative w-full md:w-[60%] bg-neutral-900 flex items-center justify-center p-4 md:p-8 min-h-[300px] md:min-h-[500px]">
+        {/* Left: Image Section (Full Bleed Focus) */}
+        <div className="relative w-full md:w-[65%] bg-black flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
           <motion.img
             layoutId={`image-${achievement.id}`}
-            src={achievement.image_path}
+            src={achievement.image_path?.replace(/^\/?public\//, '/')}
             alt={achievement.title}
-            className="max-w-full max-h-[70vh] object-contain shadow-2xl"
+            className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
             onContextMenu={(e) => e.preventDefault()}
             draggable={false}
           />
           
-          {/* Transparent Overlay (Security) */}
-          <div 
-            className="absolute inset-0 z-[115] cursor-default" 
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-[110]" />
 
           {/* Secure Badge */}
-          <div className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/5 text-[10px] font-mono font-bold uppercase tracking-wider text-green-400">
+          <div className="absolute top-6 left-6 z-[120] flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/5 text-[10px] font-mono font-bold uppercase tracking-wider text-green-400">
             <ShieldCheck size={12} /> {t('common.secure_preview')}
           </div>
         </div>
@@ -107,7 +104,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
             <div className="space-y-4">
               <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest">Description</p>
               <p className="text-sm text-text-secondary/70 leading-relaxed font-body">
-                {achievement.title} is a verified achievement issued by {achievement.issuer} in {achievement.year}. This certification validates the professional standard and expertise in this specific domain.
+                {t('achievements.description')}
               </p>
             </div>
           </div>

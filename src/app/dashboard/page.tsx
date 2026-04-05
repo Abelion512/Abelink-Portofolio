@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useLangStore } from "@/store/languageStore";
+import { usePerformance } from "@/hooks/usePerformance";
+import { MOCK_PROJECTS, MOCK_ACHIEVEMENTS } from "@/hooks/useData";
 
 interface Setting {
   open_to_work: boolean;
@@ -36,60 +38,88 @@ export default function Dashboard() {
   const [settings, setSettings] = useState<Setting | null>(null);
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { lowPowerMode } = usePerformance();
   useLangStore();
 
   useEffect(() => {
-    async function fetchDashboardData() {
-      setLoading(true);
-      
-      // 1. Fetch Settings
-      const { data: setts } = await supabase
-        .from('settings')
-        .select('*')
-        .eq('id', 1)
-        .single();
-      
-      if (setts) setSettings(setts);
+      try {
+        // 1. Fetch Settings
+        const { data: setts, error: settingsError } = await supabase
+          .from('settings')
+          .select('*')
+          .eq('id', 1)
+          .single();
+        
+        if (settingsError) throw settingsError;
+        if (setts) setSettings(setts);
 
-      // 2. Fetch Recent Activities
-      const [{ data: projects }, { data: achievements }] = await Promise.all([
-        supabase.from('projects').select('id, name, description, created_at, url').order('created_at', { ascending: false }).limit(3),
-        supabase.from('achievements').select('id, title, issuer, created_at, credential_url').order('created_at', { ascending: false }).limit(3)
-      ]);
+        // 2. Fetch Recent Activities
+        const [{ data: projects }, { data: achievements }] = await Promise.all([
+          supabase.from('projects').select('id, name, description, created_at, url').order('created_at', { ascending: false }).limit(3),
+          supabase.from('achievements').select('id, title, issuer, created_at, credential_url').order('created_at', { ascending: false }).limit(3)
+        ]);
 
-      const combinedFeed: FeedItem[] = [];
-      
-      if (projects) {
-        projects.forEach(p => {
-          combinedFeed.push({
+        const combinedFeed: FeedItem[] = [];
+        
+        if (projects) {
+          projects.forEach(p => {
+            combinedFeed.push({
+              id: p.id,
+              type: "project",
+              title: p.name,
+              description: p.description,
+              date: p.created_at,
+              url: p.url
+            });
+          });
+        }
+
+        if (achievements) {
+          achievements.forEach(a => {
+            combinedFeed.push({
+              id: a.id,
+              type: "achievement",
+              title: a.title,
+              description: a.issuer,
+              date: a.created_at,
+              url: a.credential_url
+            });
+          });
+        }
+
+        // Sort combined feed by date
+        combinedFeed.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setFeed(combinedFeed);
+      } catch (err) {
+        console.warn("Dashboard Fetch Failed. Using Resilience Data.");
+        // Fallback to MOCK data if available
+        setSettings({
+           open_to_work: true,
+           currently_learning: "Advanced AI Architectures",
+           currently_building: "Portofolio OS",
+           now_playing: "Lofi Beats - Study Session"
+        });
+        
+        const mockFeed: FeedItem[] = [
+          ...MOCK_PROJECTS.map(p => ({
             id: p.id,
-            type: "project",
+            type: "project" as const,
             title: p.name,
             description: p.description,
-            date: p.created_at,
-            url: p.url
-          });
-        });
-      }
-
-      if (achievements) {
-        achievements.forEach(a => {
-          combinedFeed.push({
+            date: p.created_at || new Date().toISOString()
+          })),
+          ...MOCK_ACHIEVEMENTS.map(a => ({
             id: a.id,
-            type: "achievement",
+            type: "achievement" as const,
             title: a.title,
             description: a.issuer,
-            date: a.created_at,
-            url: a.credential_url
-          });
-        });
+            date: a.created_at || new Date().toISOString()
+          }))
+        ];
+        setFeed(mockFeed);
+      } finally {
+        setLoading(false);
       }
-
-      // Sort combined feed by date
-      combinedFeed.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      setFeed(combinedFeed);
-      setLoading(false);
-    }
 
     fetchDashboardData();
   }, []);
@@ -132,10 +162,42 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* 2. Status Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* 2. Analytics & Status Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Visitors Traffic - Mockup */}
+        <div className={`p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group bg-linear-to-br from-primary/5 via-transparent to-transparent ${
+          lowPowerMode ? "bg-surface/90" : "glass"
+        }`}>
+          <div className="relative z-10 flex flex-col h-full">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-text-secondary mb-1">Traffic Overview</p>
+                <h3 className="text-3xl font-display font-bold text-text-primary">1,284 <span className="text-xs text-accent font-mono ml-2">+12%</span></h3>
+              </div>
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <Activity size={18} className="text-primary" />
+              </div>
+            </div>
+            
+            {/* Mockup Trend Line (SVG) */}
+            <div className="mt-auto pt-4">
+              <svg viewBox="0 0 100 30" className="w-full h-16 stroke-primary stroke-[2] fill-none overflow-visible">
+                <motion.path
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 2, ease: "easeInOut" }}
+                  d="M0,25 Q15,5 30,20 T60,10 T100,5"
+                />
+                <path d="M0,25 Q15,5 30,20 T60,10 T100,5" className="stroke-primary/20 scale-y-110 translate-y-2" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
         {/* Availability */}
-        <div className="glass p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+        <div className={`p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group ${
+          lowPowerMode ? "bg-surface/90" : "glass"
+        }`}>
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Circle size={80} className="text-accent" />
           </div>
@@ -148,8 +210,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Development */}
-        <div className="glass p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+        {/* Current Focus */}
+        <div className={`p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group ${
+          lowPowerMode ? "bg-surface/90" : "glass"
+        }`}>
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Terminal size={80} className="text-primary" />
           </div>
@@ -162,7 +226,9 @@ export default function Dashboard() {
         </div>
 
         {/* Now Playing */}
-        <div className="glass p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group">
+        <div className={`p-8 rounded-[2rem] border border-white/5 relative overflow-hidden group ${
+          lowPowerMode ? "bg-surface/90" : "glass"
+        }`}>
           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
             <Music size={80} className="text-[#1DB954]" />
           </div>
@@ -197,7 +263,9 @@ export default function Dashboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
                   key={item.id} 
-                  className="glass p-6 rounded-3xl border border-white/5 flex items-start gap-4 hover:border-primary/20 transition-colors group"
+                  className={`p-6 rounded-3xl border border-white/5 flex items-start gap-4 hover:border-primary/20 transition-colors group ${
+                    lowPowerMode ? "bg-surface/90" : "glass"
+                  }`}
                 >
                   <div className="mt-1 p-3 bg-surface rounded-2xl text-primary border border-white/5">
                     {item.type === 'project' ? <Code2 size={24} /> : <Trophy size={24} />}
@@ -233,7 +301,9 @@ export default function Dashboard() {
 
         {/* Right: Insights */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="glass p-8 rounded-[2rem] border border-white/10 bg-linear-to-br from-primary/5 to-accent/5">
+          <div className={`p-8 rounded-[2rem] border border-white/10 bg-linear-to-br from-primary/5 to-accent/5 ${
+            lowPowerMode ? "bg-surface/95" : "glass"
+          }`}>
             <div className="flex items-center gap-3 text-primary mb-6">
               <Sparkles size={20} />
               <h3 className="text-xl font-display font-bold">System Insights</h3>

@@ -3,12 +3,16 @@
 import * as THREE from "three";
 import { useState, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { usePerformance } from "@/hooks/usePerformance";
 
 function StarField() {
   const ref = useRef<THREE.Points>(null);
+  const { lowPowerMode } = usePerformance();
+  
   const [positions] = useState<Float32Array>(() => {
-    const p = new Float32Array(5000 * 3);
-    for (let i = 0; i < 5000; i++) {
+    const count = lowPowerMode ? 1000 : 5000;
+    const p = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
       p[i * 3] = (Math.random() - 0.5) * 10;
       p[i * 3 + 1] = (Math.random() - 0.5) * 10;
       p[i * 3 + 2] = (Math.random() - 0.5) * 10;
@@ -17,7 +21,7 @@ function StarField() {
   });
 
   useFrame((_state, delta) => {
-    if (ref.current) {
+    if (ref.current && !lowPowerMode) {
       ref.current.rotation.x -= delta / 10;
       ref.current.rotation.y -= delta / 15;
     }

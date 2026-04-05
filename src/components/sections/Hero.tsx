@@ -130,10 +130,16 @@ export default function Hero({
           >
             <div className="flex items-center gap-4 text-sm text-text-secondary font-mono">
               <div className="flex flex-col">
-                <span className="text-[9px] uppercase tracking-[0.2em] text-text-secondary/60 mb-0.5">
+                <span 
+                  suppressHydrationWarning
+                  className="text-[9px] uppercase tracking-[0.2em] text-text-secondary/60 mb-0.5"
+                >
                   {t("hero.learning.label")}
                 </span>
-                <span className="text-text-primary font-bold">
+                <span 
+                  suppressHydrationWarning
+                  className="text-text-primary font-bold"
+                >
                   {currentlyLearning ||
                     t("hero.learning.none") ||
                     "No active learning tracked"}
@@ -151,7 +157,10 @@ export default function Hero({
               href="/projects"
               className="group px-8 py-4 bg-primary text-white rounded-2xl font-bold flex items-center gap-2 relative overflow-hidden hover:shadow-[0_0_40px_rgba(108,99,255,0.5)] hover:-translate-y-1 transition-all duration-300"
             >
-              <span className="relative z-10 flex items-center gap-2">
+              <span 
+                suppressHydrationWarning
+                className="relative z-10 flex items-center gap-2"
+              >
                 {t("hero.cta.work")}
                 <ArrowRight
                   size={20}

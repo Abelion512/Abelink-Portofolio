@@ -5,8 +5,9 @@ export const revalidate = 60; // Revalidate every minute
 
 async function getSettings() {
   try {
-    // Mengecek jika env tidak diisi, maka skip fetch untuk menghindari error 
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder")) {
+    // Selalu coba fetch data jika URL tersedia
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.warn("Supabase URL is missing, using default values.");
       return { open_to_work: true, currently_learning: "Next.js 16 & AI Automation" };
     }
 

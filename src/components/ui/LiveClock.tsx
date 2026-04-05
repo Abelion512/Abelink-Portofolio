@@ -11,7 +11,8 @@ export default function LiveClock() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const interval = setInterval(() => {
-      const wibTime = new Date().toLocaleTimeString("id-ID", {
+      const now = new Date();
+      const wibTime = now.toLocaleTimeString("id-ID", {
         timeZone: "Asia/Jakarta",
         hour: "2-digit",
         minute: "2-digit",

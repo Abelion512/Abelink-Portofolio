@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import TikTokCard from '@/components/ui/TikTokCard';
+import MediaCard from '@/components/ui/MediaCard';
 import { supabase } from '@/lib/supabase';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 interface CreationItem {
@@ -12,6 +12,8 @@ interface CreationItem {
   embed_url: string;
   category: string;
   cover_image: string;
+  view_count?: number;
+  like_count?: number;
 }
 
 export default function CreationPage() {
@@ -23,7 +25,7 @@ export default function CreationPage() {
     async function fetchCreation() {
       try {
         const { data, error } = await supabase
-          .from('creation')
+          .from('memories')
           .select('*')
           .eq('is_visible', true)
           .order('created_at', { ascending: false });
@@ -44,7 +46,7 @@ export default function CreationPage() {
       .channel('creation_realtime')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'creation' },
+        { event: '*', schema: 'public', table: 'memories' },
         (payload: RealtimePostgresChangesPayload<CreationItem>) => {
           if (payload.eventType === 'INSERT') {
             const newItem = payload.new as CreationItem;
@@ -114,21 +116,15 @@ export default function CreationPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="group relative flex flex-col bg-[#0a0a0c] border border-white/5 rounded-[2.5rem] overflow-hidden hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10"
               >
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold uppercase tracking-widest text-primary">
-                      {item.category}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-6 leading-tight group-hover:text-primary transition-colors">
-                    {item.title}
-                  </h3>
-                  <div className="rounded-3xl overflow-hidden bg-neutral-900 border border-white/5 ring-1 ring-white/10 group-hover:ring-primary/20 transition-all">
-                    <TikTokCard url={item.embed_url} />
-                  </div>
-                </div>
+                <MediaCard 
+                  title={item.title}
+                  category={item.category}
+                  coverImage={item.cover_image}
+                  url={item.embed_url}
+                  views={item.view_count}
+                  likes={item.like_count}
+                />
               </motion.div>
             ))
           ) : (

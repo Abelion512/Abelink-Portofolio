@@ -1,30 +1,21 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useLangStore } from "@/store/languageStore";
-import FloatingTitle from "@/components/ui/FloatingTitle";
 import { useAchievements } from "@/hooks/useData";
 import AchievementsGrid from "@/components/sections/AchievementsGrid";
-import { useState } from "react";
+import Link from "next/link";
 
 export default function AchievementsPage() {
-  const { t } = useLangStore();
   const { achievements, loading, error } = useAchievements();
-  const [isReady, setIsReady] = useState(false);
 
   return (
     <>
-      <FloatingTitle
-        title={t("achievements.title")}
-        subtitle={t("achievements.subtitle")}
-        onAnimationComplete={() => setIsReady(true)}
-      />
 
-      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
+      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen font-inter">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 1, delay: 0.2 }}
         >
           {loading ? (
             <div className="flex flex-col items-center justify-center py-40">
@@ -65,12 +56,12 @@ export default function AchievementsPage() {
                 Verification process in progress. Our systems are currently syncing your latest certifications and honors.
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
-                <a
+                <Link
                   href="/projects"
                   className="px-10 py-4 bg-white/5 border border-white/10 rounded-full text-[11px] font-mono font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all"
                 >
                   View Case Studies
-                </a>
+                </Link>
               </div>
             </div>
           ) : (

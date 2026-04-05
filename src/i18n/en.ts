@@ -26,7 +26,10 @@ export const en: Record<string, string> = {
   "nav.changelog": "Changelog",
   "nav.card": "My Card",
   "nav.creation": "Creations",
+  "nav.search": "Search everything...",
+  "search.placeholder": "Search anything...",
   "common.search": "Search everything...",
+  "common.back": "Back",
   "common.viewDetail": "View Detail",
 
   // Projects
@@ -135,4 +138,22 @@ export const en: Record<string, string> = {
   "notfound.desc":
     "The investigation couldn't find the page you're looking for. The URL might be mistyped or the page has been moved.",
   "notfound.back": "Back to Home",
+  "projects.caseStudy": "Case Study",
+  "projects.featuredCaseStudy": "Featured Case Study",
+  "projects.projectDetails": "Project Details",
+  "projects.role": "Role",
+  "projects.timeline": "Timeline",
+  "projects.technologies": "Technologies",
+  "projects.liveDemo": "Live Demo",
+  "projects.viewSource": "View Source Code",
+  "projects.not_found_title": "Project Not Found",
+  "projects.not_found_desc": "The project you are looking for doesn't exist or has been moved.",
+  "projects.back_to_projects": "Back to Projects",
+  "projects.loading_case_study": "Loading Case Study...",
+  "projects.visual_pending": "Visual Pending",
+  "projects.content_pending": "Case study content is currently being prepared. Check back soon!",
+  "stack.frontend": "Frontend Architecture",
+  "stack.backend": "Backend & Systems",
+  "stack.intelligence": "Intelligence & Automation",
+  "stack.infrastructure": "Infrastructure",
 };
