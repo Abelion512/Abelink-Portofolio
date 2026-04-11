@@ -34,7 +34,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden rounded-[2rem] bg-surface/10 border border-white/5 transition-all duration-700 hover:border-white/20 hover:bg-surface/20 ${className}`}
+      className={`relative overflow-hidden rounded-4xl bg-surface/10 border border-white/5 transition-all duration-700 hover:border-white/20 hover:bg-surface/20 ${className}`}
     >
       {/* Premium Spotlight Glow */}
       <motion.div
@@ -51,7 +51,7 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       
       {/* Refined border highlight */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-[2rem] z-10"
+        className="pointer-events-none absolute -inset-px rounded-4xl z-10"
         style={{
           opacity: isHovered ? 1 : 0,
           background: `radial-gradient(

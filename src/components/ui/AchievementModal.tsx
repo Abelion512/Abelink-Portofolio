@@ -27,7 +27,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
       {/* Modal Container */}
       <motion.div
         layoutId={`card-${achievement.id}`}
-        className="relative z-[2100] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-[0_64px_128px_-16px_rgba(0,0,0,0.8)] my-auto h-fit max-h-[90vh]"
+        className="relative z-[2100] w-full max-w-5xl bg-surface/80 backdrop-blur-3xl border border-border/50 rounded-4xl overflow-hidden flex flex-col md:flex-row shadow-[0_64px_128px_-16px_rgba(0,0,0,0.8)] my-auto h-fit max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Mobile */}

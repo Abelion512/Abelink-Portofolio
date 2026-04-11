@@ -47,7 +47,7 @@ ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
 
 -- Memories Policies
 CREATE POLICY "Public read access for memories" ON public.memories FOR SELECT USING (is_public = true);
-CREATE POLICY "Service role full access for memories" ON public.memories ALL USING (auth.role() = 'service_role');
+CREATE POLICY "Service role full access for memories" ON public.memories FOR ALL USING (auth.role() = 'service_role') WITH CHECK (auth.role() = 'service_role');
 
 -- Positivity Locks Policies (Write once, Read everywhere, No delete)
 CREATE POLICY "Anyone can submit positivity" ON public.positivity_locks FOR INSERT WITH CHECK (true);
@@ -55,7 +55,7 @@ CREATE POLICY "Public read for locked positivity" ON public.positivity_locks FOR
 CREATE POLICY "No one can update/delete locked positivity" ON public.positivity_locks FOR UPDATE USING (false);
 
 -- Visitors Policies (Restricted to Edge Functions)
-CREATE POLICY "Service role access for visitors" ON public.visitors ALL USING (auth.role() = 'service_role');
+CREATE POLICY "Service role access for visitors" ON public.visitors FOR ALL USING (auth.role() = 'service_role') WITH CHECK (auth.role() = 'service_role');
 
 -- --- SEARCH PATH SECURITY ---
 -- (Applied globally via security hardening migration)

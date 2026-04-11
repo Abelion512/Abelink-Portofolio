@@ -13,12 +13,12 @@ ALTER FUNCTION public.sync_projects_to_knowledge() SET search_path = public;
 
 DROP POLICY IF EXISTS "Allow public insert to guestbook" ON public.guestbook;
 
-CREATE POLICY "Allow validated public insert to guestbook" 
-ON public.guestbook 
-FOR INSERT 
+CREATE POLICY "Allow validated public insert to guestbook"
+ON public.guestbook
+FOR INSERT
 WITH CHECK (
-    length(content) > 0 AND 
-    length(content) < 1000 AND
+    length(message) > 0 AND
+    length(message) < 1000 AND
     (auth.uid() IS NOT NULL OR true) -- Keep public, but restrict payload
 );
 
@@ -29,12 +29,12 @@ ALTER TABLE public.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.knowledge_docs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 
-DO $$ 
+DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'certificates' AND policyname = 'Public read access for certificates') THEN
         CREATE POLICY "Public read access for certificates" ON public.certificates FOR SELECT USING (true);
     END IF;
-    
+
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'knowledge_docs' AND policyname = 'Public read access for knowledge_docs') THEN
         CREATE POLICY "Public read access for knowledge_docs" ON public.knowledge_docs FOR SELECT USING (true);
     END IF;

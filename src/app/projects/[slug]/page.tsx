@@ -190,7 +190,7 @@ export default function ProjectDetailPage() {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.8, duration: 0.8 }}
-              className="glass p-8 rounded-[2rem] border-white/5 sticky top-32"
+              className="glass p-8 rounded-4xl border-white/5 sticky top-32"
             >
               <h3 className="text-xl font-display font-bold text-text-primary mb-8 flex items-center gap-2">
                 <Briefcase size={20} className="text-primary" />

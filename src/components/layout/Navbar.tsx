@@ -9,16 +9,13 @@ import { useLangStore } from "@/store/languageStore";
 import { useCommandStore } from "@/store/useCommandStore";
 import { NAV_ITEMS } from "@/constants/nav";
 import LiveClock from "@/components/ui/LiveClock";
-import { usePerformance } from "@/hooks/usePerformance";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [showScrolledUI, setShowScrolledUI] = useState(false);
   const { setIsOpen: setCommandOpen } = useCommandStore();
   const { lang, setLang, t } = useLangStore();
-  const { lowPowerMode } = usePerformance();
 
   const handleBack = () => {
     const isInternal = document.referrer.includes(window.location.origin);
@@ -30,24 +27,16 @@ export default function Navbar() {
   };
 
   // Desktop Main Navigation (Limit to high-level items)
-  const mainNav = NAV_ITEMS.filter(item => 
-    ["/", "/projects", "/achievements", "/stack", "/about"].includes(item.href)
+  const mainNav = NAV_ITEMS.filter((item) =>
+    ["/", "/projects", "/achievements", "/stack", "/about"].includes(item.href),
   );
 
   // Get current page info for the Page Indicator
-  const currentPage = NAV_ITEMS.find(item => item.href === pathname);
+  const currentPage = NAV_ITEMS.find((item) => item.href === pathname);
   const isHome = pathname === "/";
-  const isProjectDetail = pathname.startsWith("/projects/") && pathname !== "/projects";
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-    const handleScroll = () => {
-      // Threshold scroll 50px untuk memicu transisi identitas
-      setShowScrolledUI(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    queueMicrotask(() => setMounted(true));
   }, []);
 
   if (!mounted) return null;
@@ -56,10 +45,10 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-[1200] w-full px-4 md:px-6 py-6 h-auto pointer-events-none flex items-start justify-center gap-3"
+      className="fixed top-0 left-0 right-0 z-1200 w-full px-4 md:px-6 py-6 h-auto pointer-events-none flex items-start justify-center gap-3"
     >
       {/* 1. Leading Pill Group: Circle Back + Logo */}
-      <motion.div 
+      <motion.div
         layout
         className="flex items-center h-12 p-1.5 rounded-2xl glass-liquid pointer-events-auto border-white/10 shadow-lg shadow-black/20"
       >
@@ -79,14 +68,21 @@ export default function Navbar() {
                 >
                   <ChevronLeft size={18} />
                 </button>
-                
+
                 {/* Hide Logo on mobile sub-pages to prevent stacking */}
-                <Link href="/" className="hidden sm:flex items-center gap-2 group px-2">
-                  <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center overflow-hidden shadow-lg group-hover:shadow-primary/20 transition-all">
-                    <span className="text-[10px] font-black text-white tracking-tighter">S</span>
+                <Link
+                  href="/"
+                  className="hidden sm:flex items-center gap-2 group px-2"
+                >
+                  <div className="relative w-7 h-7 rounded-lg bg-linear-to-br from-primary to-blue-600 flex items-center justify-center overflow-hidden shadow-lg group-hover:shadow-primary/20 transition-all">
+                    <span className="text-[10px] font-black text-white tracking-tighter">
+                      S
+                    </span>
                     <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <span className="text-xs font-display font-bold tracking-tight text-text-primary group-hover:text-primary transition-colors">Salav</span>
+                  <span className="text-xs font-display font-bold tracking-tight text-text-primary group-hover:text-primary transition-colors">
+                    Salav
+                  </span>
                 </Link>
               </div>
             </motion.div>
@@ -98,7 +94,10 @@ export default function Navbar() {
               exit={{ opacity: 0, x: 10 }}
               className="flex items-center gap-2 px-1 glass-liquid rounded-full border border-white/5 shadow-2xl h-12"
             >
-              <Link href="/" className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-white/5 active-haptic transition-all group">
+              <Link
+                href="/"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-white/5 active-haptic transition-all group"
+              >
                 <span className="font-display font-bold text-lg tracking-tight text-text-primary group-hover:text-primary">
                   Salav
                 </span>
@@ -113,7 +112,7 @@ export default function Navbar() {
       </motion.div>
 
       {/* 2. Center Pill: Contextual (Title vs Main Nav) */}
-      <motion.div 
+      <motion.div
         layout
         className="flex items-center h-12 p-1.5 rounded-2xl glass-liquid pointer-events-auto border-white/10 shadow-lg shadow-black/20"
       >
@@ -126,7 +125,7 @@ export default function Navbar() {
               exit={{ opacity: 0, y: -10 }}
               className="px-6 flex items-center"
             >
-              <span className="font-display font-bold text-sm tracking-[0.1em] text-primary uppercase">
+              <span className="font-display font-bold text-sm tracking-widest text-primary uppercase">
                 {currentPage ? t(currentPage.label) : "Portfolio"}
               </span>
             </motion.div>
@@ -145,10 +144,14 @@ export default function Navbar() {
                     key={item.href}
                     href={item.href}
                     className={`relative px-4 py-2 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all duration-300 active-haptic flex items-center gap-2 ${
-                      isActive ? "text-primary" : "text-text-secondary hover:text-text-primary"
+                      isActive
+                        ? "text-primary"
+                        : "text-text-secondary hover:text-text-primary"
                     } ${idx >= 4 ? "hidden md:flex" : "flex"}`}
                   >
-                    <span className="md:hidden">{item.icon && <item.icon size={16} />}</span>
+                    <span className="md:hidden">
+                      {item.icon && <item.icon size={16} />}
+                    </span>
                     <span className="hidden md:block">{t(item.label)}</span>
                     {isActive && (
                       <motion.div
@@ -165,7 +168,7 @@ export default function Navbar() {
       </motion.div>
 
       {/* 3. Trailing Pill: Search & Language */}
-      <motion.div 
+      <motion.div
         layout
         className="flex items-center h-12 px-2 rounded-2xl glass-liquid pointer-events-auto border-white/10 shadow-lg shadow-black/20"
       >
@@ -173,12 +176,16 @@ export default function Navbar() {
           {/* Spotlight style Search */}
           <button
             onClick={() => setCommandOpen(true)}
-            className="flex items-center justify-center md:justify-start gap-3 px-3 md:px-4 h-9 md:min-w-[140px] rounded-xl hover:bg-white/5 text-text-secondary/60 hover:text-text-primary active-haptic transition-all"
+            className="flex items-center justify-center md:justify-start gap-3 px-3 md:px-4 h-9 md:min-w-35 rounded-xl hover:bg-white/5 text-text-secondary/60 hover:text-text-primary active-haptic transition-all"
             title="Search (⌘K)"
           >
             <CmdIcon size={16} />
-            <span className="hidden md:block text-[12px] font-medium grow text-left">{t("search.placeholder") || "Search"}</span>
-            <kbd className="hidden md:block text-[10px] opacity-40 font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/10 leading-none">⌘K</kbd>
+            <span className="hidden md:block text-[12px] font-medium grow text-left">
+              {t("search.placeholder") || "Search"}
+            </span>
+            <kbd className="hidden md:block text-[10px] opacity-40 font-mono bg-white/10 px-1.5 py-0.5 rounded border border-white/10 leading-none">
+              ⌘K
+            </kbd>
           </button>
 
           <div className="w-px h-4 bg-white/10 hidden md:block" />
