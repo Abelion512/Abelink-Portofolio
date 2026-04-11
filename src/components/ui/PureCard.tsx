@@ -4,12 +4,7 @@ import { motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { Share, Mail, Github, Instagram, Link as LinkIcon } from "lucide-react";
 
-interface PureCardProps {
-  onClose?: () => void;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function PureCard(_props: PureCardProps) {
+export default function PureCard() {
   const portfolioUrl = "https://abelion.vercel.app";
 
   const handleShare = async () => {

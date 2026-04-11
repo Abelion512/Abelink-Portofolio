@@ -67,14 +67,105 @@ export async function generateChatResponse(
 }
 
 export function detectPromptInjection(text: string): boolean {
-  const patterns = [
-    /ignore previous instructions/i,
-    /system prompt/i,
-    /bypass/i,
-    /forget all rules/i,
-    /act as an unrestricted/i,
+  // Layer 1: Direct instruction override patterns
+  const directOverridePatterns = [
+    /ignore\s+(previous|all|above)\s+(instructions|rules|prompts|guidelines)/i,
+    /disregard\s+(previous|all|above)/i,
+    /forget\s+(previous|all|everything|your\s+(instructions|training))/i,
+    /override\s+(your|the)\s+(instructions|system|prompt)/i,
+    /replace\s+(your|the)\s+(instructions|system\s+prompt)/i,
   ];
-  return patterns.some((p) => p.test(text));
+
+  // Layer 2: System prompt exposure attempts
+  const systemExposurePatterns = [
+    /system\s+prompt/i,
+    /system\s+message/i,
+    /initial\s+instructions/i,
+    /core\s+directives?/i,
+    /reveal\s+(your|the)\s+(full|complete|original|hidden)\s+(prompt|instructions)/i,
+    /show\s+me\s+your\s+(prompt|instructions|system)/i,
+  ];
+
+  // Layer 3: Role-play and persona hijacking
+  const roleplayPatterns = [
+    /act\s+as\s+(an?\s+)?(unrestricted|unfiltered|unlimited|developer|admin|system)/i,
+    /pretend\s+(you're|to\s+be)\s+(an?\s+)?(unrestricted|unfiltered|developer|admin)/i,
+    /role\s*[.-]?\s*play\s+as\s+(an?\s+)?(developer|admin|system)/i,
+    /you\s+are\s+now\s+(an?\s+)?(developer|admin|system|unrestricted)/i,
+    /switch\s+to\s+(dev|admin|debug|unrestricted)\s+mode/i,
+    /enable\s+(dev|admin|debug|developer|unrestricted)\s+mode/i,
+  ];
+
+  // Layer 4: Security bypass attempts
+  const securityBypassPatterns = [
+    /bypass\s+(security|restrictions|filters|limits|guardrails)/i,
+    /disable\s+(security|safety|filters|restrictions|guardrails)/i,
+    /turn\s+off\s+(security|safety|filters|restrictions)/i,
+    /remove\s+(all\s+)?(restrictions|limitations|filters|guardrails)/i,
+    /no\s+(ethical|safety|content)\s+(restrictions|guidelines|rules|filters)/i,
+    /without\s+(any\s+)?(restrictions|limitations|filters)/i,
+    /\bno\s+(filters|restrictions|limits)\b/i, // Catch "no filters" alone
+    /\bbypass\s+\w+\s+filter/i, // "bypass X filter"
+  ];
+
+  // Layer 5: Delimiter and structural injection
+  const delimiterPatterns = [
+    /###\s*(system|user|assistant|instructions)\s*###/i,
+    /<{0,2}(system|user|assistant|prompt)>{0,2}/i,
+    /\[system\]|\[user\]|\[assistant\]/i,
+    /BEGIN\s+(SYSTEM|USER|PROMPT|INSTRUCTIONS)/i,
+    /END\s+(SYSTEM|USER|PROMPT|INSTRUCTIONS)/i,
+  ];
+
+  // Layer 6:Encoded or obfuscated attempts
+  const encodedPatterns = [
+    /base64[:\s]/i,
+    /decode\s+(this|the\s+following)/i,
+    /\\x[0-9a-f]{2}/i, // Hex encoding
+    /&#?[0-9]+;/i, // HTML entities
+    /%[0-9a-f]{2}/i, // URL encoding
+  ];
+
+  // Layer 7: Jailbreak and manipulation
+  const jailbreakPatterns = [
+    /dan\s+mode/i, // Famous ChatGPT jailbreak
+    /developer\s+mode\s+enabled/i,
+    /always\s+say\s+yes/i,
+    /never\s+(refuse|decline|deny|reject)/i,
+    /you\s+(must|should|will)\s+(always|now|obey)/i,
+    /this\s+is\s+(for|a)\s+(research|educational|testing|academic)/i,
+  ];
+
+  // Layer 8: Context manipulation
+  const contextManipulationPatterns = [
+    /from\s+now\s+on/i,
+    /starting\s+now/i,
+    /your\s+new\s+(role|purpose|function|task)/i,
+    /you\s+have\s+been\s+(updated|upgraded|modified)/i,
+    /previous\s+restrictions\s+(no\s+longer\s+)?apply/i,
+  ];
+
+  // Check all pattern layers
+  const allPatterns = [
+    ...directOverridePatterns,
+    ...systemExposurePatterns,
+    ...roleplayPatterns,
+    ...securityBypassPatterns,
+    ...delimiterPatterns,
+    ...encodedPatterns,
+    ...jailbreakPatterns,
+    ...contextManipulationPatterns,
+  ];
+
+  const hasPatternMatch = allPatterns.some((pattern) => pattern.test(text));
+
+  // Additional heuristic: Check for excessive special characters
+  // (indicates delimiter-based injection attempts)
+  const specialCharRatio =
+    (text.match(/[###\[\]{}<>]/g) || []).length / text.length;
+  const hasSuspiciousStructure = specialCharRatio > 0.05 && text.length > 50;
+
+  return hasPatternMatch || hasSuspiciousStructure;
 }
 
 export function containsPII(text: string): boolean {

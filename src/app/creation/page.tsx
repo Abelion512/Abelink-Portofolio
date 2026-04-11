@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import MediaCard from '@/components/ui/MediaCard';
-import { supabase } from '@/lib/supabase';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import React, { useEffect, useState } from "react";
+import MediaCard from "@/components/ui/MediaCard";
+import { supabase } from "@/lib/supabase";
+import { motion, AnimatePresence } from "framer-motion";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface CreationItem {
   id: string;
@@ -25,15 +25,15 @@ export default function CreationPage() {
     async function fetchCreation() {
       try {
         const { data, error } = await supabase
-          .from('memories')
-          .select('*')
-          .eq('is_visible', true)
-          .order('created_at', { ascending: false });
+          .from("memories")
+          .select("*")
+          .eq("is_visible", true)
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setItems(data || []);
       } catch (err) {
-        console.error('Error fetching creation:', err);
+        console.error("Error fetching creation:", err);
       } finally {
         setLoading(false);
       }
@@ -43,21 +43,27 @@ export default function CreationPage() {
 
     // Realtime Subscription
     const channel = supabase
-      .channel('creation_realtime')
+      .channel("creation_realtime")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'memories' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "memories" },
         (payload: RealtimePostgresChangesPayload<CreationItem>) => {
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             const newItem = payload.new as CreationItem;
             setItems((prev) => [newItem, ...prev]);
-          } else if (payload.eventType === 'UPDATE') {
+          } else if (payload.eventType === "UPDATE") {
             const updatedItem = payload.new as CreationItem;
-            setItems((prev) => prev.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
-          } else if (payload.eventType === 'DELETE') {
-            setItems((prev) => prev.filter((item) => item.id === payload.old.id));
+            setItems((prev) =>
+              prev.map((item) =>
+                item.id === updatedItem.id ? updatedItem : item,
+              ),
+            );
+          } else if (payload.eventType === "DELETE") {
+            setItems((prev) =>
+              prev.filter((item) => item.id === payload.old.id),
+            );
           }
-        }
+        },
       )
       .subscribe();
 
@@ -66,12 +72,13 @@ export default function CreationPage() {
     };
   }, []);
 
-  const categories = ["all", ...Array.from(new Set(items.map(i => i.category)))];
-  const filteredItems = filter === "all" ? items : items.filter(i => i.category === filter);
+  const categories = ["all", ...new Set(items.map((i) => i.category))];
+  const filteredItems =
+    filter === "all" ? items : items.filter((i) => i.category === filter);
 
   return (
     <main className="min-h-screen pt-32 pb-24 px-6 max-w-7xl mx-auto">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-20"
@@ -80,8 +87,8 @@ export default function CreationPage() {
           Favorite <span className="text-primary">Creation</span>
         </h1>
         <p className="text-neutral-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Kumpulan inspirasi, tutorial, dan momen menarik yang saya temukan di TikTok. 
-          Semuanya dikurasi langsung dari saku saya.
+          Kumpulan inspirasi, tutorial, dan momen menarik yang saya temukan di
+          TikTok. Semuanya dikurasi langsung dari saku saya.
         </p>
       </motion.div>
 
@@ -93,8 +100,8 @@ export default function CreationPage() {
               key={cat}
               onClick={() => setFilter(cat)}
               className={`px-6 py-2.5 rounded-2xl text-[10px] font-mono font-bold uppercase tracking-widest transition-all border ${
-                filter === cat 
-                  ? "bg-primary text-white border-primary shadow-xl shadow-primary/20" 
+                filter === cat
+                  ? "bg-primary text-white border-primary shadow-xl shadow-primary/20"
                   : "bg-white/5 text-neutral-500 border-white/5 hover:bg-white/10 hover:text-white"
               }`}
             >
@@ -107,7 +114,9 @@ export default function CreationPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         <AnimatePresence mode="popLayout">
           {loading ? (
-            Array.from({ length: 6 }).map((_, i) => <CreationSkeleton key={i} />)
+            Array.from({ length: 6 }).map((_, i) => (
+              <CreationSkeleton key={i} />
+            ))
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <motion.div
@@ -117,7 +126,7 @@ export default function CreationPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
               >
-                <MediaCard 
+                <MediaCard
                   title={item.title}
                   category={item.category}
                   coverImage={item.cover_image}
@@ -129,7 +138,9 @@ export default function CreationPage() {
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
-              <p className="text-neutral-500 font-mono text-sm uppercase tracking-[0.2em]">Belum ada konten yang tersedia</p>
+              <p className="text-neutral-500 font-mono text-sm uppercase tracking-[0.2em]">
+                Belum ada konten yang tersedia
+              </p>
             </div>
           )}
         </AnimatePresence>
@@ -143,7 +154,7 @@ function CreationSkeleton() {
     <div className="w-full bg-[#0a0a0c] border border-white/5 rounded-[2.5rem] p-8 animate-pulse">
       <div className="w-20 h-5 bg-white/5 rounded-full mb-4" />
       <div className="w-full h-8 bg-white/5 rounded-lg mb-6" />
-      <div className="w-full aspect-[9/16] bg-white/5 rounded-3xl" />
+      <div className="w-full aspect-9/16 bg-white/5 rounded-3xl" />
     </div>
   );
 }

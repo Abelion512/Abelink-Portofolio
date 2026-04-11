@@ -7,7 +7,8 @@ import { supabase } from "../lib/supabase";
 // HELPERS
 // ============================================
 
-const lowerCaseReplace = (str: string) => str.toLowerCase().replace(/\s+/g, "-");
+const lowerCaseReplace = (str: string) =>
+  str.toLowerCase().replace(/\s+/g, "-");
 
 // ============================================
 export type ProjectStatus = "live" | "wip" | "preview";
@@ -68,24 +69,28 @@ export const MOCK_PROJECTS: Project[] = [
     id: "p1",
     name: "Naval Link",
     slug: "naval-link",
-    description: "Maritime Logistics Optimization Engine with Real-time Satellite Sync.",
+    description:
+      "Maritime Logistics Optimization Engine with Real-time Satellite Sync.",
     tech: ["Next.js", "Three.js", "PostgreSQL", "Satellite API"],
-    coverImage: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200",
+    coverImage:
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200",
     dominantColor: "#0066ff",
     isPinned: true,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   },
   {
     id: "p2",
     name: "Aether OS",
     slug: "aether-os",
-    description: "Cloud-native operating system interface with glassmorphism core.",
+    description:
+      "Cloud-native operating system interface with glassmorphism core.",
     tech: ["React", "Framermotion", "TailwindCSS"],
-    coverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
+    coverImage:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
     dominantColor: "#6C63FF",
     isPinned: true,
-    created_at: new Date().toISOString()
-  }
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export const MOCK_ACHIEVEMENTS: Achievement[] = [
@@ -96,8 +101,8 @@ export const MOCK_ACHIEVEMENTS: Achievement[] = [
     year: 2024,
     type: "certificate",
     is_visible: true,
-    created_at: new Date().toISOString()
-  }
+    created_at: new Date().toISOString(),
+  },
 ];
 
 // ============================================
@@ -131,9 +136,12 @@ export function useProjects() {
         // query = query.eq("is_active", true);
 
         const { data, error: queryError } = await query;
-        
+
         if (queryError) {
-          console.warn("Supabase Fetch Failed. Using Mock Projects.", queryError.message);
+          console.warn(
+            "Supabase Fetch Failed. Using Mock Projects.",
+            queryError.message,
+          );
           setProjects(MOCK_PROJECTS);
           return;
         }
@@ -150,11 +158,11 @@ export function useProjects() {
 
         // Sebaiknya hanya gunakan mock jika benar-benar tidak ada data sama sekali di DB
         if (mappedProjects.length === 0) {
-           setProjects(MOCK_PROJECTS);
+          setProjects(MOCK_PROJECTS);
         } else {
-           setProjects(mappedProjects);
+          setProjects(mappedProjects);
         }
-      } catch (err) {
+      } catch {
         console.warn("Network Error. Falling back to Mock Projects.");
         setProjects(MOCK_PROJECTS);
       } finally {
@@ -192,11 +200,11 @@ export function useAchievements() {
           .order("created_at", { ascending: false });
 
         if (error) {
-           console.warn("Supabase Fetch Failed. Using Mock Achievements.");
-           setAchievements(MOCK_ACHIEVEMENTS);
-           return;
+          console.warn("Supabase Fetch Failed. Using Mock Achievements.");
+          setAchievements(MOCK_ACHIEVEMENTS);
+          return;
         }
-        
+
         const mapped = (data || []).map((a) => ({
           ...a,
           url: a.credential_url || a.url,
@@ -204,7 +212,7 @@ export function useAchievements() {
         }));
 
         setAchievements(mapped);
-      } catch (err) {
+      } catch {
         console.warn("Network Error. Using Mock Achievements.");
         setAchievements(MOCK_ACHIEVEMENTS);
       } finally {
@@ -241,11 +249,9 @@ export function useCurrentlyLearning() {
 
         if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found, which is OK
         setData(data || {});
-      } catch (err) {
-        console.error("Error fetching settings:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch settings",
-        );
+      } catch {
+        console.error("Error fetching settings:");
+        setError("Failed to fetch settings");
       } finally {
         setLoading(false);
       }
@@ -280,23 +286,30 @@ export function useProjectBySlug(slug: string | undefined) {
           .single();
 
         if (queryError) {
-          // If slug column search fails, try fallback name matching for backward compatibility
-          if (queryError.code === "PGRST116") {
-             const { data: allData } = await supabase.from("projects").select("*");
-             const fallback = (allData || []).find(p => lowerCaseReplace(p.name) === slug);
-             if (fallback) {
-                const mappedFallback = {
-                  ...fallback,
-                  coverImage: fallback.cover_image || fallback.coverImage || "",
-                  githubUrl: fallback.github_url || fallback.githubUrl,
-                  liveUrl: fallback.live_url || fallback.liveUrl,
-                  isPinned: fallback.is_pinned || fallback.isPinned || false,
-                  dominantColor: fallback.dominant_color || fallback.dominantColor || "#00ffb3",
-                  slug: fallback.slug || lowerCaseReplace(fallback.name),
-                };
-                setProject(mappedFallback);
-                return;
-             }
+          // If slug column search fails, use DB-level ilike filter instead of fetching all rows
+          if (queryError.code === "PGRST116" && slug) {
+            const { data: fallbackData } = await supabase
+              .from("projects")
+              .select("*")
+              .ilike("name", slug.replace(/-/g, " "))
+              .limit(1);
+            const fallback = fallbackData?.[0];
+            if (fallback) {
+              const mappedFallback = {
+                ...fallback,
+                coverImage: fallback.cover_image || fallback.coverImage || "",
+                githubUrl: fallback.github_url || fallback.githubUrl,
+                liveUrl: fallback.live_url || fallback.liveUrl,
+                isPinned: fallback.is_pinned || fallback.isPinned || false,
+                dominantColor:
+                  fallback.dominant_color ||
+                  fallback.dominantColor ||
+                  "#00ffb3",
+                slug: fallback.slug || lowerCaseReplace(fallback.name),
+              };
+              setProject(mappedFallback);
+              return;
+            }
           }
           throw queryError;
         }
@@ -312,9 +325,9 @@ export function useProjectBySlug(slug: string | undefined) {
         };
 
         setProject(mappedProject);
-      } catch (err) {
-        console.error("Error fetching project by slug:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch project");
+      } catch {
+        console.error("Error fetching project by slug:");
+        setError("Failed to fetch project");
       } finally {
         setLoading(false);
       }
