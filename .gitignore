@@ -1,6 +1,30 @@
-.vercel
 .env*.local
-node_modules
-.next
-OlivX_Portfolio_PRD.md
+.next/
+node_modules/
+.vercel
+.gemini/
+.agents/
+.DS_Store
+*.log
+
+# Supabase Temp
+supabase/.temp/
+
+# Testing & Development junk
 testsprite_tests/
+coverage/
+screenshots/
+recordings/
+.tmp/
+tmp/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+out/
+build/

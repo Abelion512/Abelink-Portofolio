@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import GuestbookForm from "@/components/guestbook/GuestbookForm";
 
 export const metadata: Metadata = {
-  title: "Guestbook | Abelink Portfolio",
+  title: "Guestbook | Ihsanuddin Salav",
   description: "Leave a message for Ihsanuddin Salav and see what others have to say.",
 };
 

@@ -1,54 +1,75 @@
-import { Metadata } from "next";
+"use client";
+
+import { motion } from "motion/react";
+import { useProjects } from "@/hooks/useData";
 import ProjectsGrid from "@/components/sections/ProjectsGrid";
 
-export const revalidate = 3600; // Revalidate every hour
-
-export const metadata: Metadata = {
-  title: "Projects | Abelion — Student. Builder. Learner.",
-  description: "A curated selection of projects built by Ihsanuddin Salav (Abelion).",
-};
-
-const manualProjects = [
-  { name: "Abelink Portfolio", status: "Live", desc: "Founder-grade portfolio with AI integration.", tech: ["Next.js", "Tailwind v4", "Motion v12"], html_url: "https://github.com/abelion512/Abelink-Portofolio" },
-  { name: "LUMINA Preview", status: "WIP", desc: "Next-gen lighting and ambiance control via AI.", tech: ["TypeScript", "n8n", "Docker"], html_url: "#" },
-  { name: "learnink AI", status: "WIP", desc: "Personalized learning paths for technical mastery.", tech: ["Next.js", "Anthropic SDK"], html_url: "#" },
-  { name: "ab-pay", status: "WIP", desc: "Autonomous finance agent for decentralized payments.", tech: ["Supabase", "TypeScript"], html_url: "#" },
-  { name: "Abelion Notes", status: "WIP", desc: "AI-powered knowledge management system.", tech: ["Next.js", "PostgreSQL"], html_url: "#" },
-  { name: "Abelion Finance", status: "WIP", desc: "Automation for crypto and stock analysis.", tech: ["n8n", "AI Agents"], html_url: "#" },
-];
-
-async function getGithubProjects() {
-  try {
-    const res = await fetch("https://api.github.com/users/abelion512/repos?sort=updated&per_page=6", {
-      next: { revalidate: 3600 }
-    });
-    if (!res.ok) return [];
-    const repos = await res.json();
-    return repos.map((repo: { name: string; description: string; language: string; html_url: string }) => ({
-      name: repo.name,
-      status: "GitHub",
-      desc: repo.description || "No description provided.",
-      tech: repo.language ? [repo.language] : ["Code"],
-      html_url: repo.html_url
-    }));
-  } catch (error) {
-    console.error("Failed to fetch Github repos:", error);
-    return [];
-  }
-}
-
-export default async function ProjectsPage() {
-  const githubProjects = await getGithubProjects();
-  
-  // Merge manual projects with github projects, avoiding duplicates by name
-  const manualNames = new Set(manualProjects.map(p => p.name.toLowerCase()));
-  const filteredGithub = githubProjects.filter((p: { name: string }) => !manualNames.has(p.name.toLowerCase()));
-  
-  const allProjects = [...manualProjects, ...filteredGithub];
+export default function ProjectsPage() {
+  const { projects, loading, error } = useProjects();
 
   return (
-    <main className="pt-32 px-6 max-w-6xl mx-auto mb-24">
-      <ProjectsGrid initialProjects={allProjects} />
-    </main>
+    <>
+
+      <main className="relative z-10 pt-32 px-4 sm:px-6 max-w-7xl mx-auto mb-16 sm:mb-24 min-h-screen">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+        >
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-40">
+              <div className="relative w-16 h-16">
+                <div className="absolute inset-0 border-4 border-primary/20 rounded-full" />
+                <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin" />
+              </div>
+              <p className="mt-6 text-[10px] font-mono uppercase tracking-[0.4em] text-text-muted">
+                Syncing Projects...
+              </p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-40 bg-red-500/5 rounded-[3rem] border border-red-500/10">
+              <p className="text-red-400 font-display font-bold text-xl mb-2">Architectural Error</p>
+              <p className="text-text-secondary text-sm font-mono uppercase tracking-widest">{error}</p>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="text-center py-40 bg-surface/30 rounded-[3rem] border border-white/5">
+              <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-surface/50 border border-white/5 flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-text-muted"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-3xl font-display font-bold text-text-primary mb-4 tracking-tight">
+                Blueprint in Progress
+              </h3>
+              <p className="text-text-secondary max-w-md mx-auto mb-10 leading-relaxed">
+                The laboratory is currently processing new innovations. Check back shortly for the latest releases.
+              </p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <a
+                  href="https://github.com/Abelion512"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-10 py-4 bg-white/5 border border-white/10 rounded-full text-[11px] font-mono font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all"
+                >
+                  GitHub Repository
+                </a>
+              </div>
+            </div>
+          ) : (
+            <ProjectsGrid initialProjects={projects} />
+          )}
+        </motion.div>
+      </main>
+    </>
   );
 }

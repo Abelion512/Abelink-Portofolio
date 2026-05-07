@@ -1,89 +1,169 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion } from "motion/react";
+import { Github, ArrowUpRight, Briefcase } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { useLangStore } from "@/store/languageStore";
+import SpotlightCard from "../ui/SpotlightCard";
 
-interface Project {
+export type ProjectStatus = 'live' | 'wip' | 'preview';
+
+export interface Project {
+  id: string;
   name: string;
-  status: string;
-  desc: string;
+  slug?: string;
+  description?: string;
+  coverImage?: string;
+  status?: ProjectStatus;
   tech: string[];
-  html_url: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  isPinned?: boolean;
+  dominantColor?: string;
 }
 
-interface ProjectsClientProps {
-  initialProjects: Project[];
+interface ProjectsGridProps {
+  initialProjects?: Project[];
 }
 
-export default function ProjectsGrid({ initialProjects }: ProjectsClientProps) {
-  const [filter, setFilter] = useState("All");
+export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
+  const { t } = useLangStore();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
-  const filteredProjects = filter === "All" 
-    ? initialProjects 
-    : initialProjects.filter(p => p.status === filter);
+  if (!mounted) return null;
+  
+  const displayProjects = initialProjects || [];
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
-          <h1 className="text-5xl font-display font-bold italic mb-2">Curated <span className="text-gradient">Projects</span></h1>
-          <p className="text-text-secondary text-lg">A curated selection of things I&apos;ve built.</p>
-        </div>
-        <div className="flex gap-2">
-          {["All", "Live", "WIP", "GitHub"].map(f => (
-            <button 
-              key={f} 
-              onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-full border border-border text-sm transition-all ${
-                filter === f ? "bg-surface text-primary border-primary/30" : "text-text-secondary hover:bg-surface"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProjects.map((project, idx) => (
-          <a 
-            key={idx} 
-            href={project.html_url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="block group rounded-3xl glass border border-border bg-surface/30 hover:border-olivx-purple/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(108,99,255,0.1)] flex flex-col overflow-hidden"
-          >
-            {/* Cover Image Placeholder */}
-            <div className="relative w-full aspect-video bg-gradient-to-br from-surface to-base flex items-center justify-center border-b border-border/50">
-              <span className="text-2xl font-display font-bold text-text-secondary/40 px-4 text-center line-clamp-1 group-hover:scale-105 transition-transform duration-500">{project.name}</span>
-              
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4 px-2 py-0.5 rounded-md bg-base/80 backdrop-blur-md border border-border text-[10px] font-mono text-ai-teal tracking-tighter uppercase z-10">
-                {project.status}
-              </div>
-            </div>
-
-            {/* Card Content */}
-            <div className="p-6 flex flex-col flex-1">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-bold group-hover:text-gradient transition-all">{project.name}</h3>
-                <div className="text-text-secondary group-hover:text-olivx-purple transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 duration-300">
-                  ↗
-                </div>
-              </div>
-              <p className="text-text-secondary text-sm mb-6 leading-relaxed line-clamp-2">
-                {project.desc}
-              </p>
-              <div className="flex flex-wrap gap-2 mt-auto">
-                {project.tech?.map((t: string) => (
-                  <span key={t} className="text-[10px] font-mono px-2 py-1 rounded bg-surface/50 border border-border/50 text-text-secondary">
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </a>
+    <section className="py-12 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {displayProjects.map((project: Project, i: number) => (
+          <ProjectCard key={project.id || project.name} project={project} index={i} />
         ))}
       </div>
-    </>
+      
+      <div className="mt-24 flex justify-center">
+        <Link 
+          href="https://github.com/Abelion512" 
+          target="_blank" 
+          className="group relative px-10 py-4 bg-white/5 border border-white/10 rounded-full hover:border-primary/40 transition-all duration-500 overflow-hidden"
+        >
+          <div className="relative z-10 flex items-center gap-3 text-[11px] font-mono font-bold uppercase tracking-[0.3em] text-text-secondary group-hover:text-text-primary transition-colors">
+            <span>{t('projects.viewAll')}</span>
+            <Github size={16} className="group-hover:rotate-12 transition-transform duration-300" />
+          </div>
+          <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const projectSlug = project.slug || project.name.toLowerCase().replace(/\s+/g, '-');
+  const accentColor = project.dominantColor || "#6C63FF";
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      className="group"
+    >
+      <SpotlightCard 
+        color={accentColor}
+        className="h-full flex flex-col group/card"
+      >
+        <div className="relative aspect-[16/10] bg-black/40 overflow-hidden border-b border-white/5">
+          {(project.coverImage && project.coverImage !== "/placeholder-project.jpg") ? (
+            <Image 
+              src={project.coverImage} 
+              alt={project.name}
+              fill
+              className="object-cover transition-all duration-1000 group-hover/card:scale-110 group-hover/card:blur-[2px] opacity-80 group-hover/card:opacity-60"
+            />
+          ) : (
+            <div 
+              className="absolute inset-0 bg-linear-to-br from-surface to-base flex flex-col items-center justify-center overflow-hidden"
+              style={{ 
+                backgroundImage: `linear-gradient(135deg, ${accentColor}1A 0%, rgba(0,0,0,0.6) 100%)` 
+              }}
+            >
+              <Briefcase size={40} className="text-primary opacity-20 group-hover/card:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-5" />
+            </div>
+          )}
+          
+          {/* Subtle Glow Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+          
+          {/* Elegant Hover Indicator */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 z-30">
+            <div className="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center shadow-2xl scale-50 group-hover/card:scale-100 transition-transform duration-500">
+              <ArrowUpRight size={24} />
+            </div>
+          </div>
+
+          {/* Featured Badge */}
+          {project.isPinned && (
+            <div className="absolute top-6 left-6 z-10">
+              <span 
+                className="px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-[0.2em] backdrop-blur-md border"
+                style={{ 
+                  color: accentColor, 
+                  borderColor: `${accentColor}4D`,
+                  backgroundColor: `${accentColor}1A`
+                }}
+              >
+                Featured
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="p-8 flex-1 flex flex-col relative">
+          <div className="flex flex-wrap gap-2 mb-6">
+            {project.tech.slice(0, 3).map((tag) => (
+              <span 
+                key={tag} 
+                className="px-2.5 py-1 text-[8px] font-mono font-bold uppercase tracking-widest text-text-muted bg-white/5 rounded border border-white/5"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          
+          <h3 
+            className="text-2xl font-display font-bold text-text-primary mb-3 leading-tight tracking-tight group-hover/card:text-primary transition-colors duration-500"
+            style={{ color: project.isPinned ? accentColor : 'inherit' }}
+          >
+            {project.name}
+          </h3>
+          
+          <p className="text-text-secondary text-sm line-clamp-2 leading-relaxed font-body mb-8 opacity-70">
+            {project.description}
+          </p>
+
+          <div className="mt-auto flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-text-muted group-hover/card:text-text-primary transition-colors duration-500">
+            <span>View Case Study</span>
+            <div className="w-8 h-px bg-white/20 group-hover/card:w-12 group-hover/card:bg-primary transition-all duration-500" />
+          </div>
+        </div>
+
+        {/* Navigation Link */}
+        <Link 
+          href={`/projects/${projectSlug}`} 
+          className="absolute inset-0 z-40"
+          aria-label={project.name}
+        />
+      </SpotlightCard>
+    </motion.div>
   );
 }

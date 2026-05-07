@@ -13,7 +13,15 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "benchmark_dom_query.cjs",
+    // Ignore CSS files - ESLint doesn't understand Tailwind v4 syntax
+    "**/*.css",
   ]),
+  {
+    // Disable CSS-related warnings for Tailwind v4
+    rules: {
+      "@next/next/no-css-tags": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

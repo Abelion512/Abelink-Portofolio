@@ -1,73 +1,82 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || "",
-});
+import {
+  generateChatResponse,
+  detectPromptInjection,
+  containsPII,
+} from "@/lib/gemini";
 
 const SYSTEM_PROMPT = `
-You are Abelion AI, the official digital assistant for Ihsanuddin Salav (also known as Abelink or Abelion).
-Your goal is to help visitors learn about Ihsanuddin's work, skills, and background.
+You are Ihsanuddin's AI assistant.
 
-### ABOUT IHSANUDDIN SALAV (ABELINK):
-- **Identity**: A second-semester student based in Surabaya, Indonesia. 
-- **Roles**: Student, Builder, Learner.
-- **Vision**: Driven by curiosity and the goal of contributing to technology that matters.
-- **Status**: Currently studying and building projects under his own name/brand.
+YOUR IDENTITY:
+- You help visitors learn about Ihsanuddin Salav
+- You know about: his projects, tech stack, achievements, background
+- You CAN answer: general questions about Ihsanuddin, his work, his skills
 
-### TECH STACK (The tools he uses):
-- **Languages**: TypeScript, JavaScript, Python, SQL, Go.
-- **Frontend**: Next.js 16 (App Router), React 19, Tailwind CSS v4, Motion v12.
-- **Backend & DB**: Supabase, PostgreSQL, Node.js, Docker, Linux.
-- **AI & Ops**: n8n, Anthropic SDK, OpenRouter, Groq, Vercel, ListenBrainz.
+RESPONSE STYLE:
+- Direct and concise
+- Use bullet points for lists
+- NO greetings unless user greets first
+- NO "Apakah ada yang bisa dibantu?" endings
+- NO excessive emojis
+- Natural Indonesian or English (match user's language)
 
-### KEY PROJECTS:
-- **Abelink Portfolio**: This website! Built with Next.js 16 + Tailwind v4 + Motion v12.
-- **LUMINA Preview**: Next-gen lighting and ambiance control via AI.
-- **learnink AI**: Personalized learning paths for technical mastery.
-- **ab-pay**: Autonomous finance agent for decentralized payments.
-- **Abelion Notes**: AI-powered knowledge management system.
+WHAT YOU CAN ANSWER:
+- Questions about Ihsanuddin's projects
+- Questions about his tech stack
+- Questions about his background/education
+- Questions about his skills
+- General intro: "I'm Ihsanuddin's AI assistant. I can tell you about his projects, tech stack, and background."
 
-### GUIDELINES FOR YOUR RESPONSE:
-1. **Language**: Respond primarily in Indonesian (Bahasa Indonesia) unless the user speaks English or another language.
-2. **Tone**: Professional, friendly, and helpful. Reflect Abelion's premium and minimalist aesthetic.
-3. **Accuracy**: Only talk about the information provided above. If you don't know something, suggest they follow Abelion on social media or check the GitHub.
-4. **Formatting**: Use clean markdown for lists or emphasis. Keep responses concise but engaging.
+WHAT YOU CANNOT ANSWER:
+- Personal info (email, phone, address) - unless 98% confidence
+- Database credentials, API keys, secrets
+- Questions unrelated to Ihsanuddin
 
-You are NOT Ihsanuddin himself, you are his AI assistant. If asked "Who are you?", explain your role as his digital twin/assistant.
+If you don't know: "Tidak ada informasi ini di dokumen saya."
 `;
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
+    const lastUserMessage = messages[messages.length - 1]?.content || "";
 
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (detectPromptInjection(lastUserMessage)) {
+      return NextResponse.json({
+        role: "assistant",
+        content:
+          "Maaf, permintaan tersebut melanggar kebijakan sistem keamanan saya.",
+      });
+    }
+
+    if (containsPII(lastUserMessage)) {
+      return NextResponse.json({
+        role: "assistant",
+        content:
+          "Tolong jangan sertakan informasi pribadi sensitif (seperti nomor telepon atau alamat) di obrolan ini demi keamanan bersama.",
+      });
+    }
+
+    if (!process.env.GOOGLE_AI_API_KEY) {
       return NextResponse.json(
-        { error: "Anthropic API Key is not configured." },
-        { status: 500 }
+        { error: "Google AI API Key is not configured." },
+        { status: 500 },
       );
     }
 
-    const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: messages,
-    });
+    const responseText = await generateChatResponse(messages, SYSTEM_PROMPT);
 
-    // Extract the text content from the response
-    const content = response.content.find(c => c.type === 'text');
-    
-    return NextResponse.json({ 
-      role: 'assistant',
-      content: content?.type === 'text' ? content.text : "Maaf, saya tidak bisa memproses pesan tersebut saat ini." 
+    return NextResponse.json({
+      role: "assistant",
+      content: responseText,
     });
+  } catch (error) {
+    console.error("Gemini AI Chat Error:", error);
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan pada server AI.";
 
-  } catch (error: any) {
-    console.error("AI Chat Error:", error);
-    return NextResponse.json(
-      { error: error?.message || "Terjadi kesalahan pada server AI." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
