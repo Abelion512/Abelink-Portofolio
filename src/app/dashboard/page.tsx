@@ -80,7 +80,7 @@ export default function Dashboard() {
               description: p.description,
               date: p.created_at,
               timestamp: new Date(p.created_at).getTime(),
-              url: p.url,
+              url: p.url
             });
           });
         }
@@ -94,12 +94,12 @@ export default function Dashboard() {
               description: a.issuer,
               date: a.created_at,
               timestamp: new Date(a.created_at).getTime(),
-              url: a.credential_url,
+              url: a.credential_url
             });
           });
         }
 
-        // Sort combined feed by pre-computed timestamp (avoids repeated Date parsing)
+        // Sort combined feed by date
         combinedFeed.sort((a, b) => b.timestamp - a.timestamp);
         setFeed(combinedFeed);
       } catch {
@@ -113,22 +113,28 @@ export default function Dashboard() {
         });
 
         const mockFeed: FeedItem[] = [
-          ...MOCK_PROJECTS.map((p) => ({
-            id: p.id,
-            type: "project" as const,
-            title: p.name,
-            description: p.description,
-            date: p.created_at || new Date().toISOString(),
-            timestamp: Date.now(),
-          })),
-          ...MOCK_ACHIEVEMENTS.map((a) => ({
-            id: a.id,
-            type: "achievement" as const,
-            title: a.title,
-            description: a.issuer,
-            date: a.created_at || new Date().toISOString(),
-            timestamp: Date.now(),
-          })),
+          ...MOCK_PROJECTS.map(p => {
+            const date = p.created_at || new Date().toISOString();
+            return {
+              id: p.id,
+              type: "project" as const,
+              title: p.name,
+              description: p.description,
+              date,
+              timestamp: new Date(date).getTime()
+            };
+          }),
+          ...MOCK_ACHIEVEMENTS.map(a => {
+            const date = a.created_at || new Date().toISOString();
+            return {
+              id: a.id,
+              type: "achievement" as const,
+              title: a.title,
+              description: a.issuer,
+              date,
+              timestamp: new Date(date).getTime()
+            };
+          })
         ];
         setFeed(mockFeed);
       } finally {
@@ -330,7 +336,7 @@ export default function Dashboard() {
                         {item.title}
                       </h4>
                       <span className="text-[10px] font-mono text-text-secondary uppercase">
-                        {new Date(item.date).toLocaleDateString()}
+                        {new Date(item.timestamp).toLocaleDateString()}
                       </span>
                     </div>
                     <p className="text-text-secondary text-sm mb-4 line-clamp-2 leading-relaxed">
