@@ -52,7 +52,7 @@ export default function HeroClient({ openToWork, currentlyLearning }: HeroClient
           </h2>
 
           <p className="text-sm sm:text-base md:text-lg text-text-secondary max-w-xl leading-relaxed mb-8">
-            Hi, I'm <span className="text-primary font-medium">Ihsanuddin Salav</span> (Abelion) — a second-semester student based in Surabaya who builds things with AI and web technology. I'm actively learning, collecting certifications, and developing projects under my own name. Driven by curiosity and the goal of contributing to technology that matters.
+            Hi, I&apos;m <span className="text-primary font-medium">Ihsanuddin Salav</span> (Abelion) — a second-semester student based in Surabaya who builds things with AI and web technology. I&apos;m actively learning, collecting certifications, and developing projects under my own name. Driven by curiosity and the goal of contributing to technology that matters.
           </p>
 
           <div className="flex flex-wrap gap-4 mt-auto">
@@ -90,7 +90,7 @@ export default function HeroClient({ openToWork, currentlyLearning }: HeroClient
         <motion.div variants={itemVariants} className="md:col-span-12 glass border border-border bg-surface/30 rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-olivx-purple/30 transition-all duration-300">
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-bold font-display mb-2">Connect with me</h3>
-            <p className="text-sm text-text-secondary">Let's build something extraordinary together.</p>
+            <p className="text-sm text-text-secondary">Let&apos;s build something extraordinary together.</p>
           </div>
           <div className="flex gap-4">
             {[
