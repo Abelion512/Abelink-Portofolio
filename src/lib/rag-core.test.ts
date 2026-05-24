@@ -1,5 +1,21 @@
 import { describe, expect, it } from "bun:test";
-import { detectSecurityThreat } from "./rag-core";
+
+// We need to set the env var before importing the module that uses it
+process.env.NEXT_PUBLIC_CONTACT_EMAIL = "test@example.com";
+
+// Use dynamic import after setting env var
+const { detectSecurityThreat, PORTFOLIO_DOCS_STATIC } = await import(
+  "./rag-core"
+);
+
+describe("PORTFOLIO_DOCS_STATIC", () => {
+  it("should use the contact email from environment variable", () => {
+    const contactDoc = PORTFOLIO_DOCS_STATIC.find((doc: any) => doc.id === "contact");
+    expect(contactDoc).toBeDefined();
+    expect(contactDoc?.content).toContain("test@example.com");
+    expect(contactDoc?.content).not.toContain("agen.salva@gmail.com");
+  });
+});
 
 describe("detectSecurityThreat", () => {
   it("should block queries containing blocked topics", () => {

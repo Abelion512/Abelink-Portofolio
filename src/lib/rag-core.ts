@@ -4,6 +4,14 @@ export interface PortfolioDoc {
   securityLevel?: "public" | "sensitive" | "private";
 }
 
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
+if (!contactEmail) {
+  throw new Error(
+    "Missing environment variable: NEXT_PUBLIC_CONTACT_EMAIL is required for Portfolio context.",
+  );
+}
+
 // Static fallback (if Supabase is down)
 export const PORTFOLIO_DOCS_STATIC: PortfolioDoc[] = [
   {
@@ -42,7 +50,7 @@ PostgreSQL, Node.js, Docker, Linux, n8n, Anthropic SDK, OpenRouter, Groq, Vercel
     id: "contact",
     securityLevel: "sensitive",
     content: `Contact Information (share ONLY if confidence >= 98%):
-Email: agen.salva@gmail.com
+Email: ${contactEmail}
 For business inquiries and collaborations only.`,
   },
   {
