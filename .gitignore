@@ -1,22 +1,27 @@
-.env*.local
-.next/
+# Dependencies
 node_modules/
+.next/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Build outputs
+dist/
+out/
+build/
+
+# Vercel
 .vercel
+
+# AI/Agents
 .gemini/
 .agents/
+
+# OS
 .DS_Store
-*.log
-
-# Supabase Temp
-supabase/.temp/
-
-# Testing & Development junk
-testsprite_tests/
-coverage/
-screenshots/
-recordings/
-.tmp/
-tmp/
+Thumbs.db
 
 # IDEs
 .idea/
@@ -24,7 +29,29 @@ tmp/
 *.swp
 *.swo
 
-# Build outputs
-dist/
-out/
-build/
+# Logs
+*.log
+
+# Testing & dev junk
+testsprite_tests/
+coverage/
+screenshots/
+recordings/
+.tmp/
+tmp/
+
+# Supabase temp
+supabase/.temp/
+
+# Project junk
+.Jules/
+.remember/
+benchmark_dom_query.cjs
+tsconfig.tsbuildinfo
+
+# Docs junk
+docs/archive/prd-legacy/PRD_LiquidGlass_Rebirth.md
+docs/archive/Analyzing_.Jules_Session_Archives.md
+docs/references/*.mp4
+docs/references/*.pdf
+docs/references/*.jpeg

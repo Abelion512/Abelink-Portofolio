@@ -38,13 +38,13 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
           <CloseIcon size={24} />
         </button>
 
-        {/* Left: Image Section (Full Bleed Focus) */}
-        <div className="relative w-full md:w-[65%] bg-black flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+        {/* Left: Image Section — full bleed, modal adapts to image */}
+        <div className="relative w-full md:w-[65%] bg-black flex items-center justify-center border-b md:border-b-0 md:border-r border-white/5">
           <motion.img
             layoutId={`image-${achievement.id}`}
             src={achievement.image_path?.replace(/^\/?public\//, '/')}
             alt={achievement.title}
-            className="w-full h-full object-contain p-4 md:p-6"
+            className="w-full max-h-[75vh] object-cover"
             onContextMenu={(e) => e.preventDefault()}
             draggable={false}
           />
