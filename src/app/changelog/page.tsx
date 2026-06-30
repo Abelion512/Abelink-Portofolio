@@ -83,12 +83,8 @@ export default function ChangelogPage() {
 
         if (error) throw error;
         const list = (data as ChangelogEntry[]) || [];
-        // Sort: date desc primary, semver desc secondary
-        list.sort((a, b) => {
-          const d = new Date(b.date).getTime() - new Date(a.date).getTime();
-          if (d !== 0) return d;
-          return semverSort(a.version, b.version);
-        });
+        // Sort by semver descending — changelog follows version progression
+        list.sort((a, b) => semverSort(a.version, b.version));
         setEntries(list);
       } catch (err) {
         console.error("Failed to fetch changelog:", err);
@@ -214,10 +210,10 @@ export default function ChangelogPage() {
                       {entry.title}
                     </h2>
 
-                    {/* Content */}
+                    {/* Content — replace literal \n with real newlines */}
                     {entry.content && (
                       <div className="text-text-secondary text-sm leading-relaxed font-body prose prose-invert max-w-none prose-p:leading-relaxed">
-                        <ReactMarkdown>{entry.content}</ReactMarkdown>
+                        <ReactMarkdown>{entry.content.replace(/\\n/g, '\n')}</ReactMarkdown>
                       </div>
                     )}
                   </SpotlightCard>
