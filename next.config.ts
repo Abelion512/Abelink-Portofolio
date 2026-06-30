@@ -19,7 +19,6 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    // Cache Server Component fetch during HMR — faster dev refreshes
     serverComponentsHmrCache: true,
   },
 
@@ -27,6 +26,20 @@ const nextConfig: NextConfig = {
     fetches: {
       fullUrl: true,
     },
+  },
+
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+    ];
   },
 };
 
