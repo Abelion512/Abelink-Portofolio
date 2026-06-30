@@ -1,14 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { supabase } from "@/lib/supabase";
-import type { Metadata } from "next";
 import { GitCommit, GitPullRequest, Bug, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-
-export const metadata: Metadata = {
-  title: "Changelog | Abelink Portofolio",
-  description: "Release history and updates for Abelink Portofolio.",
-};
-
-export const revalidate = 60;
+import SpotlightCard from "@/components/ui/SpotlightCard";
 
 interface ChangelogEntry {
   id: string;
@@ -25,28 +22,28 @@ const typeConfig = {
     label: "Major",
     color: "text-primary",
     border: "border-primary/30",
-    bg: "bg-primary/5",
+    bg: "bg-primary/10",
   },
   minor: {
     icon: GitCommit,
     label: "Minor",
     color: "text-accent",
     border: "border-accent/30",
-    bg: "bg-accent/5",
+    bg: "bg-accent/10",
   },
   patch: {
     icon: GitPullRequest,
     label: "Patch",
     color: "text-emerald-400",
     border: "border-emerald-400/30",
-    bg: "bg-emerald-400/5",
+    bg: "bg-emerald-400/10",
   },
   fix: {
     icon: Bug,
     label: "Fix",
     color: "text-amber-400",
     border: "border-amber-400/30",
-    bg: "bg-amber-400/5",
+    bg: "bg-amber-400/10",
   },
 };
 
@@ -59,33 +56,60 @@ function semverSort(a: string, b: string): number {
   return 0;
 }
 
-async function getChangelog(): Promise<ChangelogEntry[]> {
-  try {
-    const { data, error } = await supabase
-      .from("changelog_entries")
-      .select("*")
-      .order("date", { ascending: false });
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.2 },
+  },
+};
 
-    if (error) throw error;
-    const entries = (data as ChangelogEntry[]) || [];
-    // Sort by semver descending (not date)
-    entries.sort((a, b) => semverSort(a.version, b.version));
-    return entries;
-  } catch (err) {
-    console.error("Failed to fetch changelog:", err);
-    return [];
-  }
-}
+const itemAnim = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
-export default async function ChangelogPage() {
-  const entries = await getChangelog();
+export default function ChangelogPage() {
+  const [entries, setEntries] = useState<ChangelogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        const { data, error } = await supabase
+          .from("changelog_entries")
+          .select("*")
+          .order("date", { ascending: false });
+
+        if (error) throw error;
+        const list = (data as ChangelogEntry[]) || [];
+        // Sort: date desc primary, semver desc secondary
+        list.sort((a, b) => {
+          const d = new Date(b.date).getTime() - new Date(a.date).getTime();
+          if (d !== 0) return d;
+          return semverSort(a.version, b.version);
+        });
+        setEntries(list);
+      } catch (err) {
+        console.error("Failed to fetch changelog:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetch();
+  }, []);
 
   return (
     <main className="pt-32 px-6 max-w-4xl mx-auto mb-24 min-h-screen">
       {/* Header */}
-      <div className="mb-16 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="mb-16 text-center"
+      >
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-border/50 bg-surface/30 text-[10px] font-mono tracking-widest uppercase text-primary mb-4">
-          <GitCommit size={14} />
+          <Sparkles size={14} />
           Release History
         </div>
         <h1 className="text-5xl md:text-6xl font-display font-bold tracking-tight mb-4">
@@ -94,49 +118,89 @@ export default async function ChangelogPage() {
         <p className="text-text-secondary text-lg max-w-xl mx-auto">
           Setiap pembaruan, peningkatan, dan perbaikan pada portofolio ini.
         </p>
-      </div>
+      </motion.div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-32">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        </div>
+      )}
+
+      {/* Empty */}
+      {!loading && entries.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center py-32"
+        >
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-surface/40 border border-white/5 flex items-center justify-center">
+            <GitCommit size={32} className="text-text-muted" />
+          </div>
+          <h3 className="text-xl font-display font-bold text-text-primary mb-2">
+            No entries yet
+          </h3>
+          <p className="text-sm text-text-muted font-mono uppercase tracking-wider">
+            Changelog will populate as updates are released
+          </p>
+        </motion.div>
+      )}
 
       {/* Timeline */}
-      {entries.length === 0 ? (
-        <div className="text-center py-32 text-text-secondary/40">
-          <GitCommit size={48} className="mx-auto mb-4 opacity-30" />
-          <p className="font-mono text-xs uppercase tracking-[0.3em]">
-            Belum ada catatan
-          </p>
-        </div>
-      ) : (
+      {!loading && entries.length > 0 && (
         <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/10 to-transparent" />
+          {/* Timeline line */}
+          <div className="absolute left-6 md:left-8 top-4 bottom-4 w-px bg-linear-to-b from-primary/30 via-primary/5 to-transparent" />
 
-          <div className="space-y-12">
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="space-y-10"
+          >
             {entries.map((entry) => {
               const cfg = typeConfig[entry.type] || typeConfig.minor;
               const Icon = cfg.icon;
 
               return (
-                <div key={entry.id} className="relative pl-16 md:pl-20">
-                  {/* Timeline Dot */}
+                <motion.div
+                  key={entry.id}
+                  variants={itemAnim}
+                  className="relative pl-16 md:pl-20"
+                >
+                  {/* Timeline dot */}
                   <div
-                    className={`absolute left-4 md:left-6 top-1 w-4 h-4 rounded-full border-2 ${cfg.border} ${cfg.bg} ring-4 ring-[--color-base] flex items-center justify-center`}
+                    className={`absolute left-3 md:left-5 top-6 w-6 h-6 rounded-full border-2 ${cfg.border} ${cfg.bg} ring-4 ring-[--color-base] flex items-center justify-center`}
                   >
-                    <div className={`w-1.5 h-1.5 rounded-full ${cfg.color} bg-current`} />
+                    <div
+                      className={`w-2 h-2 rounded-full ${cfg.color.replace("text", "bg")} bg-current`}
+                    />
                   </div>
 
                   {/* Card */}
-                  <div className="glass border border-white/5 rounded-[2rem] p-6 md:p-8 hover:border-white/10 transition-all">
-                    {/* Top Row */}
-                    <div className="flex flex-wrap items-center gap-3 mb-5">
+                  <SpotlightCard
+                    color={
+                      entry.type === "major"
+                        ? "rgba(108,99,255,0.15)"
+                        : entry.type === "fix"
+                          ? "rgba(251,191,36,0.15)"
+                          : "rgba(0,212,170,0.15)"
+                    }
+                    className="p-6 md:p-8"
+                    tilt={false}
+                  >
+                    {/* Top row */}
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
                       <Icon size={16} className={cfg.color} />
                       <span
                         className={`text-[10px] font-mono font-bold uppercase tracking-widest ${cfg.color}`}
                       >
                         {cfg.label}
                       </span>
-                      <span className="text-[10px] font-mono text-text-secondary/40 tracking-widest">
-                        {entry.version}
+                      <span className="text-[10px] font-mono tracking-wider text-text-secondary/60">
+                        v{entry.version.replace(/^v/, "")}
                       </span>
-                      <span className="text-[10px] font-mono text-text-secondary/30 ml-auto">
+                      <span className="text-[10px] font-mono text-text-muted ml-auto">
                         {new Date(entry.date).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
@@ -150,17 +214,17 @@ export default async function ChangelogPage() {
                       {entry.title}
                     </h2>
 
-                    {/* Content — rendered as markdown */}
+                    {/* Content */}
                     {entry.content && (
-                      <div className="text-text-secondary text-sm leading-relaxed font-body prose prose-invert max-w-none">
+                      <div className="text-text-secondary text-sm leading-relaxed font-body prose prose-invert max-w-none prose-p:leading-relaxed">
                         <ReactMarkdown>{entry.content}</ReactMarkdown>
                       </div>
                     )}
-                  </div>
-                </div>
+                  </SpotlightCard>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       )}
     </main>
