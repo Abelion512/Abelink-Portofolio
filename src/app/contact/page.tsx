@@ -3,37 +3,38 @@
 import { motion } from "motion/react";
 import SpotlightCard from "@/components/ui/SpotlightCard";
 import { Mail, Instagram, Linkedin, Github, Send } from "lucide-react";
+import { site } from "@/config/site";
 
 export default function ContactPage() {
 
   const contactMethods = [
     {
       label: "Direct Email",
-      value: "agen.salva@gmail.com",
-      href: "mailto:agen.salva@gmail.com",
+      value: site.email,
+      href: `mailto:${site.email}`,
       icon: <Mail className="w-6 h-6" />,
-      color: "rgba(59, 130, 246, 0.15)", // Blue
+      color: "rgba(59, 130, 246, 0.15)",
     },
     {
       label: "Instagram",
       value: "@ihsanovid",
-      href: "https://instagram.com/ihsanovid",
+      href: site.social.instagram,
       icon: <Instagram className="w-6 h-6" />,
-      color: "rgba(236, 72, 153, 0.15)", // Pink
+      color: "rgba(236, 72, 153, 0.15)",
     },
     {
       label: "LinkedIn",
       value: "ihsanuddin-abelion",
-      href: "https://linkedin.com/in/ihsanuddin-abelion",
+      href: site.social.linkedin,
       icon: <Linkedin className="w-6 h-6" />,
-      color: "rgba(10, 102, 194, 0.15)", // LinkedIn Blue
+      color: "rgba(10, 102, 194, 0.15)",
     },
     {
       label: "GitHub",
       value: "Abelion512",
-      href: "https://github.com/Abelion512",
+      href: site.social.github,
       icon: <Github className="w-6 h-6" />,
-      color: "rgba(255, 255, 255, 0.1)", // Neutral
+      color: "rgba(255, 255, 255, 0.1)",
     }
   ];
 
@@ -57,8 +58,8 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="group block h-full focus:outline-none"
               >
-                <SpotlightCard 
-                  className="p-8 h-full transition-all duration-500 group-hover:-translate-y-2 group-hover:border-primary/40" 
+                <SpotlightCard
+                  className="p-8 h-full"
                   color={method.color}
                 >
                   <div className="flex flex-col items-center text-center space-y-6">
@@ -94,7 +95,7 @@ export default function ContactPage() {
                 </p>
                 <div className="pt-4">
                   <a 
-                    href="mailto:agen.salva@gmail.com"
+                    href={`mailto:${site.email}`}
                     className="inline-flex items-center gap-3 px-10 py-5 bg-primary text-white rounded-2xl font-bold hover:shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.4)] hover:-translate-y-1 transition-all duration-300"
                   >
                     Send me a message

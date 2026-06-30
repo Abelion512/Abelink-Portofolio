@@ -1,7 +1,7 @@
 import Hero from "@/components/sections/Hero";
 import { supabase } from "@/lib/supabase";
 
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 60;
 
 async function getSettings() {
   try {

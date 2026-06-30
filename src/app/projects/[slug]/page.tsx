@@ -5,14 +5,14 @@ import { useParams } from "next/navigation";
 import { motion } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
-import { 
-  Calendar, 
-  Briefcase, 
-  Wrench, 
-  ExternalLink, 
-  Github, 
+import {
+  Calendar,
+  Briefcase,
+  Wrench,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  ExternalLink,
+  Github,
 } from "lucide-react";
 import FloatingActions from "@/components/ui/FloatingActions";
 import Link from "next/link";
@@ -234,32 +234,33 @@ export default function ProjectDetailPage() {
                     ))}
                   </div>
                 </div>
+              </div>
 
-                <div className="pt-6 border-t border-border/50 space-y-4">
+                {/* Mobile-only action buttons (desktop uses FloatingActions) */}
+                <div className="space-y-4 lg:hidden pt-6 border-t border-white/10">
                   {project.liveUrl && (
-                    <a 
-                      href={project.liveUrl} 
-                      target="_blank" 
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-4 bg-primary text-white rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-primary-light transition-all shadow-xl shadow-primary/20"
+                      className="w-full py-4 bg-primary text-white rounded-2xl flex items-center justify-center gap-3 font-bold transition-all shadow-xl shadow-primary/20 active-haptic-sm"
                     >
                       <ExternalLink size={18} />
                       {t("projects.liveDemo")}
                     </a>
                   )}
                   {project.githubUrl && (
-                    <a 
-                      href={project.githubUrl} 
-                      target="_blank" 
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-4 glass border-white/10 text-text-primary rounded-2xl flex items-center justify-center gap-3 font-bold hover:bg-surface/50 transition-all font-mono text-sm"
+                      className="w-full py-4 glass border-white/10 text-text-primary rounded-2xl flex items-center justify-center gap-3 font-bold transition-all font-mono text-sm active-haptic-sm"
                     >
                       <Github size={18} />
                       {t("projects.viewSource")}
                     </a>
                   )}
                 </div>
-              </div>
             </motion.div>
           </aside>
 

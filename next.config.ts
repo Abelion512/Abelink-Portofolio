@@ -17,6 +17,17 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: true,
   },
+
+  experimental: {
+    // Cache Server Component fetch during HMR — faster dev refreshes
+    serverComponentsHmrCache: true,
+  },
+
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;

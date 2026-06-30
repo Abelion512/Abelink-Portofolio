@@ -1,21 +1,28 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
+import { site } from "@/config/site";
 import { QRCodeSVG } from "qrcode.react";
-import { Share, Mail, Github, Instagram, Link as LinkIcon } from "lucide-react";
+import { Share, Mail, Github, Instagram, Link as LinkIcon, Check } from "lucide-react";
+import { useState } from "react";
 
 export default function PureCard() {
-  const portfolioUrl = "https://abelion.vercel.app";
+  const portfolioUrl = site.url;
+  const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
     if (navigator.share) {
+      try { await navigator.share({ title: site.name, url: portfolioUrl }); }
+      catch { /* user cancelled */ }
+    } else {
+      // Fallback: copy URL
       try {
-        await navigator.share({
-          title: "Ihsanuddin Salav",
-          url: portfolioUrl,
-        });
-      } catch (err) {
-        console.error("Error sharing:", err);
+        await navigator.clipboard.writeText(portfolioUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        prompt("Copy this URL:", portfolioUrl);
       }
     }
   };
@@ -42,23 +49,28 @@ export default function PureCard() {
             {/* Subtle top-right share action */}
             <button
               onClick={handleShare}
-              className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors z-10"
+              className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-colors z-20 cursor-pointer"
               aria-label="Share"
             >
-              <Share size={18} strokeWidth={1.5} />
+              {copied ? <Check size={18} strokeWidth={1.5} /> : <Share size={18} strokeWidth={1.5} />}
             </button>
 
             {/* Core Profile Focus */}
             <div className="flex flex-col items-start space-y-6 mt-4 relative z-10">
-              <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center shadow-xl backdrop-blur-md">
-                <span className="font-display font-black text-2xl text-white tracking-widest">
-                  IS
-                </span>
+              {/* Profile avatar with image support */}
+              <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border border-white/10 flex items-center justify-center shadow-xl overflow-hidden shrink-0">
+                {site.avatar ? (
+                  <Image src={site.avatar} alt={site.name} width={80} height={80} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="font-display font-black text-2xl text-white tracking-widest">
+                    {site.initials || "IS"}
+                  </span>
+                )}
               </div>
 
               <div className="space-y-1">
                 <h1 className="font-display font-bold text-3xl tracking-tight text-white">
-                  Ihsanuddin Salav
+                  {site.name}
                 </h1>
                 <p className="font-mono text-sm text-neutral-400">
                   Software Engineer & Builder
@@ -73,28 +85,31 @@ export default function PureCard() {
 
             <div className="h-px w-full bg-[--color-border]/30 my-8" />
 
-            {/* Socials & Small QR aligned elegantly */}
-            <div className="flex items-center justify-between relative z-10 mt-8">
+            {/* Socials & QR */}
+            <div className="flex items-center justify-between relative z-20 mt-8">
               <div className="flex gap-4">
                 <a
-                  href="mailto:agen.salva@gmail.com"
-                  className="text-white/40 hover:text-white transition-all hover:scale-110"
+                  href={`mailto:${site.email}`}
+                  className="text-white/40 hover:text-white transition-all hover:scale-110 cursor-pointer active-haptic-sm"
+                  aria-label="Email"
                 >
                   <Mail size={20} strokeWidth={1.5} />
                 </a>
                 <a
-                  href="https://github.com/Abelion512"
+                  href={site.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/40 hover:text-white transition-all hover:scale-110"
+                  className="text-white/40 hover:text-white transition-all hover:scale-110 cursor-pointer active-haptic-sm"
+                  aria-label="GitHub"
                 >
                   <Github size={20} strokeWidth={1.5} />
                 </a>
                 <a
-                  href="https://instagram.com/ihsanovid"
+                  href={site.social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/40 hover:text-white transition-all hover:scale-110"
+                  className="text-white/40 hover:text-white transition-all hover:scale-110 cursor-pointer active-haptic-sm"
+                  aria-label="Instagram"
                 >
                   <Instagram size={20} strokeWidth={1.5} />
                 </a>
@@ -102,19 +117,19 @@ export default function PureCard() {
                   href={portfolioUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/40 hover:text-white transition-all hover:scale-110"
+                  className="text-white/40 hover:text-white transition-all hover:scale-110 cursor-pointer active-haptic-sm"
+                  aria-label="Portfolio"
                 >
                   <LinkIcon size={20} strokeWidth={1.5} />
                 </a>
               </div>
 
-              {/* Minimal QR Code (Scan Only) */}
+              {/* QR Code → site.url */}
               <div className="p-1.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 opacity-80 hover:opacity-100 transition-opacity">
                 <QRCodeSVG
-                  value={`${portfolioUrl}/card`}
+                  value={portfolioUrl}
                   size={48}
                   level="M"
-                  includeMargin={false}
                   fgColor="#FFFFFF"
                   bgColor="transparent"
                 />

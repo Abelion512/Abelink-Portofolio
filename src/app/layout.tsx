@@ -4,10 +4,12 @@ import Navbar from "@/components/layout/Navbar";
 import BottomNav from "@/components/layout/BottomNav";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
-import CommandPalette from "@/components/ui/CommandPalette";
-import ChatWidget from "@/components/chat/ChatWidget";
+import PageTransition from "@/components/ui/PageTransition";
 import BackToTop from "@/components/ui/BackToTop";
+import LazyCommandPalette from "@/components/ui/LazyCommandPalette";
+import LazyChatWidget from "@/components/chat/LazyChatWidget";
 import "./globals.css";
+import { site } from "@/config/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +32,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Abelink Portofolio — Ihsanuddin Salav",
-  description:
-    "Creative Developer & AI Builder based in Surabaya building things with AI and web technology.",
+  title: site.title,
+  description: site.description,
   keywords: [
     "Ihsanuddin Salav",
     "Abelion",
@@ -54,6 +55,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${inter.variable}`}
     >
       <body className="antialiased bg-base text-white font-geist-sans selection:bg-blue-500/30">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-9999 focus:px-6 focus:py-3 focus:bg-primary focus:text-white focus:rounded-xl focus:font-bold focus:outline-none"
+        >
+          Skip to content
+        </a>
         <noscript>
           <div className="min-h-screen flex items-center justify-center p-6 text-center bg-base">
             <div className="max-w-lg">
@@ -71,11 +78,14 @@ export default function RootLayout({
             </div>
           </div>
         </noscript>
+        <div className="noise-overlay" />
         <QueryProvider>
-          <CommandPalette />
+          <LazyCommandPalette />
           <Navbar />
-          {children}
-          <ChatWidget />
+          <div id="main-content">
+            <PageTransition>{children}</PageTransition>
+          </div>
+          <LazyChatWidget />
           <BackToTop />
           <BottomNav />
           <Analytics />

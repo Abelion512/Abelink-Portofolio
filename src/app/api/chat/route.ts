@@ -3,7 +3,7 @@ import {
   generateChatResponse,
   detectPromptInjection,
   containsPII,
-} from "@/lib/gemini";
+} from "@/lib/ai";
 
 const SYSTEM_PROMPT = `
 You are Ihsanuddin's AI assistant.
@@ -57,9 +57,9 @@ export async function POST(req: Request) {
       });
     }
 
-    if (!process.env.GOOGLE_AI_API_KEY) {
+    if (!process.env.AI_API_KEY) {
       return NextResponse.json(
-        { error: "Google AI API Key is not configured." },
+        { error: "AI API Key is not configured." },
         { status: 500 },
       );
     }
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
       content: responseText,
     });
   } catch (error) {
-    console.error("Gemini AI Chat Error:", error);
+    console.error("AI Chat Error:", error);
     const errorMessage =
       error instanceof Error
         ? error.message

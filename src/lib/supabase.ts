@@ -1,7 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
+import { env } from "./env";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder_key";
-
-// Menggunakan placeholder jika env belum diisi agar build tidak crash
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(env.SUPABASE_URL || "https://placeholder.supabase.co", env.SUPABASE_ANON_KEY || "placeholder_key");

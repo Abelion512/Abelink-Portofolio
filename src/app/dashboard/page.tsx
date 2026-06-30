@@ -12,11 +12,13 @@ import {
   Terminal,
   Circle,
   ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { env } from "@/lib/env";
 import { useLangStore } from "@/store/languageStore";
 import { usePerformance } from "@/hooks/usePerformance";
-import { MOCK_PROJECTS, MOCK_ACHIEVEMENTS } from "@/hooks/useData";
+import { PageSkeleton } from "@/components/ui/Skeleton";
 
 interface Setting {
   open_to_work: boolean;
@@ -36,26 +38,25 @@ interface FeedItem {
 }
 
 export default function Dashboard() {
+  const { t } = useLangStore();
   const [settings, setSettings] = useState<Setting | null>(null);
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { lowPowerMode } = usePerformance();
-  useLangStore();
 
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        // 1. Fetch Settings
         const { data: setts, error: settingsError } = await supabase
           .from("settings")
           .select("*")
-          .eq("id", 1)
+          .eq("id", env.SETTINGS_ROW_ID)
           .single();
 
         if (settingsError) throw settingsError;
         if (setts) setSettings(setts);
 
-        // 2. Fetch Recent Activities
         const [{ data: projects }, { data: achievements }] = await Promise.all([
           supabase
             .from("projects")
@@ -99,38 +100,12 @@ export default function Dashboard() {
           });
         }
 
-        // Sort combined feed by pre-computed timestamp (avoids repeated Date parsing)
         combinedFeed.sort((a, b) => b.timestamp - a.timestamp);
         setFeed(combinedFeed);
-      } catch {
-        console.warn("Dashboard Fetch Failed. Using Resilience Data.");
-        // Fallback to MOCK data if available
-        setSettings({
-          open_to_work: true,
-          currently_learning: "Advanced AI Architectures",
-          currently_building: "Portofolio OS",
-          now_playing: "Lofi Beats - Study Session",
-        });
-
-        const mockFeed: FeedItem[] = [
-          ...MOCK_PROJECTS.map((p) => ({
-            id: p.id,
-            type: "project" as const,
-            title: p.name,
-            description: p.description,
-            date: p.created_at || new Date().toISOString(),
-            timestamp: Date.now(),
-          })),
-          ...MOCK_ACHIEVEMENTS.map((a) => ({
-            id: a.id,
-            type: "achievement" as const,
-            title: a.title,
-            description: a.issuer,
-            date: a.created_at || new Date().toISOString(),
-            timestamp: Date.now(),
-          })),
-        ];
-        setFeed(mockFeed);
+        setError(null);
+      } catch (err) {
+        console.warn("Dashboard fetch failed:", err);
+        setError("Could not sync dashboard data. Displaying cached state.");
       } finally {
         setLoading(false);
       }
@@ -140,29 +115,28 @@ export default function Dashboard() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-          <p className="font-mono text-xs text-text-secondary animate-pulse uppercase tracking-widest">
-            Syncing System...
-          </p>
-        </div>
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   return (
     <div className="space-y-12 pb-20">
+      {error && (
+        <div className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-mono">
+          <AlertCircle size={16} className="shrink-0" />
+          {error}
+        </div>
+      )}
+
       {/* 1. Header Section */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <div className="flex items-center gap-2 text-primary font-mono text-[10px] tracking-[0.3em] uppercase mb-4">
             <Activity size={14} />
-            System Live Feed
+            {t("dashboard.live") || "System Live Feed"}
           </div>
           <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tighter text-text-primary">
-            Abelink <span className="text-gradient">Pulse</span>
+            {t("dashboard.title") || "Abelink"}{" "}
+            <span className="text-gradient">{t("dashboard.pulse") || "Pulse"}</span>
           </h1>
         </div>
         <div className="flex items-center gap-3 px-4 py-2 glass rounded-2xl border border-white/5 bg-surface/30">
@@ -175,15 +149,17 @@ export default function Dashboard() {
             ))}
           </div>
           <span className="text-xs font-mono text-text-secondary">
-            <span className="text-text-primary font-bold">128+</span> nodes
-            active
+            <span className={`font-bold ${settings ? "text-accent" : "text-text-muted"}`}>
+              {settings ? "Live" : "—"}
+            </span>{" "}
+            {t("dashboard.nodes") || "nodes active"}
           </span>
         </div>
       </header>
 
       {/* 2. Analytics & Status Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Visitors Traffic - Mockup */}
+        {/* Visitors Traffic */}
         <div
           className={`p-8 rounded-4xl border border-white/5 relative overflow-hidden group bg-linear-to-br from-primary/5 via-transparent to-transparent ${
             lowPowerMode ? "bg-surface/90" : "glass"
@@ -193,37 +169,20 @@ export default function Dashboard() {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <p className="text-[10px] font-mono uppercase tracking-widest text-text-secondary mb-1">
-                  Traffic Overview
+                  {t("dashboard.traffic") || "Traffic Overview"}
                 </p>
-                <h3 className="text-3xl font-display font-bold text-text-primary">
-                  1,284{" "}
-                  <span className="text-xs text-accent font-mono ml-2">
-                    +12%
-                  </span>
+                <h3 className="text-3xl font-display font-bold text-text-secondary/40">
+                  ⏳
                 </h3>
               </div>
               <div className="p-2 bg-primary/10 rounded-xl">
                 <Activity size={18} className="text-primary" />
               </div>
             </div>
-
-            {/* Mockup Trend Line (SVG) */}
             <div className="mt-auto pt-4">
-              <svg
-                viewBox="0 0 100 30"
-                className="w-full h-16 stroke-primary stroke-2 fill-none overflow-visible"
-              >
-                <motion.path
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 2, ease: "easeInOut" }}
-                  d="M0,25 Q15,5 30,20 T60,10 T100,5"
-                />
-                <path
-                  d="M0,25 Q15,5 30,20 T60,10 T100,5"
-                  className="stroke-primary/20 scale-y-110 translate-y-2"
-                />
-              </svg>
+              <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                {t("dashboard.coming_soon") || "Analytics dashboard — coming soon"}
+              </p>
             </div>
           </div>
         </div>
@@ -239,13 +198,15 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
             <p className="text-[10px] font-mono uppercase tracking-widest text-text-secondary mb-2">
-              Availability
+              {t("dashboard.availability") || "Availability"}
             </p>
             <h3 className="text-2xl font-display font-bold text-text-primary flex items-center gap-3">
               <span
                 className={`w-3 h-3 rounded-full ${settings?.open_to_work ? "bg-accent animate-pulse" : "bg-red-500"}`}
               />
-              {settings?.open_to_work ? "Open to Work" : "Busy / Built"}
+              {settings?.open_to_work
+                ? t("dashboard.open") || "Open to Work"
+                : t("dashboard.busy") || "Busy / Built"}
             </h3>
           </div>
         </div>
@@ -261,10 +222,14 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
             <p className="text-[10px] font-mono uppercase tracking-widest text-text-secondary mb-2">
-              Building
+              {t("dashboard.building") || "Building"}
             </p>
-            <h3 className="text-xl font-display font-bold text-text-primary truncate">
-              {settings?.currently_building || "Project X"}
+            <h3 className="text-xl font-display font-bold text-text-primary truncate flex items-center gap-2">
+              {settings?.currently_building || (
+                <span className="text-text-muted text-sm font-mono uppercase tracking-wider">
+                  {t("dashboard.none") || "No active project"}
+                </span>
+              )}
             </h3>
           </div>
         </div>
@@ -280,11 +245,15 @@ export default function Dashboard() {
           </div>
           <div className="relative z-10">
             <p className="text-[10px] font-mono uppercase tracking-widest text-text-secondary mb-2">
-              Now Playing
+              {t("dashboard.nowplaying") || "Now Playing"}
             </p>
             <h3 className="text-xl font-display font-bold text-text-primary truncate flex items-center gap-3">
               <Music size={18} className="text-[#1DB954] shrink-0" />
-              {settings?.now_playing || "Silent Mode"}
+              {settings?.now_playing || (
+                <span className="text-text-muted text-sm font-mono uppercase tracking-wider">
+                  {t("dashboard.paused") || "Paused"}
+                </span>
+              )}
             </h3>
           </div>
         </div>
@@ -297,14 +266,22 @@ export default function Dashboard() {
           <div className="flex items-center gap-4 mb-4">
             <Clock size={16} className="text-primary" />
             <h2 className="text-2xl font-display font-bold text-text-primary">
-              Recent Activity
+              {t("dashboard.activity") || "Recent Activity"}
             </h2>
           </div>
 
           <div className="space-y-4">
             {feed.length === 0 ? (
-              <div className="glass p-12 text-center rounded-3xl border border-white/5 italic text-text-secondary">
-                No activity detected in the last few cycles.
+              <div className="glass p-16 text-center rounded-3xl border border-white/5">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-surface/40 border border-white/5 flex items-center justify-center">
+                  <Clock size={24} className="text-text-muted" />
+                </div>
+                <h3 className="text-lg font-display font-bold text-text-primary mb-2">
+                  {t("dashboard.no_activity") || "No activity yet"}
+                </h3>
+                <p className="text-sm text-text-muted font-mono uppercase tracking-wider">
+                  {t("dashboard.no_activity_desc") || "Feed updates when projects or achievements are added"}
+                </p>
               </div>
             ) : (
               feed.map((item, idx) => (
@@ -343,7 +320,8 @@ export default function Dashboard() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-text-primary hover:text-primary transition-colors"
                       >
-                        View Details <ExternalLink size={12} />
+                        {t("dashboard.view") || "View Details"}{" "}
+                        <ExternalLink size={12} />
                       </a>
                     )}
                   </div>
@@ -363,31 +341,29 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 text-primary mb-6">
               <Sparkles size={20} />
               <h3 className="text-xl font-display font-bold">
-                System Insights
+                {t("dashboard.insights") || "System Insights"}
               </h3>
             </div>
 
             <div className="space-y-6">
               <div>
                 <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-secondary mb-2">
-                  Curriculum
+                  {t("dashboard.curriculum") || "Curriculum"}
                 </p>
                 <div className="p-4 bg-surface/50 rounded-2xl border border-white/5">
                   <p className="text-sm text-text-primary font-medium leading-relaxed">
-                    Currently deep diving into{" "}
+                    {t("dashboard.learning_prefix") || "Currently deep diving into"}{" "}
                     <span className="text-accent font-bold">
-                      {settings?.currently_learning}
-                    </span>
-                    .
+                      {settings?.currently_learning || "—"}
+                    </span>.
                   </p>
                 </div>
               </div>
 
               <div className="p-6 bg-primary/10 rounded-2xl border border-primary/20">
                 <p className="text-xs text-text-primary font-body leading-relaxed">
-                  The dashboard is automatically synchronized with the Supabase
-                  core. All information here represents the latest state of the
-                  system in near real-time.
+                  {t("dashboard.sync_note") ||
+                    "The dashboard is automatically synchronized with the Supabase core. All information here represents the latest state of the system in near real-time."}
                 </p>
               </div>
             </div>

@@ -1,79 +1,105 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import React, { useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 
 interface SpotlightCardProps {
   children: React.ReactNode;
   className?: string;
-  color?: string; // Dynamic spotlight color
+  color?: string;
+  /** Enable 3D tilt on hover (default: true) */
+  tilt?: boolean;
 }
 
 const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = "",
   color = "var(--color-primary)",
+  tilt = true,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Smooth movement
-  const smoothX = useSpring(mouseX, { damping: 40, stiffness: 300 });
-  const smoothY = useSpring(mouseY, { damping: 40, stiffness: 300 });
+  const smoothX = useSpring(mouseX, { damping: 30, stiffness: 250 });
+  const smoothY = useSpring(mouseY, { damping: 30, stiffness: 250 });
 
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
+  const rotateX = useSpring(useTransform(smoothY, [0, 1], [4, -4]), {
+    damping: 25,
+    stiffness: 200,
+  });
+  const rotateY = useSpring(useTransform(smoothX, [0, 1], [-4, 4]), {
+    damping: 25,
+    stiffness: 200,
+  });
+
+  function handleMouseMove(e: React.MouseEvent) {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    mouseX.set(x);
+    mouseY.set(y);
   }
 
   return (
-    <div
+    <motion.div
+      ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden rounded-4xl bg-surface/10 border border-white/5 transition-all duration-700 hover:border-white/20 hover:bg-surface/20 ${className}`}
+      style={tilt ? { rotateX, rotateY, transformPerspective: 800 } : undefined}
+      className={`relative overflow-hidden rounded-4xl bg-surface/10 border border-white/5 transition-colors duration-700 hover:border-white/20 hover:bg-surface/20 ${className}`}
     >
-      {/* Premium Spotlight Glow */}
+      {/* Background glow spot */}
       <motion.div
-        className="pointer-events-none absolute -inset-px transition-opacity duration-500 z-0"
+        className="pointer-events-none absolute -inset-px z-0 opacity-14"
+        animate={{ opacity: isHovered ? 0.14 : 0 }}
+        transition={{ duration: 0.4 }}
         style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(
-            500px circle at ${smoothX}px ${smoothY}px,
-            ${color}12,
-            transparent 70%
-          )`,
-        }}
-      />
-      
-      {/* Refined border highlight */}
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-4xl z-10"
-        style={{
-          opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(
-            250px circle at ${smoothX}px ${smoothY}px,
-            ${color}22,
-            transparent 80%
-          )`,
-          maskImage: `radial-gradient(
-            250px circle at ${smoothX}px ${smoothY}px,
-            black,
-            transparent
-          )`,
-          WebkitMaskImage: `radial-gradient(
-            250px circle at ${smoothX}px ${smoothY}px,
-            black,
-            transparent
-          )`,
+          background: useTransform(
+            [smoothX, smoothY],
+            ([x, y]: number[]) =>
+              `radial-gradient(500px circle at ${x * 100}% ${y * 100}%, ${color}, transparent 70%)`
+          ),
         }}
       />
 
-      <div className="relative z-20 h-full w-full">{children}</div>
-    </div>
+      {/* Border highlight */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px rounded-4xl z-10"
+        animate={{ opacity: isHovered ? 0.2 : 0 }}
+        transition={{ duration: 0.4 }}
+        style={{
+          background: useTransform(
+            [smoothX, smoothY],
+            ([x, y]: number[]) =>
+              `radial-gradient(250px circle at ${x * 100}% ${y * 100}%, ${color}, transparent 80%)`
+          ),
+          maskImage: useTransform(
+            [smoothX, smoothY],
+            ([x, y]: number[]) =>
+              `radial-gradient(250px circle at ${x * 100}% ${y * 100}%, black, transparent)`
+          ),
+          WebkitMaskImage: useTransform(
+            [smoothX, smoothY],
+            ([x, y]: number[]) =>
+              `radial-gradient(250px circle at ${x * 100}% ${y * 100}%, black, transparent)`
+          ),
+        }}
+      />
+
+      {/* Content */}
+      <motion.div
+        className="relative z-20 h-full w-full"
+        animate={tilt ? { y: isHovered ? -4 : 0 } : undefined}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
   );
 };
 

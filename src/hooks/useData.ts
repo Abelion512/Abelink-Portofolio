@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { env } from "../lib/env";
 
 // ============================================
 // HELPERS
@@ -61,49 +62,8 @@ export interface CurrentlyLearning {
 }
 
 // ============================================
-// MOCK DATA (High-End Fallback for Portofolio)
-// ============================================
-
-export const MOCK_PROJECTS: Project[] = [
-  {
-    id: "p1",
-    name: "Naval Link",
-    slug: "naval-link",
-    description:
-      "Maritime Logistics Optimization Engine with Real-time Satellite Sync.",
-    tech: ["Next.js", "Three.js", "PostgreSQL", "Satellite API"],
-    coverImage:
-      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1200",
-    dominantColor: "#0066ff",
-    isPinned: true,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "p2",
-    name: "Aether OS",
-    slug: "aether-os",
-    description:
-      "Cloud-native operating system interface with glassmorphism core.",
-    tech: ["React", "Framermotion", "TailwindCSS"],
-    coverImage:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200",
-    dominantColor: "#6C63FF",
-    isPinned: true,
-    created_at: new Date().toISOString(),
-  },
-];
-
-export const MOCK_ACHIEVEMENTS: Achievement[] = [
-  {
-    id: "a1",
-    title: "AWS Certified Developer",
-    issuer: "Amazon Web Services",
-    year: 2024,
-    type: "certificate",
-    is_visible: true,
-    created_at: new Date().toISOString(),
-  },
-];
+// MOCK DATA — removed. Dashboard and fallbacks no longer use fake data.
+// ponytail: restore if explicit dev/test mode needed.
 
 // ============================================
 // HOOKS
@@ -139,10 +99,10 @@ export function useProjects() {
 
         if (queryError) {
           console.warn(
-            "Supabase Fetch Failed. Using Mock Projects.",
+            "Supabase Fetch Failed. No projects.",
             queryError.message,
           );
-          setProjects(MOCK_PROJECTS);
+          setProjects([]);
           return;
         }
 
@@ -156,15 +116,14 @@ export function useProjects() {
           slug: p.slug || lowerCaseReplace(p.name),
         }));
 
-        // Sebaiknya hanya gunakan mock jika benar-benar tidak ada data sama sekali di DB
         if (mappedProjects.length === 0) {
-          setProjects(MOCK_PROJECTS);
+          setProjects([]);
         } else {
           setProjects(mappedProjects);
         }
       } catch {
-        console.warn("Network Error. Falling back to Mock Projects.");
-        setProjects(MOCK_PROJECTS);
+        console.warn("Network Error. No projects available.");
+        setProjects([]);
       } finally {
         setLoading(false);
       }
@@ -200,8 +159,8 @@ export function useAchievements() {
           .order("created_at", { ascending: false });
 
         if (error) {
-          console.warn("Supabase Fetch Failed. Using Mock Achievements.");
-          setAchievements(MOCK_ACHIEVEMENTS);
+          console.warn("Supabase Fetch Failed. No achievements.");
+          setAchievements([]);
           return;
         }
 
@@ -213,8 +172,8 @@ export function useAchievements() {
 
         setAchievements(mapped);
       } catch {
-        console.warn("Network Error. Using Mock Achievements.");
-        setAchievements(MOCK_ACHIEVEMENTS);
+        console.warn("Network Error. No achievements.");
+        setAchievements([]);
       } finally {
         setLoading(false);
       }
@@ -244,7 +203,7 @@ export function useCurrentlyLearning() {
         const { data, error } = await supabase
           .from("settings")
           .select("currently_learning, currently_building")
-          .eq("id", 1)
+          .eq("id", env.SETTINGS_ROW_ID)
           .single();
 
         if (error && error.code !== "PGRST116") throw error; // PGRST116 = not found, which is OK
