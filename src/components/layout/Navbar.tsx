@@ -79,7 +79,7 @@ export default function Navbar() {
               {...fadeSlide}
               transition={{ duration: 0.25 }}
             >
-              <div className="flex items-center gap-2 px-2 py-1.5 bg-white/5 rounded-full border border-white/5">
+              <div className="flex items-center gap-2 px-2 py-1.5">
                 <button
                   onClick={handleBack}
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-text-secondary transition-all hover:bg-white/10 hover:text-text-primary active-haptic-sm"
