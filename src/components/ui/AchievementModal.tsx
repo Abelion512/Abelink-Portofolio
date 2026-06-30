@@ -44,7 +44,7 @@ export default function AchievementModal({ achievement, onClose }: AchievementMo
             layoutId={`image-${achievement.id}`}
             src={achievement.image_path?.replace(/^\/?public\//, '/')}
             alt={achievement.title}
-            className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+            className="w-full h-full object-contain p-4 md:p-6"
             onContextMenu={(e) => e.preventDefault()}
             draggable={false}
           />
