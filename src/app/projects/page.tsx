@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { useProjects } from "@/hooks/useData";
 import ProjectsGrid from "@/components/sections/ProjectsGrid";
+import { site } from "@/config/site";
+import { SkeletonGrid } from "@/components/ui/Skeleton";
 
 export default function ProjectsPage() {
   const { projects, loading, error } = useProjects();
@@ -17,14 +19,8 @@ export default function ProjectsPage() {
           transition={{ duration: 1, delay: 0.2 }}
         >
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-40">
-              <div className="relative w-16 h-16">
-                <div className="absolute inset-0 border-4 border-primary/20 rounded-full" />
-                <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin" />
-              </div>
-              <p className="mt-6 text-[10px] font-mono uppercase tracking-[0.4em] text-text-muted">
-                Syncing Projects...
-              </p>
+            <div className="py-8">
+              <SkeletonGrid count={6} />
             </div>
           ) : error ? (
             <div className="text-center py-40 bg-red-500/5 rounded-[3rem] border border-red-500/10">
@@ -56,7 +52,7 @@ export default function ProjectsPage() {
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a
-                  href="https://github.com/Abelion512"
+                  href={site.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-10 py-4 bg-white/5 border border-white/10 rounded-full text-[11px] font-mono font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all"

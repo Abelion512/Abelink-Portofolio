@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Laptop, Cpu, Monitor, Terminal, Wrench } from "lucide-react";
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 3600;
 
 interface UseItem {
   id: string;

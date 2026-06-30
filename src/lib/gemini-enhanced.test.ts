@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { detectPromptInjection } from "./gemini";
+import { detectPromptInjection } from "./ai";
 
 describe("Enhanced Prompt Injection Detection", () => {
   describe("Layer 1: Direct Instruction Override", () => {

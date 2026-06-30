@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { site } from "@/config/site";
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
-import { Search, Github, Mail, X, ChevronLeft } from "lucide-react";
+import { Search, Mail, Github, X, ChevronLeft } from "lucide-react";
 import { useLangStore } from "@/store/languageStore";
 import { useCommandStore } from "@/store/useCommandStore";
 import { NAV_ITEMS } from "@/constants/nav";
@@ -50,7 +51,7 @@ export default function CommandPalette() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-md pointer-events-auto" 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto"
             onClick={() => setIsOpen(false)} 
           />
 
@@ -88,15 +89,10 @@ export default function CommandPalette() {
               </div>
             </div>
 
-            <Command.List 
+            <Command.List
               className="max-h-[60vh] overflow-y-auto p-3 transition-all scroll-smooth"
-              onScroll={() => {
-                if (document.activeElement instanceof HTMLElement && document.activeElement.tagName === 'INPUT') {
-                  document.activeElement.blur();
-                }
-              }}
             >
-              <Command.Empty className="py-12 text-center text-text-secondary text-sm">
+              <Command.Empty role="status" className="py-12 text-center text-text-secondary text-sm">
                 <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center mx-auto mb-3">
                   <Search size={20} className="opacity-20" />
                 </div>
@@ -121,7 +117,7 @@ export default function CommandPalette() {
 
               <Command.Group heading="Connect" className="px-3 py-3 mt-2 text-[10px] font-mono text-primary/60 uppercase tracking-[0.2em] border-t border-white/5">
                 <Command.Item 
-                  onSelect={() => runCommand(() => window.open("https://github.com/abelion512", "_blank"))}
+                  onSelect={() => runCommand(() => window.open(site.social.github, "_blank"))}
                   className="flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-default select-none text-[13px] font-medium text-text-secondary data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:shadow-lg data-[selected=true]:shadow-primary/20 transition-all group active-haptic"
                 >
                   <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center group-data-[selected=true]:bg-white/20">
@@ -131,7 +127,7 @@ export default function CommandPalette() {
                   <ChevronLeft size={14} className="opacity-0 group-data-[selected=true]:opacity-40 rotate-180" />
                 </Command.Item>
                 <Command.Item 
-                  onSelect={() => runCommand(() => window.location.href = "mailto:ihsanuddinsalav.me@gmail.com")}
+                  onSelect={() => runCommand(() => window.location.href = `mailto:${site.email}`)}
                   className="flex items-center gap-3 px-4 py-3.5 rounded-2xl cursor-default select-none text-[13px] font-medium text-text-secondary data-[selected=true]:bg-primary data-[selected=true]:text-white data-[selected=true]:shadow-lg data-[selected=true]:shadow-primary/20 transition-all group active-haptic"
                 >
                   <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center group-data-[selected=true]:bg-white/20">

@@ -5,6 +5,7 @@ import {
   detectSecurityThreat,
   RAGResult,
 } from "./rag-core";
+import { env } from "./env";
 
 export type { PortfolioDoc, RAGResult };
 export { PORTFOLIO_DOCS_STATIC, detectSecurityThreat };
@@ -20,7 +21,7 @@ export {
 // Cache for performance (5 minutes)
 let cachedDocs: PortfolioDoc[] = [];
 let lastFetch = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = env.CACHE_DOCS_MS;
 
 // Fetch knowledge docs from Supabase (with caching)
 export async function getKnowledgeDocs(): Promise<PortfolioDoc[]> {
@@ -60,7 +61,7 @@ export async function getKnowledgeDocs(): Promise<PortfolioDoc[]> {
 // Cache for live context (30 seconds - shorter since it represents "realtime" status)
 let cachedLiveContext = "";
 let lastLiveFetch = 0;
-const LIVE_CONTEXT_CACHE_DURATION = 30 * 1000; // 30 seconds
+const LIVE_CONTEXT_CACHE_DURATION = env.CACHE_LIVE_MS; // 30 seconds
 
 // Retrieve relevant context from Supabase realtime data
 export async function getLiveContext(): Promise<string> {
@@ -76,7 +77,7 @@ export async function getLiveContext(): Promise<string> {
     const { data } = await supabase
       .from("settings")
       .select("currently_learning, currently_building")
-      .eq("id", 1)
+      .eq("id", env.SETTINGS_ROW_ID)
       .single();
 
     if (!data) {
@@ -180,9 +181,9 @@ export async function getRelevantContextWithConfidence(
 
   // Determine tier based on confidence
   let tier: 1 | 2 | 3 = 3;
-  if (confidence >= 0.98)
+  if (confidence >= env.AI_CONFIDENCE_TIER1)
     tier = 1; // 98%+ for full AI answers
-  else if (confidence >= 0.9) tier = 2; // 90-97% limited info
+  else if (confidence >= env.AI_CONFIDENCE_TIER2) tier = 2; // 90-97% limited info
   // Below 90% = Tier 3 (no answer)
 
   // Get context from top matching documents

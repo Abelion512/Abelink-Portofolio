@@ -20,6 +20,13 @@ interface Message {
   content: string;
 }
 
+const springOpen = {
+  type: "spring" as const,
+  damping: 22,
+  stiffness: 220,
+  mass: 0.9,
+};
+
 export default function ChatWidget() {
   const { t } = useLangStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +50,7 @@ export default function ChatWidget() {
     if (isOpen) scrollToBottom();
   }, [messages, isLoading, isOpen]);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: { preventDefault: () => void }) => {
     e?.preventDefault();
     if (!input.trim() || isLoading) return;
 
@@ -100,14 +107,14 @@ export default function ChatWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.8, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: 50, scale: 0.8, filter: "blur(10px)" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="w-[90vw] max-w-100 h-150 max-h-[70vh] glass border border-white/10 shadow-2xl rounded-[2.5rem] flex flex-col overflow-hidden mb-6"
+            initial={{ opacity: 0, y: 40, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 40, scale: 0.85 }}
+            transition={springOpen}
+            className="w-[90vw] max-w-100 h-150 max-h-[70vh] glass-dark border border-white/10 shadow-2xl rounded-[2.5rem] flex flex-col overflow-hidden mb-6"
           >
             {/* Header */}
-            <div className="p-6 border-b border-border/20 flex items-center justify-between bg-surface/30 backdrop-blur-xl">
+            <div className="p-6 border-b border-border/20 flex items-center justify-between bg-surface/40 backdrop-blur-2xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20">
                   <Sparkles size={20} />
@@ -124,13 +131,15 @@ export default function ChatWidget() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={clearChat}
-                  className="p-2 text-text-muted hover:text-red-400 transition-colors"
+                  className="p-2 text-text-muted hover:text-red-400 transition-colors active-haptic-sm"
+                  title="Clear chat"
                 >
                   <Trash2 size={16} />
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-text-muted hover:text-text-primary transition-colors"
+                  className="p-2 text-text-muted hover:text-text-primary transition-colors active-haptic-sm"
+                  aria-label="Close"
                 >
                   <X size={20} />
                 </button>
@@ -140,8 +149,11 @@ export default function ChatWidget() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
               {messages.map((m, idx) => (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
@@ -161,10 +173,10 @@ export default function ChatWidget() {
                       )}
                     </div>
                     <div
-                      className={`px-4 py-3 rounded-2xl text-sm ${
+                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                         m.role === "user"
-                          ? "bg-primary/10 border border-primary/20 text-text-primary rounded-tr-none"
-                          : "bg-surface/50 border border-border/40 text-text-secondary rounded-tl-none"
+                          ? "bg-primary/15 border border-primary/25 text-text-primary rounded-tr-[4px]"
+                          : "bg-surface/60 backdrop-blur-xl border border-border/30 text-text-secondary rounded-tl-[4px]"
                       }`}
                     >
                       <div className="prose prose-sm prose-invert max-w-none prose-p:leading-relaxed">
@@ -172,19 +184,23 @@ export default function ChatWidget() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
               {isLoading && (
-                <div className="flex justify-start gap-3">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex justify-start gap-3"
+                >
                   <div className="w-8 h-8 rounded-lg bg-surface border border-border/40 flex items-center justify-center">
                     <Loader2 size={14} className="animate-spin text-primary" />
                   </div>
-                  <div className="flex gap-1 items-center px-4 py-3 bg-surface/50 rounded-2xl border border-border/40">
+                  <div className="flex gap-1 items-center px-4 py-3 bg-surface/60 backdrop-blur-xl rounded-2xl border border-border/30">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce" />
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce [animation-delay:0.2s]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce [animation-delay:0.4s]" />
                   </div>
-                </div>
+                </motion.div>
               )}
               <div ref={messagesEndRef} />
             </div>
@@ -199,12 +215,12 @@ export default function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={t("chat.placeholder") || "Ask me anything..."}
-                  className="flex-1 bg-surface/50 border border-border/40 rounded-xl px-5 py-3.5 outline-none focus:border-primary/50 text-sm transition-all"
+                  className="flex-1 bg-surface/50 border border-border/40 rounded-xl px-5 py-3.5 outline-none focus:border-primary/50 focus:bg-surface/70 text-sm transition-all placeholder:text-text-muted"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="p-3.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all font-bold"
+                  className="p-3.5 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100 transition-all"
                 >
                   <Send size={18} />
                 </button>
@@ -216,13 +232,12 @@ export default function ChatWidget() {
 
       <motion.button
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-11 h-11 rounded-2xl bg-surface/30 backdrop-blur-2xl border border-white/10 text-primary shadow-2xl flex items-center justify-center relative overflow-hidden group z-[1000] ring-1 ring-white/5"
+        className="w-12 h-12 rounded-2xl glass-elevated text-primary shadow-2xl flex items-center justify-center relative overflow-hidden group"
       >
-        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {isOpen ? <X size={18} /> : <MessageCircle size={18} />}
-
       </motion.button>
     </div>
   );
