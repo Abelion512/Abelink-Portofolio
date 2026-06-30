@@ -56,3 +56,11 @@ docs/archive/Analyzing_.Jules_Session_Archives.md
 docs/references/*.mp4
 docs/references/*.pdf
 docs/references/*.jpeg
+
+# Internal data
+public/
+docs/
+
+# Supabase — keep migrations, ignore the rest
+supabase/.temp/
+supabase/.temp/*
