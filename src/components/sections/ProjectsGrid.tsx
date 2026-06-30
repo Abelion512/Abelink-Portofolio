@@ -6,6 +6,7 @@ import { Github, ArrowUpRight, Briefcase } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLangStore } from "@/store/languageStore";
+import { site } from "@/config/site";
 import SpotlightCard from "../ui/SpotlightCard";
 
 export type ProjectStatus = 'live' | 'wip' | 'preview';
@@ -51,7 +52,7 @@ export default function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
       
       <div className="mt-24 flex justify-center">
         <Link 
-          href="https://github.com/Abelion512" 
+          href={site.social.github} 
           target="_blank" 
           className="group relative px-10 py-4 bg-white/5 border border-white/10 rounded-full hover:border-primary/40 transition-all duration-500 overflow-hidden"
         >

@@ -1,11 +1,12 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// Generic OpenAI-compatible AI client — works with OpenRouter, OpenAI, Groq, etc.
+// Configure via env vars: AI_BASE_URL, AI_API_KEY, AI_MODEL
+
 import {
   getRelevantContextWithConfidence,
   getTieredResponse,
   detectSecurityThreat,
 } from "./rag";
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || "");
+import { env } from "./env";
 
 export interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -13,39 +14,35 @@ export interface ChatMessage {
   language?: "id" | "en";
 }
 
+const BASE_URL = env.AI_BASE_URL;
+const API_KEY = env.AI_API_KEY;
+const MODEL = env.AI_MODEL;
+
 export async function generateChatResponse(
   messages: ChatMessage[],
   systemPrompt: string,
 ) {
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-  });
-
   const lastMsg = messages[messages.length - 1].content;
   const userLang = messages[messages.length - 1]?.language || "id";
 
   // SECURITY: Check for threats first
   const securityCheck = detectSecurityThreat(lastMsg);
   if (securityCheck.blocked) {
-    // Return cynical response for manipulation attempts
     return getTieredResponse(lastMsg, 3, "", false, userLang, true);
   }
 
   const { context, confidence, tier } =
     await getRelevantContextWithConfidence(lastMsg);
 
-  // For general questions (who are you, what is this, etc), always use AI
   const isGeneralQuestion =
     /who are you|what (is|can|do)|siapa (kamu|anda)|apa (ini|itu)/i.test(
       lastMsg,
     );
 
-  // SECURITY: If confidence below 95% AND not a general question, use tiered response
-  if (confidence < 0.95 && !isGeneralQuestion) {
+  if (confidence < env.AI_CONFIDENCE_HIGH && !isGeneralQuestion) {
     return getTieredResponse(lastMsg, tier, context, false, userLang);
   }
 
-  // For general questions or high confidence, use AI
   const langInstruction =
     userLang === "id"
       ? "Jawab dalam bahasa Indonesia yang natural dan ringkas."
@@ -53,13 +50,39 @@ export async function generateChatResponse(
 
   const enhancedPrompt = `${systemPrompt}\n\n${langInstruction}\n\n### CONTEXT:\n${context || "General info about Ihsanuddin Salav"}`;
 
+  if (!API_KEY) {
+    throw new Error("AI_API_KEY is not configured");
+  }
+
   try {
-    const result = await model.generateContent(
-      enhancedPrompt + "\n\nUser: " + lastMsg + "\nAssistant:",
-    );
-    return result.response.text();
+    const response = await fetch(`${BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
+        "HTTP-Referer": env.SITE_URL,
+        "X-Title": "Abelink Portfolio AI",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          { role: "system", content: enhancedPrompt },
+          { role: "user", content: lastMsg },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text().catch(() => "");
+      throw new Error(
+        `AI API error ${response.status}: ${errBody || response.statusText}`,
+      );
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "";
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("AI API Error:", error);
     return userLang === "id"
       ? "Maaf, terjadi kesalahan saat memproses permintaan Anda."
       : "Sorry, an error occurred while processing your request.";
@@ -104,8 +127,8 @@ export function detectPromptInjection(text: string): boolean {
     /remove\s+(all\s+)?(restrictions|limitations|filters|guardrails)/i,
     /no\s+(ethical|safety|content)\s+(restrictions|guidelines|rules|filters)/i,
     /without\s+(any\s+)?(restrictions|limitations|filters)/i,
-    /\bno\s+(filters|restrictions|limits)\b/i, // Catch "no filters" alone
-    /\bbypass\s+\w+\s+filter/i, // "bypass X filter"
+    /\bno\s+(filters|restrictions|limits)\b/i,
+    /\bbypass\s+\w+\s+filter/i,
   ];
 
   // Layer 5: Delimiter and structural injection
@@ -117,18 +140,18 @@ export function detectPromptInjection(text: string): boolean {
     /END\s+(SYSTEM|USER|PROMPT|INSTRUCTIONS)/i,
   ];
 
-  // Layer 6:Encoded or obfuscated attempts
+  // Layer 6: Encoded or obfuscated attempts
   const encodedPatterns = [
     /base64[:\s]/i,
     /decode\s+(this|the\s+following)/i,
-    /\\x[0-9a-f]{2}/i, // Hex encoding
-    /&#?[0-9]+;/i, // HTML entities
-    /%[0-9a-f]{2}/i, // URL encoding
+    /\\x[0-9a-f]{2}/i,
+    /&#?[0-9]+;/i,
+    /%[0-9a-f]{2}/i,
   ];
 
   // Layer 7: Jailbreak and manipulation
   const jailbreakPatterns = [
-    /dan\s+mode/i, // Famous ChatGPT jailbreak
+    /dan\s+mode/i,
     /developer\s+mode\s+enabled/i,
     /always\s+say\s+yes/i,
     /never\s+(refuse|decline|deny|reject)/i,
@@ -145,7 +168,6 @@ export function detectPromptInjection(text: string): boolean {
     /previous\s+restrictions\s+(no\s+longer\s+)?apply/i,
   ];
 
-  // Check all pattern layers
   const allPatterns = [
     ...directOverridePatterns,
     ...systemExposurePatterns,
@@ -159,8 +181,6 @@ export function detectPromptInjection(text: string): boolean {
 
   const hasPatternMatch = allPatterns.some((pattern) => pattern.test(text));
 
-  // Additional heuristic: Check for excessive special characters
-  // (indicates delimiter-based injection attempts)
   const specialCharRatio =
     (text.match(/[###\[\]{}<>]/g) || []).length / text.length;
   const hasSuspiciousStructure = specialCharRatio > 0.05 && text.length > 50;
@@ -169,7 +189,7 @@ export function detectPromptInjection(text: string): boolean {
 }
 
 export function containsPII(text: string): boolean {
-  const phoneRegex = /(\+62|62|0)8[1-9][0-9]{6,10}/g;
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  const phoneRegex = /(\+62|62|0)8[1-9][0-9]{6,10}/;
+  const emailRegex = /\b[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}\b/;
   return phoneRegex.test(text) || emailRegex.test(text);
 }

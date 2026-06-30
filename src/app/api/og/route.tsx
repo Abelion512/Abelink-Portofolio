@@ -3,12 +3,16 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://abelion.vercel.app";
+
 export async function GET(req: NextRequest) {
+  // ponytail: rate limiting skipped — add when abuse observed (e.g. upstash-redis)
+  const cacheHours = 12;
   try {
     const { searchParams } = new URL(req.url);
 
     // Dynamic params
-    const title = searchParams.get("title") || "Ihsanuddin Salav";
+    const title = searchParams.get("title") || process.env.NEXT_PUBLIC_SITE_TITLE || "Ihsanuddin Salav";
     const subtitle = searchParams.get("subtitle") || "Fullstack Engineer • Builder • Learner";
     const type = searchParams.get("type") || "portfolio"; // 'project', 'achievement', 'portfolio'
 
@@ -51,7 +55,7 @@ export async function GET(req: NextRequest) {
               color: "#EDEDED",
               letterSpacing: "-0.05em"
             }}>
-              ihsanuddinsalav.me
+              {new URL(SITE_URL).hostname}
             </div>
           </div>
 
@@ -90,6 +94,9 @@ export async function GET(req: NextRequest) {
       {
         width: 1200,
         height: 630,
+        headers: {
+          "Cache-Control": `public, max-age=${cacheHours * 3600}, s-maxage=${cacheHours * 3600}, stale-while-revalidate=${cacheHours * 3600 * 2}`,
+        },
       }
     );
   } catch (e) {

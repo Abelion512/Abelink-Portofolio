@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { containsPII } from "./gemini";
+import { containsPII } from "./ai";
 
 describe("containsPII - Comprehensive Tests", () => {
   describe("Indonesian Phone Number Detection", () => {
@@ -138,13 +138,13 @@ describe("containsPII - Comprehensive Tests", () => {
         expect(containsPII(text)).toBe(true);
       }
 
-      // Note: + and % are NOT in the allowed character set [a-zA-Z0-9._-]
-      // These will NOT be detected (known limitation)
-      expect(containsPII("user+tag@example.com")).toBe(false);
-      expect(containsPII("user%tag@example.com")).toBe(false);
+      // + and % are NOT in allowed set — but regex now finds the clean suffix
+      // e.g. "user+tag@example.com" detects "tag@example.com"
+      expect(containsPII("user+tag@example.com")).toBe(true);
+      expect(containsPII("user%tag@example.com")).toBe(true);
     });
 
-    it("should NOT detect emails embedded in text (known limitation)", () => {
+    it("should detect emails embedded in text", () => {
       const embeddedEmails = [
         "My email is test@example.com",
         "Contact: user.name@domain.org",
@@ -154,24 +154,29 @@ describe("containsPII - Comprehensive Tests", () => {
       ];
 
       for (const text of embeddedEmails) {
-        expect(containsPII(text)).toBe(false);
+        expect(containsPII(text)).toBe(true);
       }
     });
 
-    it("should NOT detect invalid email formats", () => {
+    it("should NOT detect most invalid email formats", () => {
       const invalidEmails = [
         "user@", // Missing domain
         "@example.com", // Missing local part
         "user@example", // Missing TLD
-        "user@.com", // Missing domain name
-        "user name@example.com", // Space in local part
-        "user@example.c", // TLD too short (1 char, but {2,6} allows this - edge case)
+        "user@.com", // Missing domain name — colon+dot can be separate components but regex .+ fails. Check the next block.
+        "user@example.c", // TLD too short (1 char)
         "user@example.toolong", // TLD too long (7 chars)
       ];
 
       for (const text of invalidEmails) {
         expect(containsPII(text)).toBe(false);
       }
+    });
+
+    it("should detect emails with embedded components as potential PII", () => {
+      // These aren't valid emails, but contain something that looks like one.
+      // Conservative approach: treat as PII rather than leak
+      expect(containsPII("user name@example.com")).toBe(true); // finds name@example.com
     });
   });
 
@@ -180,7 +185,7 @@ describe("containsPII - Comprehensive Tests", () => {
       const mixedContent = [
         "081234567890", // Phone only
         "test@example.com", // Email only
-        "Call 081234567890 or email test@example.com", // Both (but email won't match due to ^$)
+        "Call 081234567890 or email test@example.com", // Both
         "My phone is 081234567890", // Phone in text
       ];
 
@@ -288,17 +293,11 @@ Thanks!`;
   });
 
   describe("Known Limitations Documentation", () => {
-    it("documents that email regex only matches standalone emails", () => {
-      // This is by design due to ^ and $ anchors
-      // Standalone email: ✅ detected
+    it("documents that email regex now detects embedded emails", () => {
+      // Unanchored regex + word boundaries detect emails in sentences.
+      // This is a security improvement over the old ^...$ anchored version.
       expect(containsPII("user@example.com")).toBe(true);
-
-      // Email in sentence: ❌ NOT detected (limitation)
-      expect(containsPII("My email is user@example.com")).toBe(false);
-
-      // Workaround: Extract email first, then test
-      const extractedEmail = "user@example.com";
-      expect(containsPII(extractedEmail)).toBe(true);
+      expect(containsPII("My email is user@example.com")).toBe(true);
     });
 
     it("documents that only Indonesian phone numbers are detected", () => {

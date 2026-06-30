@@ -12,7 +12,7 @@ export default function FloatingActions({ githubUrl, liveUrl }: FloatingActionsP
   if (!githubUrl && !liveUrl) return null;
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 w-fit">
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 w-fit hidden lg:block">
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

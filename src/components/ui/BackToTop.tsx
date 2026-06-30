@@ -35,7 +35,7 @@ export default function BackToTop() {
             damping: 20 
           }}
           onClick={scrollToTop}
-          className="fixed bottom-24 right-6 md:right-8 z-[1000] w-11 h-11 rounded-2xl bg-surface/30 backdrop-blur-2xl border border-white/10 text-primary flex items-center justify-center hover:bg-surface/50 transition-all shadow-2xl group ring-1 ring-white/5 shadow-primary/10"
+          className="fixed bottom-44 right-6 md:right-8 z-50 w-11 h-11 rounded-2xl bg-surface/30 backdrop-blur-2xl border border-white/10 text-primary flex items-center justify-center hover:bg-surface/50 transition-all shadow-2xl group ring-1 ring-white/5 shadow-primary/10"
           aria-label="Back to top"
         >
           <ArrowUp size={18} className="group-hover:-translate-y-0.5 transition-transform" />

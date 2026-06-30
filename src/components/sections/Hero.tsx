@@ -9,6 +9,7 @@ import { useLangStore } from "@/store/languageStore";
 import EasterEggName from "@/components/ui/EasterEggName";
 import TypingAnimation from "@/components/ui/TypingAnimation";
 import { ChevronDown } from "lucide-react";
+import { site } from "@/config/site";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
   ssr: false,
@@ -104,10 +105,7 @@ export default function Hero({
             <TypingAnimation
               texts={[
                 t("hero.tagline"),
-                "Fullstack Developer",
-                "AI Enthusiast",
-                "Linux Lover",
-                "Open Source Contributor",
+                ...site.taglines,
               ]}
               className="text-xl md:text-3xl font-display font-bold text-primary tracking-tight"
             />
@@ -180,17 +178,17 @@ export default function Hero({
             {[
               {
                 icon: <Github size={20} className="md:w-6 md:h-6" />,
-                href: "https://github.com/Abelion512",
+                href: site.social.github,
                 label: "GitHub",
               },
               {
                 icon: <Instagram size={20} className="md:w-6 md:h-6" />,
-                href: "https://instagram.com/ihsanovid",
+                href: site.social.instagram,
                 label: "Instagram",
               },
               {
                 icon: <Mail size={20} className="md:w-6 md:h-6" />,
-                href: "mailto:agen.salva@gmail.com",
+                href: `mailto:${site.email}`,
                 label: "Email",
               },
             ].map((social, i) => (

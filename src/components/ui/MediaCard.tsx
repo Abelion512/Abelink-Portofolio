@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Play, Eye, Heart } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 interface MediaCardProps {
   title: string;

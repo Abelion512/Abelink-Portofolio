@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { detectPromptInjection, containsPII } from "./gemini";
+import { detectPromptInjection, containsPII } from "./ai";
 
 describe("detectPromptInjection", () => {
   it("should detect 'ignore previous instructions' pattern", () => {
@@ -184,7 +184,7 @@ describe("containsPII", () => {
       expect(containsPII(text)).toBe(true);
     }
 
-    // Emails embedded in text will NOT be detected by current implementation
+    // Emails embedded in text ARE now detected (unanchored regex with word boundaries)
     const embeddedEmails = [
       "My email is test@example.com",
       "Contact: user.name@domain.org",
@@ -192,7 +192,7 @@ describe("containsPII", () => {
     ];
 
     for (const text of embeddedEmails) {
-      expect(containsPII(text)).toBe(false); // Known limitation
+      expect(containsPII(text)).toBe(true);
     }
   });
 
@@ -226,8 +226,8 @@ describe("containsPII", () => {
       expect(containsPII(text)).toBe(true);
     }
 
-    // But emails in mixed text won't be detected due to ^ and $ anchors limitation
+    // Emails in mixed text ARE now detected
     const emailInText = "My email is test@example.com";
-    expect(containsPII(emailInText)).toBe(false); // Known limitation
+    expect(containsPII(emailInText)).toBe(true);
   });
 });

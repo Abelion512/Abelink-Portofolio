@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MediaCard from "@/components/ui/MediaCard";
 import { supabase } from "@/lib/supabase";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface CreationItem {
@@ -25,7 +25,7 @@ export default function CreationPage() {
     async function fetchCreation() {
       try {
         const { data, error } = await supabase
-          .from("memories")
+          .from("creation")
           .select("*")
           .eq("is_visible", true)
           .order("created_at", { ascending: false });
@@ -46,7 +46,7 @@ export default function CreationPage() {
       .channel("creation_realtime")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "memories" },
+        { event: "*", schema: "public", table: "creation" },
         (payload: RealtimePostgresChangesPayload<CreationItem>) => {
           if (payload.eventType === "INSERT") {
             const newItem = payload.new as CreationItem;
@@ -138,8 +138,14 @@ export default function CreationPage() {
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
-              <p className="text-neutral-500 font-mono text-sm uppercase tracking-[0.2em]">
-                Belum ada konten yang tersedia
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-surface/40 border border-white/5 flex items-center justify-center">
+                <svg className="w-10 h-10 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-display font-bold text-text-primary mb-2">No content yet</h3>
+              <p className="text-text-muted text-sm font-mono uppercase tracking-[0.2em]">
+                Creation gallery coming soon
               </p>
             </div>
           )}

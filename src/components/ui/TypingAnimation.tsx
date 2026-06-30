@@ -54,6 +54,7 @@ export default function TypingAnimation({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
+      aria-live="polite"
     >
       {currentText}
       <span className="inline-block w-0.5 h-5 ml-1 bg-primary animate-pulse" />

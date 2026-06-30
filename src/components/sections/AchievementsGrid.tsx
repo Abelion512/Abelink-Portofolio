@@ -7,7 +7,7 @@ import { Calendar, Award, Trophy, ExternalLink } from "lucide-react";
 import { useLangStore } from "@/store/languageStore";
 import AchievementModal from "@/components/ui/AchievementModal";
 import SpotlightCard from "@/components/ui/SpotlightCard";
-
+import { achievements as CERT_DATA } from "@/constants/achievements";
 
 export type AchievementType = "certificate" | "participation";
 
@@ -24,81 +24,22 @@ export interface Achievement {
   is_visible: boolean;
 }
 
-const CERT_DATA: Achievement[] = [
-  {
-    id: "dicoding-financial",
-    title: "Introduction to Financial Literacy",
-    issuer: "Dicoding × DBS Foundation",
-    year: 2026,
-    type: "certificate",
-    image_path: "/certs/dicoding-financial-literacy.jpg",
-    url: "https://dicoding.com/certificates/1RXYQ9NRQZVM",
-    is_visible: true,
-    category: "Software Engineering"
-  },
-  {
-    id: "ibm-gen-ai",
-    title: "Use Generative AI for Software Development",
-    issuer: "IBM SkillsBuild",
-    year: 2025,
-    type: "certificate",
-    image_path: "/certs/ibm-genai-software-dev.jpg",
-    url: "#",
-    is_visible: true,
-    category: "Software Engineering"
-  },
-  {
-    id: "dicoding-dasar-ai",
-    title: "Belajar Dasar AI",
-    issuer: "Dicoding Indonesia",
-    year: 2026,
-    type: "certificate",
-    image_path: "/certs/dicoding-dasar-ai.jpg",
-    url: "https://dicoding.com/certificates/QLZ9RD0Q0Z5D",
-    is_visible: true,
-    category: "Software Engineering"
-  },
-  {
-    id: "ibm-granite",
-    title: "Getting Started with IBM Granite Models",
-    issuer: "IBM SkillsBuild",
-    year: 2025,
-    type: "certificate",
-    image_path: "/certs/ibm-granite-models.jpg",
-    url: "#",
-    is_visible: true,
-    category: "Software Engineering"
-  },
-  {
-    id: "dibimbing-rpa",
-    title: "Robotic Process Automation",
-    issuer: "Dibimbing.id",
-    year: 2024,
-    type: "certificate",
-    image_path: "/certs/dibimbing-rpa.jpg",
-    url: "#",
-    is_visible: true,
-    category: "Automation"
-  },
-  {
-    id: "dibimbing-devops",
-    title: "DevOps Engineering",
-    issuer: "Dibimbing.id",
-    year: 2024,
-    type: "certificate",
-    image_path: "/certs/dibimbing-devops.jpg",
-    url: "#",
-    is_visible: true,
-    category: "Infrastructure"
-  }
-];
-
 export default function AchievementsGrid({ initialAchievements }: { initialAchievements?: Achievement[] }) {
   const { t } = useLangStore();
   const [mounted, setMounted] = useState(false);
   const [filter, setFilter] = useState<"all" | AchievementType>("all");
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-  const achievements = initialAchievements || CERT_DATA;
+  const fallbackData: Achievement[] = CERT_DATA.map(a => ({
+    id: a.id,
+    title: a.title,
+    issuer: a.issuer,
+    year: a.year || new Date().getFullYear(),
+    type: a.type,
+    image_path: a.image,
+    url: a.credentialUrl,
+    is_visible: true,
+  }));
+  const achievements = initialAchievements || fallbackData;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -156,9 +97,12 @@ export default function AchievementsGrid({ initialAchievements }: { initialAchie
       </AnimatePresence>
 
       {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-32 text-text-secondary opacity-30">
-          <Trophy size={64} strokeWidth={1} className="mb-6" />
-          <p className="font-mono text-xs uppercase tracking-[0.4em]">No achievements listed</p>
+        <div className="flex flex-col items-center justify-center py-32 text-text-secondary border border-white/5 rounded-[3rem] bg-surface/10">
+          <Trophy size={48} strokeWidth={1} className="mb-6 text-gold/30" />
+          <h3 className="text-xl font-display font-bold text-text-primary mb-2">No achievements found</h3>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-text-muted">
+            {filter === "all" ? "Gallery in progress" : "No results for this filter"}
+          </p>
         </div>
       )}
     </div>

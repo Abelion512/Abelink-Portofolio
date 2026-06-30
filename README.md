@@ -1,42 +1,65 @@
-# Abelink Portfolio — Premium Developer Showcase 💎
+# Abelink Portfolio
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase)](https://supabase.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-Portofolio modern yang dibangun dengan fokus pada **Apple Human Interface Guidelines (HIG)**, performa maksimal, dan integrasi AI yang cerdas. Menampilkan proyek, pencapaian, dan aktivitas real-time saya sebagai Creative Developer & AI Builder.
+Personal portfolio — Apple-inspired UI, AI integration, real-time activity feed.
 
-## 🚀 Fitur Unggulan
-- **Apple-Inspired UI**: Implementasi glassmorphism, tipografi premium (Plus Jakarta Sans & Syne), dan spacing proporsional.
-- **Pulse Living Feed**: Dashboard aktivitas real-time yang memantau progress belajar dan pengerjaan proyek.
-- **AI-Powered Exploration**: Integrasi RAG (Retrieval-Augmented Generation) untuk pencarian info proyek yang cerdas.
-- **Easter Egg Interactions**: Detail mikro-interaksi pada nama dan elemen UI untuk pengalaman pengguna yang menyenangkan.
-- **High-End SEO/AEO**: Optimasi Meta Tags dan JSON-LD untuk visibilitas maksimal di search engine tradisional maupun AI (Gemini, Perplexity, GPT-4).
+## Tech Stack
 
-## 🛠 Tech Stack & Getting Started
-- **Frontend**: Next.js 16+ (App Router), React 19, Tailwind CSS v4.
-- **Backend & Database**: Supabase (PostgreSQL), Edge Functions.
-- **Runtime**: Bun.
-- **AI Model**: Google Gemini 1.5 Pro.
+| Layer | Stack |
+|-------|-------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 (`@theme` directive) |
+| Animation | `motion/react` v12 |
+| Database | Supabase (PostgreSQL) |
+| AI | Google Gemini 1.5 Pro, RAG |
+| Runtime | Bun |
+| Deploy | Vercel |
+
+## Setup
 
 ```bash
-# Install dependencies
+# Install
 bun install
 
-# Run development server
+# Copy env
+cp .env.example .env.local
+# Fill in: SUPABASE_URL, SUPABASE_ANON_KEY, AI_API_KEY, etc.
+
+# Dev
 bun dev
 
-# Build for production
+# Build
 bun run build
 ```
 
-## 📁 Struktur Proyek
-- `src/app`: Routing dan Page views.
-- `src/components`: UI Atomic components & Sections.
-- `src/data`: Static data & Config.
-- `docs/audit_reports`: Dokumentasi kualitas dan laporan audit performa.
-- `supabase/migrations`: Struktur database dan kontrol versi skema.
+## Environment Variables
+
+See `.env.example` for all required keys:
+- Supabase URL + anon key
+- AI provider (Gemini/OpenRouter/Groq)
+- Site URL, social links, email
+
+## Project Structure
+
+```
+src/
+├── app/          # Pages & API routes
+├── components/
+│   ├── layout/   # Navbar, BottomNav
+│   ├── sections/ # Hero, Projects, Achievements
+│   ├── ui/       # Atoms: SpotlightCard, Skeleton, etc.
+│   └── chat/     # AI ChatWidget
+├── config/       # Site config
+├── hooks/        # Data fetching
+├── lib/          # AI, RAG, Supabase client
+└── store/        # Zustand (lang, command palette)
+```
 
 ---
-Built with 🤍 by **[Ihsanuddin Salav (Abelion)](https://ihsanuddinsalav.my.id)**
+Built by [Ihsanuddin Salav](https://abelion.vercel.app)

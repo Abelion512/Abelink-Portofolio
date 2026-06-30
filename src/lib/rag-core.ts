@@ -4,54 +4,18 @@ export interface PortfolioDoc {
   securityLevel?: "public" | "sensitive" | "private";
 }
 
-// Static fallback (if Supabase is down)
+// Static fallback (if Supabase is down) — minimal PII, identify info only
 export const PORTFOLIO_DOCS_STATIC: PortfolioDoc[] = [
   {
     id: "about",
     securityLevel: "public",
-    content: `Ihsanuddin Salav is a second-semester Software Engineering student based in Surabaya, Indonesia.
-He specializes in Fullstack Development, AI Automation (n8n), and Linux Architecture.
-Tagline: Student. Builder. Learner.
-GitHub: github.com/abelion512
-Instagram: @ihsanovid`,
-  },
-  {
-    id: "stack",
-    securityLevel: "public",
-    content: `Tech stack: Next.js 16, TypeScript, Tailwind CSS v4, Motion v12, Supabase,
-PostgreSQL, Node.js, Docker, Linux, n8n, Anthropic SDK, OpenRouter, Groq, Vercel.`,
-  },
-  {
-    id: "projects",
-    securityLevel: "public",
-    content: `Active Projects:
-- Abelink Portfolio: Personal portfolio (this site). Next.js 16 + Tailwind v4 + Motion.
-- Lembaran: CLI TUI note-taking app, multi-environment.
-- LearnInk AI: AI-first LMS with Pyodide code execution.
-- Ab-Pay: Custom payment system with Midtrans (QRIS, e-wallet, VA).`,
-  },
-  {
-    id: "achievements",
-    securityLevel: "public",
-    content: `Certificates (7 total):
-- Dicoding: Dasar AI, Financial Literacy (2026)
-- IBM SkillsBuild: Generative AI, Granite Models (2025)
-- Dibimbing.id: RPA, DevOps, Data Science & ML (2025/2026)`,
+    content: `Ihsanuddin Salav is a Software Engineering student based in Surabaya, Indonesia.
+He specializes in Fullstack Development, AI Automation, and Linux Architecture.`,
   },
   {
     id: "contact",
     securityLevel: "sensitive",
-    content: `Contact Information (share ONLY if confidence >= 98%):
-Email: agen.salva@gmail.com
-For business inquiries and collaborations only.`,
-  },
-  {
-    id: "explorer",
-    securityLevel: "public",
-    content: `Ihsanuddin is also an explorer and adventurer.
-He enjoys discovering new technologies, experimenting with cutting-edge tools,
-and pushing the boundaries of what's possible with AI and web development.
-Always learning, always building, always exploring.`,
+    content: `Contact: email available on request.`,
   },
 ];
 
@@ -152,7 +116,7 @@ export function getTieredResponse(
     };
 
     const responses = cynicalResponses[language];
-    return responses[Math.floor(Math.random() * responses.length)];
+    return responses[query.length % responses.length];
   }
 
   const translations = {
